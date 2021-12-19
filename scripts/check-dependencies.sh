@@ -31,4 +31,5 @@ checkExists () {
 set -e
 
 checkExists ${ARCH}-elf-g++
+checkExists ${ARCH}-elf-gcc
 checkExists ${ARCH}-elf-ld

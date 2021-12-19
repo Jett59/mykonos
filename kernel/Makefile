@@ -13,24 +13,26 @@
     #You should have received a copy of the GNU General Public License
     #along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-export ARCH?=x86_64
+CXXFLAGS+=-ffreestanding
+LDFLAGS+=-T arch/$(ARCH)/linker.ld
 
-export CXX:=$(ARCH)-elf-g++
-export AS:=$(ARCH)-elf-gcc
-export LD:=$(ARCH)-elf-gcc
+# Architecture-specific properties
+include arch/$(ARCH)/Make.properties
 
-export CPPFLAGS:=
-export CXXFLAGS:=-std=gnu++17 -nostdinc -nostdlib -O2
-export ASFLAGS:=
+# Find the steps
+include arch/$(ARCH)/Make.steps
 
-export LDFLAGS:=-nostdlib -lgcc
+OUTPUT:=arch/$(ARCH)/build/Mykonos
 
-all: check-dependencies kernel
+$(OUTPUT): $(STEPS)
+	mkdir -p $(shell dirname $(OUTPUT))
+	echo "$(LD) $@"
+	$(LD) $(LDFLAGS) $^ -o $@
 
-.PHONY: check-dependencies
-check-dependencies:
-	@ARCH=$(ARCH) ./scripts/check-dependencies.sh
+%.o: %.S
+	echo "$(AS) $@"
+	$(AS) $(ASFLAGS) $(CPPFLAGS) -c $^ -o $@
 
-.PHONY: kernel
-kernel: kernel/Makefile
-	@"$(MAKE)" -s -C kernel
+%.o: %.cpp
+	echo "$(CXX) $@"
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $^ -o $@
