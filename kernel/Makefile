@@ -36,3 +36,6 @@ $(OUTPUT): $(STEPS)
 %.o: %.cpp
 	echo "$(CXX) $@"
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $^ -o $@
+
+clean:
+	rm -f $(STEPS)

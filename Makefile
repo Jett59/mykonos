@@ -34,3 +34,7 @@ check-dependencies:
 .PHONY: kernel
 kernel: kernel/Makefile
 	@"$(MAKE)" -s -C kernel
+
+.PHONY: clean
+clean:
+	@"$(MAKE)" -s -C kernel clean
