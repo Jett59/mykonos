@@ -1,1 +1,1 @@
-STEPS+=arch/x86_64/bootstrap/multiboot.o
+STEPS+=arch/x86_64/bootstrap/multiboot.o arch/x86_64/bootstrap/bootstrap.o
