@@ -31,11 +31,10 @@ int $0 /*Tripple fault*/
     .globl _start
     .type _start, @function
 _start:
-int $0
 check_multiboot:
 cmpl $MULTIBOOT2_EAX_MAGIC, %eax
 jne bootstrap_error
-movl %ebx, mbiPointer /*Thank you little-endian*/
+movl %ebx, mbiPointer /*Thank you little-endian: this makes a 64 bit pointer for use later*/
 check_long_mode:
 movl $0x80000000, %eax
 cpuid /*Highest cpuid number*/
@@ -63,6 +62,8 @@ addl $8, %edi /*Next entry*/
 decl %ecx
 jnz 1b /*next*/
 /*We don't put in pml1s because we use large pages*/
+movl $pml4, %eax
+movl %eax, %cr3 /*Tell the CPU where it is*/
 enable_long_mode:
 /*PAE, LME and PG*/
 /*PAE*/
@@ -82,6 +83,7 @@ movl %eax, %cr0 /*Paging enabled*/
 load_gdt:
 movl $gdt_pointer, %esi
 lgdt (%esi)
+exit_compatibility_mode:
 /*Into 64 bit mode*/
 jmp $8, $begin_long_mode
 
