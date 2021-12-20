@@ -16,6 +16,8 @@
     */
     /*Handle going into 64-bit mode*/
 
+#include <gdtbits.h>
+
 .code32
 
 #define MULTIBOOT2_EAX_MAGIC 0x36d76289
@@ -77,8 +79,25 @@ movl %cr0, %eax
 orl $(1 << 31), %eax /*PG (paging) bit*/
 movl %eax, %cr0 /*Paging enabled*/
 /*Now we are in compatibility (32 bit) long mode*/
+load_gdt:
+movl $gdt_pointer, %esi
+lgdt (%esi)
+/*Into 64 bit mode*/
+jmp $8, $begin_long_mode
+
+.code64
+
+begin_long_mode: /*We made it! Just a few more things to set up*/
+/*Reload the gdt because it was only half loaded before*/
+movq $gdt_pointer, %rsi
+lgdt (%rsi)
 1: hlt
 jmp 1b
+
+.section .bootstrap-rodata
+gdt_pointer:
+.word gdt_end - gdt - 1 /*Size - 1*/
+.quad gdt /*Pointer*/
 
 .section .bootstrap-bss, "aw", @nobits
 /*Page tables*/
@@ -96,3 +115,13 @@ initial_stack_top:
 .globl mbiPointer
 mbiPointer:
 .quad 0 /*64 bit pointer*/
+
+.section .bootstrap-rodata
+
+gdt:
+.quad 0 /*The first descriptor must be null*/
+.quad GDT_PRESENT | GDT_LONG | GDT_NOT_SYSTEM | GDT_EXECUTABLE /*Kernel code segment*/
+.quad GDT_PRESENT | GDT_NOT_SYSTEM | GDT_WRITABLE /*syscall stack segment*/
+.quad GDT_PRESENT | GDT_WRITABLE | GDT_NOT_SYSTEM | GDT_PRIVILEGE(3) /*User mode stack segment*/
+.quad GDT_PRESENT | GDT_EXECUTABLE | GDT_LONG | GDT_NOT_SYSTEM | GDT_PRIVILEGE(3) /*User mode code segment*/
+gdt_end:

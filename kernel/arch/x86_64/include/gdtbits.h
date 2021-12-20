@@ -14,37 +14,21 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     */
+/*gdtbits.h: definitions of the bits in the gdt (global descriptor table)*/
 
-ENTRY(_start);
+/*Note: this may be included by assembly code, assuming .S suffix*/
 
-SECTIONS {
-    . = 1m;
-    kernelPhysicalAddress = .;
-    .multiboot : {
-        *(.multiboot)
-    }
-    .bootstrap : {
-        *(.bootstrap)
-    }
-    .bootstrap-rodata : {
-        *(.bootstrap-rodata)
-    }
-    .bootstrap-bss : {
-        *(.bootstrap-bss)
-    }
-    .text : {
-        *(.text)
-        *(.text.*)
-    }
-    .rodata : {
-        *(.rodata)
-        *(.rodata.*)
-    }
-    .bss : {
-        *(.bss)
-        *(.bss.*)
-        *(common)
-        *(common.*)
-    }
-    kernelPhysicalEnd = .;
-}
+   #ifndef _GDTBITS_H
+   #define _GDTBITS_H
+
+#define GDT_TYPE(X) ((X & 0xF) << 40)
+#define GDT_WRITABLE (1 << 41)
+#define GDT_CONFORMING (1 << 42)
+#define GDT_EXECUTABLE (1 << 43)
+#define GDT_NOT_SYSTEM (1 << 44)
+#define GDT_PRIVILEGE(X)  ((X & 3) << 45)
+#define GDT_PRESENT (1 << 47)
+#define GDT_LONG (1 << 53)
+#define GDT_SIZE (1 << 54)
+
+   #endif

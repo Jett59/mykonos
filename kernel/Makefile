@@ -16,6 +16,8 @@
 CXXFLAGS+=-ffreestanding
 LDFLAGS+=-T arch/$(ARCH)/linker.ld
 
+CPPFLAGS+=-I arch/$(ARCH)/include
+
 # Architecture-specific properties
 include arch/$(ARCH)/Make.properties
 
