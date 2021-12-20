@@ -21,25 +21,78 @@
 #define MULTIBOOT2_EAX_MAGIC 0x36d76289
 
     .section .bootstrap
-    .globl _start
-_start:
-movl $initial_stack_top, %esp
-cmpl $MULTIBOOT2_EAX_MAGIC, %eax
-jne no_multiboot
-movl %ebx, mbiPointer /*Thank you little-endian*/
-1: hlt
-jmp 1b
-no_multiboot:
+    bootstrap_error:
+    no_multiboot:
 movl $0x1000000, %ecx
 1: decl %ecx
 jnz 1b
 int $0 /*Tripple fault*/
-
-.globl mbiPointer
-mbiPointer:
-.quad 0 /*64 bit pointer*/
+    .globl _start
+_start:
+movl $initial_stack_top, %esp
+check_multiboot:
+cmpl $MULTIBOOT2_EAX_MAGIC, %eax
+jne bootstrap_error
+movl %ebx, mbiPointer /*Thank you little-endian*/
+check_long_mode:
+movl $0x80000000, %eax
+cpuid /*Highest cpuid number*/
+cmpl $0x80000001, %eax
+jb bootstrap_error /*Not high enough*/
+movl $0x80000001, %eax
+cpuid /*Extended feature flags*/
+testl $(1 << 29), %edx
+jz bootstrap_error /*Not supported*/
+build_page_tables:
+movl $pml3, %eax
+orl $3, %eax /*present | writable*/
+movl %eax, pml4
+movl %eax, pml4 + 256 * 8 /*For higher half*/
+movl $pml2, %eax
+orl $3, %eax
+movl %eax, pml3
+/*Now set up pml2*/
+movl $512, %ecx /*512 * 2mb = 1gb = amount mapped by pml2*/
+movl $pml2, %edi
+movl $0x83, %eax /*present | writable | large*/
+1: movl %eax, (%edi)
+addl $0x200000, %eax /*2mb = increment in pml2*/
+addl $8, %edi /*Next entry*/
+decl %ecx
+jnz 1b /*next*/
+/*We don't put in pml1s because we use large pages*/
+enable_long_mode:
+/*PAE, LME and PG*/
+/*PAE*/
+movl %cr4, %eax
+orl $(1 << 5), %eax /*PAE bit*/
+movl %eax, %cr4 /*PAE enabled*/
+/*LME*/
+movl $0xC0000080, %ecx /*EFER (Extended Feature Enable Register)*/
+rdmsr /*Get EFER register*/
+orl $(1 << 8), %eax /*Set bit 8 (LME, Long Mode Enable)*/
+wrmsr /*Enable long mode*/
+/*PG*/
+movl %cr0, %eax
+orl $(1 << 31), %eax /*PG (paging) bit*/
+movl %eax, %cr0 /*Paging enabled*/
+/*Now we are in compatibility (32 bit) long mode*/
+1: hlt
+jmp 1b
 
 .section .bootstrap-bss, "aw", @nobits
+/*Page tables*/
+.align 4096
+pml4:
+.fill 4096
+pml3: /*(or pdp if you prefer)*/
+.fill 4096
+pml2: /*(or pde if you prefer)*/
+.fill 4096
+
 initial_stack:
 .fill 1024 /*Thats enough for now*/
 initial_stack_top:
+.globl mbiPointer
+mbiPointer:
+.quad 0 /*64 bit pointer*/
