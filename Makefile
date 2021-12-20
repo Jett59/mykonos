@@ -20,10 +20,10 @@ export AS:=$(ARCH)-elf-gcc
 export LD:=$(ARCH)-elf-gcc
 
 export CPPFLAGS:=
-export CXXFLAGS:=-std=gnu++17 -nostdinc -nostdlib -O2 -g
+export CXXFLAGS:=-std=gnu++17 -nostdinc -nostdlib -O2 -g -ffunction-sections -fdata-sections
 export ASFLAGS:=
 
-export LDFLAGS:=-nostdlib -lgcc
+export LDFLAGS:=-nostdlib -lgcc -Wl,-gc-sections
 
 all: check-dependencies kernel
 
