@@ -18,33 +18,32 @@
 ENTRY(_start);
 
 SECTIONS {
-    . = 1m;
+    . = 0x200000 + SIZEOF_HEADERS; /*(binutils hack)*/
     kernelPhysicalAddress = .;
     .multiboot : {
-        *(.multiboot)
+        *(.multiboot);
     }
     .bootstrap : {
-        *(.bootstrap)
+        *(.bootstrap);
     }
     .bootstrap-rodata : {
-        *(.bootstrap-rodata)
-    }
-    .bootstrap-bss : {
-        *(.bootstrap-bss)
+        *(.bootstrap-rodata);
     }
     .text : {
-        *(.text)
-        *(.text.*)
+        *(.text*);
     }
     .rodata : {
-        *(.rodata)
-        *(.rodata.*)
+        *(.rodata*);
+    }
+    .data : {
+        *(.data*);
     }
     .bss : {
-        *(.bss)
-        *(.bss.*)
-        *(common)
-        *(common.*)
+        *(.bss*);
+        *(common*);
+    }
+    .bootstrap-bss : {
+        *(.bootstrap-bss);
     }
     kernelPhysicalEnd = .;
 }
