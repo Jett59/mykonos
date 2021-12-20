@@ -22,7 +22,7 @@ extern "C" {
   extern ConstructorOrDestructor __fini_array_start[0], __fini_array_end[0];
 }
 
-extern "C" void kstart() {
+extern "C" [[noreturn]] void kstart() {
     // Global constructors must be called
     // We use init_array method, for simplicity
     for (ConstructorOrDestructor *initArrayElement = __init_array_start;
