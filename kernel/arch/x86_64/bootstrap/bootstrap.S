@@ -24,14 +24,13 @@
 
     .section .bootstrap
     bootstrap_error:
-    no_multiboot:
 movl $0x1000000, %ecx
 1: decl %ecx
 jnz 1b
 int $0 /*Tripple fault*/
     .globl _start
+    .type _start, @function
 _start:
-movl $initial_stack_top, %esp
 check_multiboot:
 cmpl $MULTIBOOT2_EAX_MAGIC, %eax
 jne bootstrap_error
@@ -91,8 +90,11 @@ begin_long_mode: /*We made it! Just a few more things to set up*/
 /*Reload the gdt because it was only half loaded before*/
 movq $gdt_pointer, %rsi
 lgdt (%rsi)
-1: hlt
-jmp 1b
+/*Now set up the stack*/
+movabsq $initial_stack_top, %rsp
+/*We actually made it! Let's go to C++*/
+pushq $0 /*Fake return address*/
+jmp kstart
 
 .section .bootstrap-rodata
 gdt_pointer:
@@ -109,9 +111,6 @@ pml3: /*(or pdp if you prefer)*/
 pml2: /*(or pde if you prefer)*/
 .fill 4096
 
-initial_stack:
-.fill 1024 /*Thats enough for now*/
-initial_stack_top:
 .globl mbiPointer
 mbiPointer:
 .quad 0 /*64 bit pointer*/
@@ -125,3 +124,9 @@ gdt:
 .quad GDT_PRESENT | GDT_WRITABLE | GDT_NOT_SYSTEM | GDT_PRIVILEGE(3) /*User mode stack segment*/
 .quad GDT_PRESENT | GDT_EXECUTABLE | GDT_LONG | GDT_NOT_SYSTEM | GDT_PRIVILEGE(3) /*User mode code segment*/
 gdt_end:
+
+.bss
+
+initial_stack:
+.fill 4096 /*Should be fine*/
+initial_stack_top:

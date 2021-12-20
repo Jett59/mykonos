@@ -42,8 +42,22 @@ SECTIONS {
         *(.bss*);
         *(common*);
     }
+    .init_array : {
+        __init_array_start = ABSOLUTE(.);
+        *(.init_array);
+        __init_array_end = ABSOLUTE(.);
+    }
+    .fini_array : {
+        __fini_array_start = ABSOLUTE(.);
+        *(.fini_array);
+        __fini_array_end = ABSOLUTE(.);
+    }
     .bootstrap-bss : {
         *(.bootstrap-bss);
+    }
+    /DISCARD/ : {
+        *(.comment);
+        *(.note);
     }
     kernelPhysicalEnd = .;
 }
