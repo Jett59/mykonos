@@ -22,15 +22,16 @@
 
 #define MULTIBOOT2_EAX_MAGIC 0x36d76289
 
-    .section .bootstrap
+    .section .bootstrap, "ax"
     bootstrap_error:
-movl $0x1000000, %ecx
+movl $0x100000, %ecx
 1: decl %ecx
 jnz 1b
 int $0 /*Tripple fault*/
     .globl _start
     .type _start, @function
 _start:
+int $0
 check_multiboot:
 cmpl $MULTIBOOT2_EAX_MAGIC, %eax
 jne bootstrap_error
@@ -96,11 +97,6 @@ movabsq $initial_stack_top, %rsp
 pushq $0 /*Fake return address*/
 jmp kstart
 
-.section .bootstrap-rodata
-gdt_pointer:
-.word gdt_end - gdt - 1 /*Size - 1*/
-.quad gdt /*Pointer*/
-
 .section .bootstrap-bss, "aw", @nobits
 /*Page tables*/
 .align 4096
@@ -115,7 +111,11 @@ pml2: /*(or pde if you prefer)*/
 mbiPointer:
 .quad 0 /*64 bit pointer*/
 
-.section .bootstrap-rodata
+.section .bootstrap-rodata, "a"
+
+gdt_pointer:
+.word gdt_end - gdt - 1 /*Size - 1*/
+.quad gdt /*Pointer*/
 
 gdt:
 .quad 0 /*The first descriptor must be null*/

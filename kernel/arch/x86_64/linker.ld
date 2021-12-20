@@ -18,10 +18,10 @@
 ENTRY(_start);
 
 SECTIONS {
-    . = 0x200000 + SIZEOF_HEADERS; /*(binutils hack)*/
+    . = 0x200000 + SIZEOF_HEADERS;
     kernelPhysicalAddress = .;
     .multiboot : {
-        *(.multiboot);
+        KEEP(*(.multiboot));
     }
     .bootstrap : {
         *(.bootstrap);
@@ -54,10 +54,6 @@ SECTIONS {
     }
     .bootstrap-bss : {
         *(.bootstrap-bss);
-    }
-    /DISCARD/ : {
-        *(.comment);
-        *(.note);
     }
     kernelPhysicalEnd = .;
 }
