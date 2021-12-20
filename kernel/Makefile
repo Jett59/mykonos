@@ -22,7 +22,7 @@ include arch/$(ARCH)/Make.properties
 # Find the steps
 include arch/$(ARCH)/Make.steps
 
-OUTPUT:=arch/$(ARCH)/build/Mykonos
+OUTPUT:=arch/$(ARCH)/build/mykonos
 
 $(OUTPUT): $(STEPS)
 	mkdir -p $(shell dirname $(OUTPUT))
@@ -38,4 +38,4 @@ $(OUTPUT): $(STEPS)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $^ -o $@
 
 clean:
-	rm -f $(STEPS)
+	rm -f $(STEPS) $(OUTPUT)

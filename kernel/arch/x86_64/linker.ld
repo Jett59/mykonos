@@ -15,16 +15,33 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     */
 
-ENTRY(_start)
+ENTRY(_start);
 
 SECTIONS {
     . = 1m;
     kernelPhysicalAddress = .;
-    .bootstrap : {
+    .multiboot : {
         *(.multiboot)
-        *(.init)
+    }
+    .bootstrap : {
+        *(.bootstrap)
     }
     .bootstrap-bss : {
-        *(.init.bss)
+        *(.bootstrap-bss)
     }
+    .text : {
+        *(.text)
+        *(.text*)
+    }
+    .rodata : {
+        *(.rodata)
+        *(.rodata*)
+    }
+    .bss : {
+        *(.bss)
+        *(.bss*)
+        *(common)
+        *(common*)
+    }
+    kernelPhysicalEnd = .;
 }

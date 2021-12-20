@@ -20,20 +20,26 @@
 
 #define MULTIBOOT2_EAX_MAGIC 0x36d76289
 
-    .section .init
+    .section .bootstrap
     .globl _start
 _start:
 movl $initial_stack_top, %esp
 cmpl $MULTIBOOT2_EAX_MAGIC, %eax
 jne no_multiboot
-1: jmp 1b
+movl %ebx, mbiPointer /*Thank you little-endian*/
+1: hlt
+jmp 1b
 no_multiboot:
 movl $0x1000000, %ecx
 1: decl %ecx
 jnz 1b
 int $0 /*Tripple fault*/
 
-.section .init.bss, "aw", @nobits
+.globl mbiPointer
+mbiPointer:
+.quad 0 /*64 bit pointer*/
+
+.section .bootstrap-bss, "aw", @nobits
 initial_stack:
 .fill 1024 /*Thats enough for now*/
 initial_stack_top:

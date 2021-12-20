@@ -21,14 +21,16 @@
 
 .section .multiboot
 
+.align 8
 multiboot_header:
 .long MULTIBOOT2_MAGIC /*Magic*/
-.long 0 /*Architecture (i386)*/
+.long MULTIBOOT2_ARCHITECTURE /*Architecture (i386)*/
 .long multiboot_header_end - multiboot_header /*Header length*/
-.long - (MULTIBOOT2_MAGIC + MULTIBOOT2_ARCHITECTURE + (multiboot_header_end - multiboot_header)) /*Checksum*/
+.long 0x100000000 - (MULTIBOOT2_MAGIC + MULTIBOOT2_ARCHITECTURE + (multiboot_header_end - multiboot_header)) /*Checksum*/
 /*Tags*/
 
 /*End tag*/
+.align 8
 .short 0 /*Type*/
 .short 0 /*Flags*/
 .long 8 /*Size*/

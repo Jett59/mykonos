@@ -34,6 +34,16 @@ check-dependencies:
 .PHONY: kernel
 kernel: kernel/Makefile
 	@"$(MAKE)" -s -C kernel
+	@mkdir -p build
+	@cp kernel/arch/$(ARCH)/build/mykonos build/mykonos
+
+.PHONY: isoimage
+isoimage: all
+	@mkdir -p build/isoroot
+	@mkdir -p build/isoroot/boot/grub
+	@cp build/mykonos build/isoroot/boot/mykonos
+	@cp grub/example.cfg build/isoroot/boot/grub/grub.cfg
+	@grub-mkrescue -d /usr/lib/grub/i386-pc -o build/mykonos.iso build/isoroot
 
 .PHONY: clean
 clean:
