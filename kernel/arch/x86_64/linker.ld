@@ -38,10 +38,6 @@ SECTIONS {
     .data : {
         *(.data*);
     }
-    .bss : {
-        *(.bss*);
-        *(common*);
-    }
     .init_array : {
         __init_array_start = .;
         KEEP(*(.init_array));
@@ -53,6 +49,10 @@ SECTIONS {
         KEEP(*(.fini_array));
         KEEP(*(.dtors));
         __fini_array_end = ABSOLUTE(.);
+    }
+    .bss : {
+        *(.bss*);
+        *(common*);
     }
     .bootstrap-bss : {
         *(.bootstrap-bss);
