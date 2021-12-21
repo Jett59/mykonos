@@ -77,9 +77,9 @@ class Block {
     class BlockAllocator {
         private:
          BlockBuffer allocated;
-         BlockMap freeMemory;
+         BlockMap& freeMemory;
          public:
-         BlockAllocator (BlockMap freeMemory) : freeMemory(freeMemory) {}
+         BlockAllocator (BlockMap& freeMemory) : freeMemory(freeMemory) {}
          void* allocate(size_t amount) {
            void* result = freeMemory.allocate(amount);
            allocated.addBlock(Block(result, (void*)((uint8_t*)result + amount)));

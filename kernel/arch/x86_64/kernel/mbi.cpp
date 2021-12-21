@@ -14,26 +14,22 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     */
-
-#include <mbi.h>
-
-typedef void (*ConstructorOrDestructor)();
+   #include <mbi.h>
 
 extern "C" {
-  extern ConstructorOrDestructor __init_array_start[0], __init_array_end[0];
-  extern ConstructorOrDestructor __fini_array_start[0], __fini_array_end[0];
+extern multiboot::Mbi* mbiPointer;
 }
 
-extern "C" [[noreturn]] void kstart() {
-    // Global constructors must be called
-    // We use init_array method, for simplicity
-    for (ConstructorOrDestructor *initArrayElement = __init_array_start;
-         initArrayElement != __init_array_end; initArrayElement ++) {
-      (*initArrayElement)();
-    }
-    // Now that that's over
-    multiboot::parseMbi();
-    while (true) {
-      __asm__("hlt");
-    }
-    }
+   namespace multiboot {
+   static void parseMbiTag(MbiTag* tag);
+   void parseMbi() {
+       MbiTag* tag = &mbiPointer->firstTag;
+       while (tag->type != 0) {
+         parseMbiTag(tag);
+         tag = (MbiTag*)((uint8_t*)tag + (tag->size + 7) / 8 * 8);
+       }
+   }
+   static void parseMbiTag(MbiTag* tag) {
+       // TODO
+   }
+   }
