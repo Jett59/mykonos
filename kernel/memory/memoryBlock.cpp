@@ -64,4 +64,27 @@
          }
          return nullptr; // Not enough room in the block map
        }
+
+       void BlockBuffer::addBlock(Block block) {
+           if (numBlocks < BLOCK_BUFFER_SIZE) {
+             blocks[numBlocks++] = block;
+           }
+       }
+       Block BlockBuffer::removeBlock(void* startAddress) {
+            unsigned i;
+            Block block;
+            // Find the block
+            for (i = 0; i < numBlocks; i++) {
+              if (blocks[i].getStart() == startAddress) {
+                block = blocks[i];
+                break;
+              }
+            }
+            // Push everything after this one down
+            for (i ++; i < numBlocks; i ++) {
+              blocks[i - 1] = blocks[i];
+            }
+            numBlocks--;
+            return block;
+       }
    }

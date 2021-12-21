@@ -22,6 +22,7 @@
 #include <stdint.h>
 
 namespace memory {
+  class BlockBuffer;
 class BlockMap;
 class Block {
  private:
@@ -47,12 +48,13 @@ class Block {
   }
   void addToEnd(size_t amount) { end = (void*)((uint8_t*)end + amount); }
   friend class BlockMap;
+  friend class BlockBuffer;
 };
 #define BLOCKMAP_SIZE 256
     class BlockMap {
         private:
          Block blocks[BLOCKMAP_SIZE];
-         unsigned numBlocks;
+         unsigned numBlocks = 0;
          void merge();
 
         public:
@@ -62,6 +64,31 @@ class Block {
            addBlock(Block(ptr, (void*)((uint8_t*)ptr + amount)));
          }
          void reserve(Block block);
+    };
+    #define BLOCK_BUFFER_SIZE 256
+    class BlockBuffer {
+      private:
+      Block blocks[BLOCK_BUFFER_SIZE];
+      unsigned numBlocks = 0;
+      public:
+      void addBlock(Block block);
+      Block removeBlock(void* startAddress);
+    };
+    class BlockAllocator {
+        private:
+         BlockBuffer allocated;
+         BlockMap freeMemory;
+         public:
+         BlockAllocator (BlockMap freeMemory) : freeMemory(freeMemory) {}
+         void* allocate(size_t amount) {
+           void* result = freeMemory.allocate(amount);
+           allocated.addBlock(Block(result, (void*)((uint8_t*)result + amount)));
+           return result;
+         }
+         void free(void* ptr) {
+           size_t size = allocated.removeBlock(ptr).capacity();
+           freeMemory.returnMemory(ptr, size);
+         }
     };
     }  // namespace memory
 
