@@ -17,6 +17,8 @@
 
 ENTRY(_start);
 
+kernelVirtualOffset = 0xFFFF800000000000;
+
 SECTIONS {
     . = 0x200000 + SIZEOF_HEADERS;
     kernelPhysicalAddress = .;
@@ -29,33 +31,34 @@ SECTIONS {
     .bootstrap-rodata : {
         *(.bootstrap-rodata);
     }
-    .text : {
+    .bootstrap-bss : {
+        *(.bootstrap-bss);
+    }
+    . += kernelVirtualOffset;
+    .text : AT(ADDR(.text) - kernelVirtualOffset) {
         *(.text*);
     }
-    .rodata : {
+    .rodata : AT(ADDR(.rodata) - kernelVirtualOffset) {
         *(.rodata*);
     }
-    .data : {
+    .data : AT(ADDR(.data) - kernelVirtualOffset) {
         *(.data*);
     }
-    .init_array : {
+    .init_array : AT(ADDR(.init_array) - kernelVirtualOffset) {
         __init_array_start = .;
         KEEP(*(.init_array));
         KEEP(*(.ctors));
         __init_array_end = .;
     }
-    .fini_array : {
+    .fini_array : AT(ADDR(.fini_array) - kernelVirtualOffset) {
         __fini_array_start = ABSOLUTE(.);
         KEEP(*(.fini_array));
         KEEP(*(.dtors));
         __fini_array_end = ABSOLUTE(.);
     }
-    .bss : {
+    .bss : AT(ADDR(.bss) - kernelVirtualOffset) {
         *(.bss*);
         *(common*);
-    }
-    .bootstrap-bss : {
-        *(.bootstrap-bss);
     }
     /DISCARD/ : {
         *(.comment)

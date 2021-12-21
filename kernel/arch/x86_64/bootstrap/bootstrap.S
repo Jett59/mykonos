@@ -97,7 +97,8 @@ lgdt (%rsi)
 movabsq $initial_stack_top, %rsp
 /*We actually made it! Let's go to C++*/
 pushq $0 /*Fake return address*/
-jmp kstart
+movabsq $kstart, %rax
+jmp * %rax
 
 .section .bootstrap-bss, "aw", @nobits
 /*Page tables*/

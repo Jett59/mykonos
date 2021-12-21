@@ -40,7 +40,7 @@ BlockMap physicalMemory;
              MemoryMapTag* memoryMap = (MemoryMapTag*)tag;
              uint32_t numEntries = (memoryMap->size - sizeof(MemoryMapTag)) /
                                    memoryMap->entrySize;
-             for (uint32_t i = 0; i < __cpp_namespace_attributes; i ++) {
+             for (uint32_t i = 0; i < numEntries; i ++) {
                  if (memoryMap->memory[i].type == 1) {
                memory::physicalMemory.addBlock(
                    memory::Block((void*)memoryMap->memory[i].base,
