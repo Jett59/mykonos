@@ -43,17 +43,23 @@ SECTIONS {
         *(common*);
     }
     .init_array : {
-        __init_array_start = ABSOLUTE(.);
+        __init_array_start = .;
         KEEP(*(.init_array));
-        __init_array_end = ABSOLUTE(.);
+        KEEP(*(.ctors));
+        __init_array_end = .;
     }
     .fini_array : {
         __fini_array_start = ABSOLUTE(.);
         KEEP(*(.fini_array));
+        KEEP(*(.dtors));
         __fini_array_end = ABSOLUTE(.);
     }
     .bootstrap-bss : {
         *(.bootstrap-bss);
+    }
+    /DISCARD/ : {
+        *(.comment)
+        *(.note)
     }
     kernelPhysicalEnd = .;
 }
