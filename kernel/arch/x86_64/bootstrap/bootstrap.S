@@ -93,6 +93,13 @@ begin_long_mode: /*We made it! Just a few more things to set up*/
 /*Reload the gdt because it was only half loaded before*/
 movq $gdt_pointer, %rsi
 lgdt (%rsi)
+/*Reset the segment registers to null*/
+xorl %eax, %eax
+movl %eax, %ds
+movl %eax, %es
+movl %eax, %fs
+movl %eax, %gs
+movl %eax, %ss
 /*Now set up the stack*/
 movabsq $initial_stack_top, %rsp
 /*We actually made it! Let's go to C++*/

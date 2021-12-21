@@ -14,23 +14,13 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     */
-   #ifndef _PHYSICAL_MEMORY_H
-   #define _PHYSICAL_MEMORY_H
+   #ifndef _VIRTUAL_MEMORY_H
+   #define _VIRTUAL_MEMORY_H
 
 #include <memoryBlock.h>
 
-#include <pageConstants.h>
-
-#include <stddef.h>
-
 namespace memory {
-extern BlockMap physicalMemory;
-static inline size_t allocateFrame() {
-  return (size_t)physicalMemory.allocate(PAGE_SIZE) / PAGE_SIZE;
-}
-static inline void returnFrame(size_t frameIndex) {
-  physicalMemory.returnMemory((void*)(frameIndex * PAGE_SIZE), PAGE_SIZE);
-}
+extern BlockAllocator virtualMemory;
 }
 
 #endif

@@ -19,9 +19,12 @@ ENTRY(_start);
 
 kernelVirtualOffset = 0xFFFF800000000000;
 
+kernelHeapSize = 512m;
+
 SECTIONS {
     . = 0x200000 + SIZEOF_HEADERS;
     kernelPhysicalAddress = .;
+    kernelVirtualAddress = . + kernelVirtualOffset;
     .multiboot : {
         KEEP(*(.multiboot));
     }
@@ -60,9 +63,12 @@ SECTIONS {
         *(.bss*);
         *(common*);
     }
+    kernelVirtualEnd = .;
+    kernelPhysicalEnd = . - kernelVirtualOffset;
+    kernelHeapStart = ALIGN(1m);
+    kernelHeapEnd = kernelHeapStart + kernelHeapSize;
     /DISCARD/ : {
         *(.comment)
         *(.note)
     }
-    kernelPhysicalEnd = .;
 }
