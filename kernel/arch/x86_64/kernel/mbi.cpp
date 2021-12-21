@@ -21,15 +21,16 @@ extern multiboot::Mbi* mbiPointer;
 }
 
    namespace multiboot {
-   static void parseMbiTag(MbiTag* tag);
+   static void parseMbiTag(uint32_t type, MbiTag* tag);
    void parseMbi() {
        MbiTag* tag = &mbiPointer->firstTag;
        while (tag->type != 0) {
-         parseMbiTag(tag);
+         parseMbiTag(tag->type, tag);
          tag = (MbiTag*)((uint8_t*)tag + (tag->size + 7) / 8 * 8);
        }
    }
-   static void parseMbiTag(MbiTag* tag) {
+   static void parseMbiTag(uint32_t type, MbiTag* tag) {
        // TODO
+       __asm__ volatile("nop");
    }
    }
