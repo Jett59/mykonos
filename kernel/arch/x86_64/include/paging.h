@@ -14,35 +14,14 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     */
-   #ifndef PAGE_TABLES_H
-   #define PAGE_TABLES_H
+   #ifndef _PAGING_H
+   #define _PAGING_H
 
-#include <stdint.h>
+#include <pageTables.h>
 
 namespace paging {
-enum class PageTableFlags : uint64_t {
-  // Standard bits
-  PRESENT = 1 << 0,
-  WRITABLE = 1 << 1,
-  USER = 1 << 2,
-  // Available bits
-  ALLOCATED = 1 << 11
-};
-inline PageTableFlags operator|(PageTableFlags a, PageTableFlags b) {
-  return (PageTableFlags)((uint64_t)a + (uint64_t)b);
-}
-inline PageTableFlags& operator|= (PageTableFlags& a, PageTableFlags b) {
-  return a = a | b;
-}
-typedef PageTableFlags PageTableEntry;
-
-typedef PageTableEntry Pml1[512];
-typedef Pml1 Pml2[512];
-typedef Pml2 Pml3[512];
-typedef Pml3 Pml4[512];
-}
-
-// Recursive mapping
-#define PAGE_TABLE_POINTER ((paging::Pml4*)0xFFFFFF8000000000)
+void mapPage(void* virtualAddress, void* physicalAddress, PageTableFlags flags, bool allocated);
+void unmapPage(void* virtualAddress);
+}  // namespace paging
 
 #endif
