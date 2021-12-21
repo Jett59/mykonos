@@ -15,4 +15,53 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     */
    #include <memoryBlock.h>
-   
+
+   namespace memory {
+   void BlockMap::merge() {
+       Block temp[BLOCKMAP_SIZE];
+       for (unsigned i = 0; i < numBlocks; i ++) {
+         temp[i] = blocks[i];
+       }
+       unsigned originalNumBlocks = numBlocks;
+       numBlocks = 0;
+         for (unsigned i = 0; i < originalNumBlocks; i++) {
+             if (temp[i].capacity() == 0) {
+               continue; // Ignore empty block
+             }
+           [&] {  // Use lambda for break/continue
+             for (unsigned j = 0; j < numBlocks; j++) {
+               if (blocks[j].start == temp[i].end) {
+                 blocks[j].start = temp[i].start;
+                 return; // break/continue
+               }
+               if (blocks[j].end == temp[i].start) {
+                 blocks[j].end = temp[i].end;
+                 return; // break/continue
+               }
+             }
+             // Could not combine, just append
+             blocks[numBlocks++] = temp[i];
+           }();
+         }
+   }
+   void BlockMap::addBlock(Block block) {
+       if (block.capacity() > 0) {
+     if (numBlocks < BLOCKMAP_SIZE) {
+       blocks[numBlocks++] = block;
+     } else {
+       merge();
+       if (numBlocks < BLOCKMAP_SIZE) {
+         blocks[numBlocks++] = block;
+       }
+     }
+       }
+       }
+       void* BlockMap::allocate(size_t amount) {
+         for (unsigned i = 0; i < numBlocks; i ++) {
+           if (blocks[i].capacity() >= amount) {
+             return blocks[i].reserve(amount);
+           }
+         }
+         return nullptr; // Not enough room in the block map
+       }
+   }
