@@ -18,7 +18,7 @@
 
    namespace memory {
    void BlockMap::merge() {
-       Block temp[BLOCKMAP_SIZE];
+       Block temp[numBlocks];
        for (unsigned i = 0; i < numBlocks; i ++) {
          temp[i] = blocks[i];
        }
@@ -28,15 +28,15 @@
              if (temp[i].capacity() == 0) {
                continue; // Ignore empty block
              }
-           [&] {  // Use lambda for break/continue
+           [&] {  // Use lambda for multi level continue
              for (unsigned j = 0; j < numBlocks; j++) {
                if (blocks[j].start == temp[i].end) {
                  blocks[j].start = temp[i].start;
-                 return; // break/continue
+                 return; // Multi level continue
                }
                if (blocks[j].end == temp[i].start) {
                  blocks[j].end = temp[i].end;
-                 return; // break/continue
+                 return; // Multi level continue
                }
              }
              // Could not combine, just append
