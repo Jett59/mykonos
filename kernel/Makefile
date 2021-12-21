@@ -27,7 +27,7 @@ include memory/Make.steps
 
 # Enable runtime tests if requested
 ifeq ($(DEBUG),runtime)
- CPPFLAGS+=-DRUNTIME_TEST
+ CPPFLAGS+=-DRUNTIME_TESTS
  STEPS+=$(TEST_STEPS)
 endif
 
