@@ -25,6 +25,12 @@ include arch/$(ARCH)/Make.properties
 include arch/$(ARCH)/Make.steps
 include memory/Make.steps
 
+# Enable runtime tests if requested
+ifeq ($(DEBUG),runtime)
+ CPPFLAGS+=-DRUNTIME_TEST
+ STEPS+=$(TEST_STEPS)
+endif
+
 OUTPUT:=arch/$(ARCH)/build/mykonos
 
 $(OUTPUT): $(STEPS)

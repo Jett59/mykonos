@@ -58,7 +58,9 @@ class Block {
         public:
          void addBlock(Block block);
          void* allocate(size_t amount);
-         void returnMemory (void* ptr, size_t amount);
+         void returnMemory (void* ptr, size_t amount) {
+           addBlock(Block(ptr, (void*)((uint8_t*)ptr + amount)));
+         }
          void reserve(Block block);
     };
     }  // namespace memory

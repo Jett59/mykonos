@@ -1,1 +1,3 @@
 STEPS+=memory/memoryBlock.o
+
+TEST_STEPS+=memory/memoryBlock_test.o
