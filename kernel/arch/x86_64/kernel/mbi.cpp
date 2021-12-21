@@ -23,7 +23,6 @@ extern multiboot::Mbi* mbiPointer;
 
 namespace memory {
 BlockMap physicalMemory;
-BlockAllocator physicalMemoryAllocator(physicalMemory);
 }
 
    namespace multiboot {
