@@ -16,13 +16,14 @@
 CXXFLAGS+=-ffreestanding -fno-rtti -fno-exceptions -fno-asynchronous-unwind-tables
 LDFLAGS+=-T arch/$(ARCH)/linker.ld
 
-CPPFLAGS+=-I arch/$(ARCH)/include
+CPPFLAGS+=-I arch/$(ARCH)/include -I include
 
 # Architecture-specific properties
 include arch/$(ARCH)/Make.properties
 
 # Find the steps
 include arch/$(ARCH)/Make.steps
+include memory/Make.steps
 
 OUTPUT:=arch/$(ARCH)/build/mykonos
 
