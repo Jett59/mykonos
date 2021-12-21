@@ -130,5 +130,5 @@ gdt_end:
 .bss
 
 initial_stack:
-.fill 4096 /*Should be fine*/
+.fill 16384 /*Should be fine*/
 initial_stack_top:
