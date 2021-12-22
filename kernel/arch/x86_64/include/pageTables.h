@@ -44,6 +44,9 @@ typedef PageTableEntry Pml1[512];
 typedef Pml1 Pml2[512];
 typedef Pml2 Pml3[512];
 typedef Pml3 Pml4[512];
+
+// Quick check: is the pml4 512gb in size?
+static_assert(sizeof(Pml4) == 549755813888, "Pml4 must be 512gb in size");
 } // namespace paging
 
 // Recursive mapping
