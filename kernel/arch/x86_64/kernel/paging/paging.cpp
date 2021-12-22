@@ -41,7 +41,9 @@ static PageTableEntry allocatePageTable() {
          PageTableFlags::PRESENT | PageTableFlags::WRITABLE |
          PageTableFlags::ALLOCATED | PageTableFlags::USER;
 }
-static PageTableEntry *getPageTableEntry(void *virtualAddress) {
+// If not allocatePageTables, return nullptr if the page table does not exist
+static PageTableEntry *getPageTableEntry(void *virtualAddress,
+                                         bool allocatePageTables) {
   uint64_t address = (uint64_t)virtualAddress &
                      ((1UL << 48) - 1); // Mask for 48 bit address space
   // Mask and shift out the parts of the address
@@ -55,17 +57,29 @@ static PageTableEntry *getPageTableEntry(void *virtualAddress) {
   // Make sure the page tables all exist
   // Check the pml4 entry
   if ((PML4ENTRY(pml4Index) & PageTableFlags::PRESENT) == 0) {
-    PML4ENTRY(pml4Index) = allocatePageTable();
-    memset(PML3TABLE(pml4Index), 0, 4096);
+    if (allocatePageTable) {
+      PML4ENTRY(pml4Index) = allocatePageTable();
+      memset(PML3TABLE(pml4Index), 0, 4096);
+    } else {
+      return nullptr;
+    }
   }
   if ((PML3ENTRY(pml4Index, pml3Index) & PageTableFlags::PRESENT) == 0) {
-    PML3ENTRY(pml4Index, pml3Index) = allocatePageTable();
-    memset(PML2TABLE(pml4Index, pml3Index), 0, 4096);
+    if (allocatePageTable) {
+      PML3ENTRY(pml4Index, pml3Index) = allocatePageTable();
+      memset(PML2TABLE(pml4Index, pml3Index), 0, 4096);
+    } else {
+      return nullptr;
+    }
   }
   if ((PML2ENTRY(pml4Index, pml3Index, pml2Index) & PageTableFlags::PRESENT) ==
       0) {
-    PML2ENTRY(pml4Index, pml3Index, pml2Index) = allocatePageTable();
-    memset(PML1TABLE(pml4Index, pml3Index, pml2Index), 0, 4096);
+    if (allocatePageTable) {
+      PML2ENTRY(pml4Index, pml3Index, pml2Index) = allocatePageTable();
+      memset(PML1TABLE(pml4Index, pml3Index, pml2Index), 0, 4096);
+    } else {
+      return nullptr;
+    }
   }
   return &PML1ENTRY(pml4Index, pml3Index, pml2Index, pml1Index);
 }
@@ -76,5 +90,16 @@ void mapPage(void *virtualAddress, void *physicalAddress, PageTableFlags flags,
   }
   PageTableEntry pageTableEntry =
       (PageTableEntry)((uint64_t)flags | ((uint64_t)physicalAddress & ~4095ul));
+  *getPageTableEntry(virtualAddress, true) = pageTableEntry;
+}
+void unmapPage(void *virtualAddress) {
+  PageTableEntry *pageTableEntry = getPageTableEntry(virtualAddress, false);
+  if (pageTableEntry != nullptr) {
+    if ((*pageTableEntry & PageTableFlags::ALLOCATED) != 0) {
+      memory::returnFrame(((uint64_t)*pageTableEntry >> 12) &
+                          ((1ul << 52) - 1));
+    }
+    *pageTableEntry = (PageTableEntry)0;
+  }
 }
 } // namespace paging
