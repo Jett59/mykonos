@@ -85,6 +85,7 @@ static PageTableEntry *getPageTableEntry(void *virtualAddress,
 }
 void mapPage(void *virtualAddress, void *physicalAddress, PageTableFlags flags,
              bool allocated) {
+  flags |= PageTableFlags::PRESENT;
   if (allocated) {
     flags |= PageTableFlags::ALLOCATED;
   }

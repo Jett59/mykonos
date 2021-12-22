@@ -14,12 +14,14 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     */
-#ifndef _PAGE_CONSTANTS_H
-#define _PAGE_CONSTANTS_H
+#ifndef _KMALLOC_H
+#define _KMALLOC_H
 
-#define PAGE_SIZE 4096
+#include <stddef.h>
 
-#define PAGE_ALIGN_UP(X) (((X) + 4095) / 4096 * 4096)
-#define PAGE_ALIGN_DOWN(X) ((X) / 4096 * 4096)
+namespace memory {
+void *kmalloc(size_t size);
+void kfree(void *ptr);
+} // namespace memory
 
 #endif

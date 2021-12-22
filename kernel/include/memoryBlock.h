@@ -15,8 +15,8 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     */
 
-#ifndef _MEMORYBLOCK_H
-#define _MEMORYBLOCK
+#ifndef _MEMORY_BLOCK_H
+#define _MEMORY_BLOCK_H
 
 #include <stddef.h>
 #include <stdint.h>
@@ -87,9 +87,10 @@ public:
     allocated.addBlock(Block(result, (void *)((uint8_t *)result + amount)));
     return result;
   }
-  void free(void *ptr) {
+  size_t free(void *ptr) {
     size_t size = allocated.removeBlock(ptr).capacity();
     freeMemory.returnMemory(ptr, size);
+    return size;
   }
 };
 } // namespace memory

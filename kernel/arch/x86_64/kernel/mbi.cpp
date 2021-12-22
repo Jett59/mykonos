@@ -16,9 +16,7 @@
     */
 #include <mbi.h>
 #include <physicalMemory.h>
-
-#define PAGE_ALIGN_UP(X) (((X) + 4095) / 4096 * 4096)
-#define PAGE_ALIGN_DOWN(X) ((X) / 4096 * 4096)
+#include <pageConstants.h>
 
 extern "C" {
 extern multiboot::Mbi *mbiPointer;
