@@ -47,6 +47,7 @@ static PageTableEntry *getPageTableEntry(void *virtualAddress,
   uint64_t address = (uint64_t)virtualAddress &
                      ((1UL << 48) - 1); // Mask for 48 bit address space
   // Mask and shift out the parts of the address
+  address >>= 12; // Remove the byte offset
   uint64_t pml1Index = address & 511;
   address >>= 9;
   uint64_t pml2Index = address & 511;

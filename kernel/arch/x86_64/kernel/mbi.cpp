@@ -13,10 +13,11 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
-    */
+*/
 #include <mbi.h>
 #include <pageConstants.h>
 #include <physicalMemory.h>
+#include <frameBuffer.h>
 
 extern "C" {
 extern multiboot::Mbi *mbiPointer;
@@ -35,24 +36,39 @@ void parseMbi() {
     tag = (MbiTag *)((uint8_t *)tag + (tag->size + 7) / 8 * 8);
   }
 }
+static void parseMemoryMapTag(MemoryMapTag *memoryMap);
+static void parseFrameBufferTag(FrameBufferTag *tag);
 static void parseMbiTag(uint32_t type, MbiTag *tag) {
   switch (type) {
   case MBI_TAG_MEMORY: {
-    MemoryMapTag *memoryMap = (MemoryMapTag *)tag;
-    uint32_t numEntries =
-        (memoryMap->size - sizeof(MemoryMapTag)) / memoryMap->entrySize;
-    for (uint32_t i = 0; i < numEntries; i++) {
-      if (memoryMap->memory[i].type == 1) {
-        void *entryBase = (void *)PAGE_ALIGN_UP(memoryMap->memory[i].base);
-        size_t entrySize = PAGE_ALIGN_DOWN(memoryMap->memory[i].length);
-        void *entryEnd = (void *)((uint8_t *)entryBase + entrySize);
-        memory::physicalMemory.addBlock(memory::Block(entryBase, entryEnd));
-      }
-    }
+    parseMemoryMapTag((MemoryMapTag *)tag);
+    break;
+  }
+  case MBI_TAG_FRAME_BUFFER: {
+    parseFrameBufferTag((FrameBufferTag *)tag);
     break;
   }
   default:
     break;
   }
+}
+static void parseMemoryMapTag(MemoryMapTag *memoryMap) {
+  uint32_t numEntries =
+      (memoryMap->size - sizeof(MemoryMapTag)) / memoryMap->entrySize;
+  for (uint32_t i = 0; i < numEntries; i++) {
+    if (memoryMap->memory[i].type == 1) {
+      void *entryBase = (void *)PAGE_ALIGN_UP(memoryMap->memory[i].base);
+      size_t entrySize = PAGE_ALIGN_DOWN(memoryMap->memory[i].length);
+      void *entryEnd = (void *)((uint8_t *)entryBase + entrySize);
+      memory::physicalMemory.addBlock(memory::Block(entryBase, entryEnd));
+    }
+  }
+}
+static void parseFrameBufferTag(FrameBufferTag *tag) {
+  display::frameBuffer.pointer = (uint8_t*)tag->address;
+  display::frameBuffer.width = tag->width;
+  display::frameBuffer.height = tag->height;
+  display::frameBuffer.depth = tag->depth;
+  display::frameBuffer.pitch = tag->pitch;
 }
 } // namespace multiboot

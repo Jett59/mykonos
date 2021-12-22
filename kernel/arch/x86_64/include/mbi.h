@@ -25,6 +25,7 @@ struct MbiTag {
   uint32_t size;
 };
 #define MBI_TAG_MEMORY 6
+#define MBI_TAG_FRAME_BUFFER 8
 
 struct MemoryMapTag {
   uint32_t type;
@@ -38,6 +39,22 @@ struct MemoryMapTag {
     uint32_t reserved;
   } memory[0];
 };
+static_assert(
+    sizeof(MemoryMapTag) == 16,
+    "Invalid padding added to MemoryMapTag. Add __attribute__((__packed__))");
+
+struct __attribute__((__packed__)) FrameBufferTag {
+  uint32_t type;
+  uint32_t size;
+  uint64_t address;
+  uint32_t pitch;
+  uint32_t width;
+  uint32_t height;
+  uint8_t depth;
+  // Remaining information omitted
+};
+static_assert(sizeof(FrameBufferTag) == 29,
+              "Invalid padding in FrameBufferTag");
 
 void parseMbi();
 class Mbi {
