@@ -17,6 +17,9 @@
 #include <mbi.h>
 #include <physicalMemory.h>
 
+#define PAGE_ALIGN_UP(X) (((X) + 4095) / 4096 * 4096)
+#define PAGE_ALIGN_DOWN(X) ((X) / 4096 * 4096)
+
 extern "C" {
 extern multiboot::Mbi *mbiPointer;
 }
@@ -42,10 +45,10 @@ static void parseMbiTag(uint32_t type, MbiTag *tag) {
         (memoryMap->size - sizeof(MemoryMapTag)) / memoryMap->entrySize;
     for (uint32_t i = 0; i < numEntries; i++) {
       if (memoryMap->memory[i].type == 1) {
-        memory::physicalMemory.addBlock(
-            memory::Block((void *)memoryMap->memory[i].base,
-                          (void *)((uint8_t *)memoryMap->memory[i].base +
-                                   memoryMap->memory[i].length)));
+        void *entryBase = (void *)PAGE_ALIGN_UP(memoryMap->memory[i].base);
+        size_t entrySize = PAGE_ALIGN_DOWN(memoryMap->memory[i].length);
+        void *entryEnd = (void *)((uint8_t *)entryBase + entrySize);
+        memory::physicalMemory.addBlock(memory::Block(entryBase, entryEnd));
       }
     }
     break;
