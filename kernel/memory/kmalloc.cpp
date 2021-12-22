@@ -23,21 +23,33 @@
 
 #include <stdint.h>
 
+#define ADD_TO_POINTER(PTR, AMOUNT) ((void *)((uint8_t *)PTR + AMOUNT))
+
 namespace memory {
 void *kmalloc(size_t size) {
   size = PAGE_ALIGN_UP(size);
-  void *ptr = memory::virtualMemory.allocate(size);
+  void *ptr = virtualMemory.allocate(size);
   for (size_t i = 0; i < size; i += PAGE_SIZE) {
-    paging::mapPage((void *)((uint8_t *)ptr + i),
-                    (void*)(memory::allocateFrame() * PAGE_SIZE),
+    paging::mapPage(ADD_TO_POINTER(ptr, i),
+                    (void *)(memory::allocateFrame() * PAGE_SIZE),
                     paging::PageTableFlags::WRITABLE, true);
   }
   return ptr;
 }
 void kfree(void *ptr) {
-  size_t size = memory::virtualMemory.free(ptr);
+  size_t size = virtualMemory.free(ptr);
   for (size_t i = 0; i < size; i += PAGE_SIZE) {
-    paging::unmapPage((void *)((uint8_t *)ptr + i));
-  };
+    paging::unmapPage(ADD_TO_POINTER(ptr, i));
+  }
+}
+void *mapAddress(void *physicalAddress, size_t size) {
+  physicalAddress = (void *)PAGE_ALIGN_DOWN((size_t)physicalAddress);
+  size = PAGE_ALIGN_UP(size);
+  void *ptr = virtualMemory.allocate(size);
+  for (size_t i = 0; i < size; i += PAGE_SIZE) {
+    paging::mapPage(ADD_TO_POINTER(ptr, i), ADD_TO_POINTER(physicalAddress, i),
+                    paging::PageTableFlags::WRITABLE, false);
+  }
+  return ptr;
 }
 } // namespace memory

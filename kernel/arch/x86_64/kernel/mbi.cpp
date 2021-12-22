@@ -15,8 +15,8 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     */
 #include <mbi.h>
-#include <physicalMemory.h>
 #include <pageConstants.h>
+#include <physicalMemory.h>
 
 extern "C" {
 extern multiboot::Mbi *mbiPointer;

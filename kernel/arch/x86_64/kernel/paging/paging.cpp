@@ -93,6 +93,9 @@ void mapPage(void *virtualAddress, void *physicalAddress, PageTableFlags flags,
       (PageTableEntry)((uint64_t)flags | ((uint64_t)physicalAddress & ~4095ul));
   *getPageTableEntry(virtualAddress, true) = pageTableEntry;
 }
+static void invalidateTlbCache(void *address) {
+  __asm__ volatile("invlpg (%0)" : : "r"(address) : "memory");
+}
 void unmapPage(void *virtualAddress) {
   PageTableEntry *pageTableEntry = getPageTableEntry(virtualAddress, false);
   if (pageTableEntry != nullptr) {
@@ -101,6 +104,7 @@ void unmapPage(void *virtualAddress) {
                           ((1ul << 52) - 1));
     }
     *pageTableEntry = (PageTableEntry)0;
+    invalidateTlbCache(virtualAddress);
   }
 }
 } // namespace paging
