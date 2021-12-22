@@ -14,25 +14,16 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
-#include <display.h>
-#include <frameBuffer.h>
-#include <kmalloc.h>
-#include <string.h>
+#ifndef _DISPLAY_H
+#define _DISPLAY_H
+
+#include <stdint.h>
 
 namespace display {
-FrameBuffer frameBuffer;
-void initFrameBuffer() {
-  frameBuffer.pointer = (uint8_t *)memory::mapAddress(
-      frameBuffer.pointer,
-      frameBuffer.pitch * frameBuffer.height * (frameBuffer.depth / 8));
-  memset(frameBuffer.pointer, 0,
-         frameBuffer.pitch * frameBuffer.height * (frameBuffer.depth / 8));
+    struct Pixel {
+      uint8_t r, g, b;
+    };
+    void writePixel(unsigned x, unsigned y, Pixel pixel);
 }
-void writePixel(unsigned x, unsigned y, Pixel pixel) {
-  uint8_t *pixelPointer = frameBuffer.pointer +
-                          (y * frameBuffer.pitch + x * (frameBuffer.depth / 8));
-  pixelPointer[2] = pixel.r;
-  pixelPointer[1] = pixel.g;
-  pixelPointer[0] = pixel.b;
-}
-} // namespace display
+
+#endif

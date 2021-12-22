@@ -1,1 +1,6 @@
 STEPS+=display/frameBuffer.o
+STEPS+=display/font/font.o display/font/psfRenderer.o
+
+%.o: %.psf
+	echo "objcopy $@"
+	objcopy -I binary -O elf64-x86-64 $^ $@

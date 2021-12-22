@@ -14,25 +14,13 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
-#include <display.h>
-#include <frameBuffer.h>
-#include <kmalloc.h>
-#include <string.h>
+#ifndef _FONT_RENDERER_H
+#define _FONT_RENDERER_H
 
-namespace display {
-FrameBuffer frameBuffer;
-void initFrameBuffer() {
-  frameBuffer.pointer = (uint8_t *)memory::mapAddress(
-      frameBuffer.pointer,
-      frameBuffer.pitch * frameBuffer.height * (frameBuffer.depth / 8));
-  memset(frameBuffer.pointer, 0,
-         frameBuffer.pitch * frameBuffer.height * (frameBuffer.depth / 8));
+#include <display.h>
+
+namespace font {
+void render(char c, unsigned x, unsigned y, display::Pixel foreground, display::Pixel background);
 }
-void writePixel(unsigned x, unsigned y, Pixel pixel) {
-  uint8_t *pixelPointer = frameBuffer.pointer +
-                          (y * frameBuffer.pitch + x * (frameBuffer.depth / 8));
-  pixelPointer[2] = pixel.r;
-  pixelPointer[1] = pixel.g;
-  pixelPointer[0] = pixel.b;
-}
-} // namespace display
+
+#endif
