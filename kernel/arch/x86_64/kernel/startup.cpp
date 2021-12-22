@@ -39,7 +39,7 @@ extern "C" [[noreturn]] void kstart() {
   multiboot::parseMbi();
   paging::initPageTables();
   display::initFrameBuffer();
-  font::render('A', 20, 20, {.r = 0xFF, .g = 0xff, .b = 0}, {});
+  display::writeString(0, 20, "Hello, World!");
   while (true) {
     __asm__("hlt");
   }
