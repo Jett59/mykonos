@@ -16,6 +16,10 @@
     */
 
 #include <mbi.h>
+#include <pageTableInit.h>
+
+#include <kmalloc.h>
+#include <string.h>
 
 typedef void (*ConstructorOrDestructor)();
 
@@ -33,6 +37,9 @@ extern "C" [[noreturn]] void kstart() {
   }
   // Now that that's over
   multiboot::parseMbi();
+  paging::initPageTables();
+  char *myPtr = (char*)memory::kmalloc(10);
+  memcpy(myPtr, "Hello!", 7);
   while (true) {
     __asm__("hlt");
   }

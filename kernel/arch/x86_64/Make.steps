@@ -1,3 +1,3 @@
 STEPS+=arch/x86_64/bootstrap/multiboot.o arch/x86_64/bootstrap/bootstrap.o
-STEPS+=arch/x86_64/kernel/startup.o arch/x86_64/kernel/mbi.o
+STEPS+=arch/x86_64/kernel/startup.o arch/x86_64/kernel/mbi.o arch/x86_64/kernel/pageTableInit.o
 STEPS+=arch/x86_64/kernel/paging/paging.o

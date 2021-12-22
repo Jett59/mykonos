@@ -65,7 +65,7 @@ SECTIONS {
     }
     kernelVirtualEnd = .;
     kernelPhysicalEnd = . - kernelVirtualOffset;
-    kernelHeapStart = ALIGN(1m);
+    kernelHeapStart = ALIGN(2m) + 8m;
     kernelHeapEnd = kernelHeapStart + kernelHeapSize;
     /DISCARD/ : {
         *(.comment)
