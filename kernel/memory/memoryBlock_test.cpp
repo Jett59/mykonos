@@ -20,30 +20,30 @@
 #include <memoryBlock.h>
 
 namespace memory {
-    namespace test {
-    bool blockMapTest() {
-        BlockMap map;
-        map.addBlock(Block(nullptr, (void*)0x2000));
-        // Simple allocation test
-        if (map.allocate(0x2000) == nullptr) {
-            return false;
-        }
-        // Free and allocate again
-        map.returnMemory((void*)nullptr, 0x2000);
-        if (map.allocate(0x2000) == nullptr) {
-            return false;
-        }
-        // Stress test (test the merging function)
-        for (int i = 0; i < 1000; i ++) {
-          void* allocatedMemory = map.allocate(0x2000 / (i + 1));
-          if (allocatedMemory == nullptr) {
-            return false;
-          }else {
-            map.returnMemory(allocatedMemory, 0x2000 / (i + 1));
-          }
-        }
-        return true;
+namespace test {
+bool blockMapTest() {
+  BlockMap map;
+  map.addBlock(Block(nullptr, (void *)0x2000));
+  // Simple allocation test
+  if (map.allocate(0x2000) == nullptr) {
+    return false;
+  }
+  // Free and allocate again
+  map.returnMemory((void *)nullptr, 0x2000);
+  if (map.allocate(0x2000) == nullptr) {
+    return false;
+  }
+  // Stress test (test the merging function)
+  for (int i = 0; i < 1000; i++) {
+    void *allocatedMemory = map.allocate(0x2000 / (i + 1));
+    if (allocatedMemory == nullptr) {
+      return false;
+    } else {
+      map.returnMemory(allocatedMemory, 0x2000 / (i + 1));
     }
-    } // namespace test
+  }
+  return true;
+}
+} // namespace test
 } // namespace memory
 #endif

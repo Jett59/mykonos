@@ -18,17 +18,17 @@
 
 /*Note: this may be included by assembly code, assuming .S suffix*/
 
-   #ifndef _GDTBITS_H
-   #define _GDTBITS_H
+#ifndef _GDTBITS_H
+#define _GDTBITS_H
 
 #define GDT_TYPE(X) ((X & 0xF) << 40)
 #define GDT_WRITABLE (1 << 41)
 #define GDT_CONFORMING (1 << 42)
 #define GDT_EXECUTABLE (1 << 43)
 #define GDT_NOT_SYSTEM (1 << 44)
-#define GDT_PRIVILEGE(X)  ((X & 3) << 45)
+#define GDT_PRIVILEGE(X) ((X & 3) << 45)
 #define GDT_PRESENT (1 << 47)
 #define GDT_LONG (1 << 53)
 #define GDT_SIZE (1 << 54)
 
-   #endif
+#endif

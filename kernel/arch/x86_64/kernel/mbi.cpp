@@ -14,44 +14,44 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     */
-   #include <mbi.h>
-   #include <physicalMemory.h>
+#include <mbi.h>
+#include <physicalMemory.h>
 
 extern "C" {
-extern multiboot::Mbi* mbiPointer;
+extern multiboot::Mbi *mbiPointer;
 }
 
 namespace memory {
 BlockMap physicalMemory;
 }
 
-   namespace multiboot {
-   static void parseMbiTag(uint32_t type, MbiTag* tag);
-   void parseMbi() {
-       MbiTag* tag = &mbiPointer->firstTag;
-       while (tag->type != 0) {
-         parseMbiTag(tag->type, tag);
-         tag = (MbiTag*)((uint8_t*)tag + (tag->size + 7) / 8 * 8);
-       }
-   }
-   static void parseMbiTag(uint32_t type, MbiTag* tag) {
-       switch (type) {
-           case MBI_TAG_MEMORY: {
-             MemoryMapTag* memoryMap = (MemoryMapTag*)tag;
-             uint32_t numEntries = (memoryMap->size - sizeof(MemoryMapTag)) /
-                                   memoryMap->entrySize;
-             for (uint32_t i = 0; i < numEntries; i ++) {
-                 if (memoryMap->memory[i].type == 1) {
-               memory::physicalMemory.addBlock(
-                   memory::Block((void*)memoryMap->memory[i].base,
-                                 (void*)((uint8_t*)memoryMap->memory[i].base +
-                                         memoryMap->memory[i].length)));
-                 }
-             }
-             break;
-           }
-           default:
-             break;
-       }
-   }
-   }
+namespace multiboot {
+static void parseMbiTag(uint32_t type, MbiTag *tag);
+void parseMbi() {
+  MbiTag *tag = &mbiPointer->firstTag;
+  while (tag->type != 0) {
+    parseMbiTag(tag->type, tag);
+    tag = (MbiTag *)((uint8_t *)tag + (tag->size + 7) / 8 * 8);
+  }
+}
+static void parseMbiTag(uint32_t type, MbiTag *tag) {
+  switch (type) {
+  case MBI_TAG_MEMORY: {
+    MemoryMapTag *memoryMap = (MemoryMapTag *)tag;
+    uint32_t numEntries =
+        (memoryMap->size - sizeof(MemoryMapTag)) / memoryMap->entrySize;
+    for (uint32_t i = 0; i < numEntries; i++) {
+      if (memoryMap->memory[i].type == 1) {
+        memory::physicalMemory.addBlock(
+            memory::Block((void *)memoryMap->memory[i].base,
+                          (void *)((uint8_t *)memoryMap->memory[i].base +
+                                   memoryMap->memory[i].length)));
+      }
+    }
+    break;
+  }
+  default:
+    break;
+  }
+}
+} // namespace multiboot

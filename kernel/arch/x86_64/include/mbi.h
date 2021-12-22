@@ -14,40 +14,39 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     */
-   #ifndef _MBI_H
-   #define _MBI_H
+#ifndef _MBI_H
+#define _MBI_H
 
 #include <stdint.h>
 
 namespace multiboot {
-    struct MbiTag {
-      uint32_t type;
-      uint32_t size;
-    };
-    #define MBI_TAG_MEMORY 6
+struct MbiTag {
+  uint32_t type;
+  uint32_t size;
+};
+#define MBI_TAG_MEMORY 6
 
-    struct MemoryMapTag {
-      uint32_t type;
-      uint32_t size;
-      uint32_t entrySize;
-      uint32_t version;
-      struct {
-        uint64_t base;
-        uint64_t length;
-        uint32_t type;
-        uint32_t reserved;
-      } memory[0];
-    };
+struct MemoryMapTag {
+  uint32_t type;
+  uint32_t size;
+  uint32_t entrySize;
+  uint32_t version;
+  struct {
+    uint64_t base;
+    uint64_t length;
+    uint32_t type;
+    uint32_t reserved;
+  } memory[0];
+};
 
-    void
-    parseMbi();
-    class Mbi {
-     private:
-      uint32_t size;
-      uint32_t reserved;
-      MbiTag firstTag;
-      friend void parseMbi();
-    };
-    }  // namespace multiboot
+void parseMbi();
+class Mbi {
+private:
+  uint32_t size;
+  uint32_t reserved;
+  MbiTag firstTag;
+  friend void parseMbi();
+};
+} // namespace multiboot
 
 #endif

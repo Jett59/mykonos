@@ -20,20 +20,20 @@
 typedef void (*ConstructorOrDestructor)();
 
 extern "C" {
-  extern ConstructorOrDestructor __init_array_start[0], __init_array_end[0];
-  extern ConstructorOrDestructor __fini_array_start[0], __fini_array_end[0];
+extern ConstructorOrDestructor __init_array_start[0], __init_array_end[0];
+extern ConstructorOrDestructor __fini_array_start[0], __fini_array_end[0];
 }
 
 extern "C" [[noreturn]] void kstart() {
-    // Global constructors must be called
-    // We use init_array method, for simplicity
-    for (ConstructorOrDestructor *initArrayElement = __init_array_start;
-         initArrayElement != __init_array_end; initArrayElement ++) {
-      (*initArrayElement)();
-    }
-    // Now that that's over
-    multiboot::parseMbi();
-    while (true) {
-      __asm__("hlt");
-    }
-    }
+  // Global constructors must be called
+  // We use init_array method, for simplicity
+  for (ConstructorOrDestructor *initArrayElement = __init_array_start;
+       initArrayElement != __init_array_end; initArrayElement++) {
+    (*initArrayElement)();
+  }
+  // Now that that's over
+  multiboot::parseMbi();
+  while (true) {
+    __asm__("hlt");
+  }
+}

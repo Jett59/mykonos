@@ -14,8 +14,8 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     */
-   #ifndef _VIRTUAL_MEMORY_H
-   #define _VIRTUAL_MEMORY_H
+#ifndef _VIRTUAL_MEMORY_H
+#define _VIRTUAL_MEMORY_H
 
 #include <memoryBlock.h>
 

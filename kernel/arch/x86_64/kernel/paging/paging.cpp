@@ -14,30 +14,67 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     */
-   #include <paging.h>
-   #include <pageTables.h>
+#include <pageTables.h>
+#include <paging.h>
 
 #include <physicalMemory.h>
 
-   namespace paging {
-       static PageTableEntry* getPageTableEntry(void* virtualAddress) {
-         uint64_t address = (uint64_t)virtualAddress & ((1UL << 48) - 1); // Mask for 48 bit address space
-         // Mask and shift out the parts of the address
-         uint64_t pml1Index = address & 511;
-         address >>= 9;
-         uint64_t pml2Index = address & 511;
-         address >>= 9;
-         uint64_t pml3Index = address & 511;
-         address >>= 9;
-         uint64_t pml4Index = address & 511;
-         return &(*PAGE_TABLE_POINTER)[pml4Index][pml3Index][pml2Index][pml1Index];
-       }
-       void mapPage(void* virtualAddress, void* physicalAddress, PageTableFlags flags, bool allocated) {
-           if (allocated) {
-             flags |= PageTableFlags::ALLOCATED;
-           }
-           PageTableEntry pageTableEntry =
-               (PageTableEntry)((uint64_t)flags |
-                                ((uint64_t)physicalAddress & ~4095ul));
-       }
-   }
+#include <string.h>
+
+#define PML4TABLE ((*PAGE_TABLE_POINTER)[511][511][511])
+#define PML3TABLE(PML4INDEX) ((*PAGE_TABLE_POINTER)[511][511][PML4INDEX])
+#define PML2TABLE(PML4INDEX, PML3INDEX)                                        \
+  ((*PAGE_TABLE_POINTER)[511][PML4INDEX][PML3INDEX])
+#define PML1TABLE(PML4INDEX, PML3INDEX, PML2INDEX)                             \
+  ((*PAGE_TABLE_POINTER)[PML4INDEX][PML3INDEX][PML2INDEX])
+
+#define PML4ENTRY(PML4INDEX) (PML4TABLE[PML4INDEX])
+#define PML3ENTRY(PML4INDEX, PML3INDEX) (PML3TABLE(PML4INDEX)[PML3INDEX])
+#define PML2ENTRY(PML4INDEX, PML3INDEX, PML2INDEX)                             \
+  (PML2TABLE(PML4INDEX, PML3INDEX)[PML2INDEX])
+#define PML1ENTRY(PML4INDEX, PML3INDEX, PML2INDEX, PML1INDEX)                  \
+  (PML1TABLE(PML4INDEX, PML3INDEX, PML2INDEX)[PML1INDEX])
+
+namespace paging {
+static PageTableEntry allocatePageTable() {
+  return (PageTableEntry)(memory::allocateFrame() << 12) |
+         PageTableFlags::PRESENT | PageTableFlags::WRITABLE |
+         PageTableFlags::ALLOCATED | PageTableFlags::USER;
+}
+static PageTableEntry *getPageTableEntry(void *virtualAddress) {
+  uint64_t address = (uint64_t)virtualAddress &
+                     ((1UL << 48) - 1); // Mask for 48 bit address space
+  // Mask and shift out the parts of the address
+  uint64_t pml1Index = address & 511;
+  address >>= 9;
+  uint64_t pml2Index = address & 511;
+  address >>= 9;
+  uint64_t pml3Index = address & 511;
+  address >>= 9;
+  uint64_t pml4Index = address & 511;
+  // Make sure the page tables all exist
+  // Check the pml4 entry
+  if ((PML4ENTRY(pml4Index) & PageTableFlags::PRESENT) == 0) {
+    PML4ENTRY(pml4Index) = allocatePageTable();
+    memset(PML3TABLE(pml4Index), 0, 4096);
+  }
+  if ((PML3ENTRY(pml4Index, pml3Index) & PageTableFlags::PRESENT) == 0) {
+    PML3ENTRY(pml4Index, pml3Index) = allocatePageTable();
+    memset(PML2TABLE(pml4Index, pml3Index), 0, 4096);
+  }
+  if ((PML2ENTRY(pml4Index, pml3Index, pml2Index) & PageTableFlags::PRESENT) ==
+      0) {
+    PML2ENTRY(pml4Index, pml3Index, pml2Index) = allocatePageTable();
+    memset(PML1TABLE(pml4Index, pml3Index, pml2Index), 0, 4096);
+  }
+  return &PML1ENTRY(pml4Index, pml3Index, pml2Index, pml1Index);
+}
+void mapPage(void *virtualAddress, void *physicalAddress, PageTableFlags flags,
+             bool allocated) {
+  if (allocated) {
+    flags |= PageTableFlags::ALLOCATED;
+  }
+  PageTableEntry pageTableEntry =
+      (PageTableEntry)((uint64_t)flags | ((uint64_t)physicalAddress & ~4095ul));
+}
+} // namespace paging

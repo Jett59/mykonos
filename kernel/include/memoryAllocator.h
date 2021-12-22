@@ -14,16 +14,14 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     */
-   #ifndef _MEMORY_ALLOCATOR_H
-   #define _MEMORY_ALLOCATOR_H
+#ifndef _MEMORY_ALLOCATOR_H
+#define _MEMORY_ALLOCATOR_H
 
 #include <memoryBlock.h>
 
 #include <stddef.h>
 #include <stdint.h>
 
-namespace memory {
-    
-    }  // namespace memory
+namespace memory {} // namespace memory
 
 #endif

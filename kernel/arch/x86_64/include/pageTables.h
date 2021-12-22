@@ -14,8 +14,8 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     */
-   #ifndef PAGE_TABLES_H
-   #define PAGE_TABLES_H
+#ifndef PAGE_TABLES_H
+#define PAGE_TABLES_H
 
 #include <stdint.h>
 
@@ -31,18 +31,22 @@ enum class PageTableFlags : uint64_t {
 inline PageTableFlags operator|(PageTableFlags a, PageTableFlags b) {
   return (PageTableFlags)((uint64_t)a + (uint64_t)b);
 }
-inline PageTableFlags& operator|= (PageTableFlags& a, PageTableFlags b) {
+inline PageTableFlags &operator|=(PageTableFlags &a, PageTableFlags b) {
   return a = a | b;
 }
+inline uint64_t operator&(PageTableFlags a, PageTableFlags b) {
+  return (uint64_t)a & (uint64_t)b;
+}
+
 typedef PageTableFlags PageTableEntry;
 
 typedef PageTableEntry Pml1[512];
 typedef Pml1 Pml2[512];
 typedef Pml2 Pml3[512];
 typedef Pml3 Pml4[512];
-}
+} // namespace paging
 
 // Recursive mapping
-#define PAGE_TABLE_POINTER ((paging::Pml4*)0xFFFFFF8000000000)
+#define PAGE_TABLE_POINTER ((paging::Pml4 *)0xFFFFFF8000000000)
 
 #endif

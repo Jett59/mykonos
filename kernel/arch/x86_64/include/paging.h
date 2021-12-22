@@ -14,14 +14,15 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     */
-   #ifndef _PAGING_H
-   #define _PAGING_H
+#ifndef _PAGING_H
+#define _PAGING_H
 
 #include <pageTables.h>
 
 namespace paging {
-void mapPage(void* virtualAddress, void* physicalAddress, PageTableFlags flags, bool allocated);
-void unmapPage(void* virtualAddress);
-}  // namespace paging
+void mapPage(void *virtualAddress, void *physicalAddress, PageTableFlags flags,
+             bool allocated);
+void unmapPage(void *virtualAddress);
+} // namespace paging
 
 #endif

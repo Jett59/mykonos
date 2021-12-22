@@ -14,9 +14,9 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     */
-   #ifndef _PAGE_CONSTANTS_H
-   #define _PAGE_CONSTANTS_H
+#ifndef _PAGE_CONSTANTS_H
+#define _PAGE_CONSTANTS_H
 
 #define PAGE_SIZE 4096
 
-   #endif
+#endif

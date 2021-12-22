@@ -29,4 +29,4 @@ BlockAllocator virtualMemory(virtualMemoryMap);
 __attribute__((constructor)) static void initVirtualMemory() {
   virtualMemoryMap.addBlock(Block(&kernelHeapStart, &kernelHeapEnd));
 }
-}
+} // namespace memory
