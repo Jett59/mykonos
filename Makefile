@@ -37,12 +37,19 @@ kernel: kernel/Makefile
 	@mkdir -p build
 	@cp kernel/arch/$(ARCH)/build/mykonos build/mykonos
 
+EFI_FILE_NAME?=BOOTX64.EFI
+
+build/boot.efi:
+	@grub-mkimage -O $(ARCH)-efi -p /boot/grub -o $@ normal part_msdos fat iso9660 part_gpt all_video multiboot2
+
 .PHONY: isoimage
-isoimage: all
+isoimage: all build/boot.efi
 	@mkdir -p build/isoroot
 	@mkdir -p build/isoroot/boot/grub
 	@cp build/mykonos build/isoroot/boot/mykonos
 	@cp grub/example.cfg build/isoroot/boot/grub/grub.cfg
+	@mkdir -p build/isoroot/EFI/BOOT
+	@cp build/boot.efi build/isoroot/EFI/BOOT/$(EFI_FILE_NAME)
 	@grub-mkrescue -d /usr/lib/grub/i386-pc -o build/mykonos.iso build/isoroot
 
 .PHONY: clean
