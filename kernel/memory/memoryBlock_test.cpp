@@ -19,9 +19,11 @@
 
 #include <memoryBlock.h>
 
+#include <test.h>
+
 namespace memory {
 namespace test {
-bool blockMapTest() {
+bool blockMapTest(::test::Logger logger) {
   BlockMap map;
   map.addBlock(Block(nullptr, (void *)0x2000));
   // Simple allocation test
@@ -44,6 +46,8 @@ bool blockMapTest() {
   }
   return true;
 }
-} // namespace test
+ADD_TEST(blockMapTest);
+}  // namespace test
 } // namespace memory
+
 #endif

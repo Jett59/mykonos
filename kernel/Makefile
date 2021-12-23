@@ -14,7 +14,7 @@
     #along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 CXXFLAGS+=-ffreestanding -fno-rtti -fno-exceptions -fno-asynchronous-unwind-tables
-LDFLAGS+=-T arch/$(ARCH)/linker.ld
+LDFLAGS+=-Wl,--nmagic -T arch/$(ARCH)/linker.ld
 
 CPPFLAGS+=-I arch/$(ARCH)/include -I include
 

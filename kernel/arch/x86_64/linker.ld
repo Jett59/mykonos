@@ -47,6 +47,11 @@ SECTIONS {
     .data : AT(ADDR(.data) - kernelVirtualOffset) {
         *(.data*);
     }
+    .test_array : AT(ADDR(.test_array) - kernelVirtualOffset) {
+        __test_array_start = .;
+        KEEP(*(.test_array));
+        __test_array_end = .;
+    }
     .init_array : AT(ADDR(.init_array) - kernelVirtualOffset) {
         __init_array_start = .;
         KEEP(*(.init_array));
