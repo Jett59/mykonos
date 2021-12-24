@@ -39,19 +39,8 @@ extern "C" [[noreturn]] void kstart() {
   multiboot::parseMbi();
   paging::initPageTables();
   display::initFrameBuffer();
-  for (int i = 0; i < 5000; i ++) {
-    if (i % 2 == 0) {
-      kout::print("Divisible by 2, ");
-    }
-    if (i % 3 == 0) {
-      kout::print("Divisible by 3, ");
-    }
-    if (i % 5 == 0) {
-      kout::print("Divisible by 5, ");
-    }
-    kout::print("\n");
+  kout::print("Initialised the console");
+  while (true) {
+    __asm__("hlt");
   }
-    while (true) {
-      __asm__("hlt");
-    }
 }
