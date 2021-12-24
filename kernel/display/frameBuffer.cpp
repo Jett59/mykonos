@@ -23,16 +23,18 @@ namespace display {
 FrameBuffer frameBuffer;
 void initFrameBuffer() {
   frameBuffer.pointer = (uint8_t *)memory::mapAddress(
-      frameBuffer.pointer,
-      frameBuffer.pitch * frameBuffer.height);
-  memset(frameBuffer.pointer, 0,
-         frameBuffer.pitch * frameBuffer.height);
+      frameBuffer.pointer, frameBuffer.pitch * frameBuffer.height);
+  memset(frameBuffer.pointer, 0, frameBuffer.pitch * frameBuffer.height);
 }
 void writePixel(unsigned x, unsigned y, Pixel pixel) {
-  uint8_t *pixelPointer = frameBuffer.pointer +
-                          (y * frameBuffer.pitch + x * (frameBuffer.depth / 8));
-  pixelPointer[2] = pixel.r;
-  pixelPointer[1] = pixel.g;
-  pixelPointer[0] = pixel.b;
+  if (x < getWidth() && y < getHeight()) {
+    uint8_t *pixelPointer = frameBuffer.pointer + (y * frameBuffer.pitch +
+                                                   x * (frameBuffer.depth / 8));
+    pixelPointer[2] = pixel.r;
+    pixelPointer[1] = pixel.g;
+    pixelPointer[0] = pixel.b;
+  }
 }
+unsigned getWidth() { return frameBuffer.width; }
+unsigned getHeight() { return frameBuffer.height; }
 } // namespace display

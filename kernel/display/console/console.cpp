@@ -14,21 +14,31 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+#include <kout.h>
+
 #include <display.h>
 #include <fontRenderer.h>
 
-#define FOREGROUND                                                             \
-  { .r = 0xFF, .g = 0xFF, .b = 0xFF }
-#define BACKGROUND                                                             \
-  { .r = 0, .g = 0, .b = 0 }
-
-namespace display {
-void writeCharacter(unsigned x, unsigned y, char c) {
-  font::render(c, x, y, FOREGROUND, BACKGROUND);
-}
-void writeString(unsigned x, unsigned y, const char *str) {
-  for (unsigned i = 0; str[i] != 0; i++) {
-    font::render(str[i], x + i * font::getWidth(), y, FOREGROUND, BACKGROUND);
+namespace kout {
+static unsigned line, column;
+static unsigned lines, columns;
+void print(const char* str) {
+    if (columns == 0) {
+      columns = display::getWidth() / font::getWidth();
+      lines = display::getHeight() / font::getHeight();
+    }
+  unsigned x = column * font::getWidth();
+  unsigned y = line * font::getHeight();
+  while (*str != 0) {
+    display::writeCharacter(x, y, *str);
+    str++;
+    x += font::getWidth();
+    column++;
+    if (column >= columns) {
+      column = x = 0;
+      line++;
+      y += font::getHeight();
+    }
   }
 }
-} // namespace display
+}

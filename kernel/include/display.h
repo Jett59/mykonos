@@ -20,12 +20,17 @@
 #include <stdint.h>
 
 namespace display {
-    struct Pixel {
-      uint8_t r, g, b;
-    };
-    void writePixel(unsigned x, unsigned y, Pixel pixel);
+struct Pixel {
+  uint8_t r, g, b;
+};
+void writePixel(unsigned x, unsigned y, Pixel pixel);
 
-    void writeString(unsigned x, unsigned y, const char* string);
-    }  // namespace display
+void writeCharacter(unsigned x, unsigned y, char c);
+
+void writeString(unsigned x, unsigned y, const char *string);
+
+unsigned getWidth();
+unsigned getHeight();
+} // namespace display
 
 #endif
