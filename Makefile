@@ -36,6 +36,8 @@ kernel: kernel/Makefile
 	@"$(MAKE)" -s -C kernel
 	@mkdir -p build
 	@cp kernel/arch/$(ARCH)/build/mykonos build/mykonos
+	@objcopy --only-keep-debug build/mykonos build/mykonos.debug
+	@strip --strip-all build/mykonos
 
 EFI_FILE_NAME?=BOOTX64.EFI
 
