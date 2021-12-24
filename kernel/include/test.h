@@ -18,10 +18,12 @@
 #define _TEST_H
 
 namespace test {
-typedef void (*Logger)(const char*);
+typedef void (*Logger)(const char *);
 typedef bool (*TestFunction)(Logger);
-}
+} // namespace test
 
-#define ADD_TEST(FUNCTION_NAME) ::test::TestFunction testTable_ ## FUNCTION_NAME __attribute__((section(".test_array"))) = &FUNCTION_NAME
+#define ADD_TEST(FUNCTION_NAME)                                                \
+  ::test::TestFunction testTable_##FUNCTION_NAME                               \
+      __attribute__((section(".test_array"))) = &FUNCTION_NAME
 
 #endif

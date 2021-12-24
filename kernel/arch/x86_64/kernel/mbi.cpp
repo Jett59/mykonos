@@ -14,10 +14,10 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+#include <frameBuffer.h>
 #include <mbi.h>
 #include <pageConstants.h>
 #include <physicalMemory.h>
-#include <frameBuffer.h>
 
 extern "C" {
 extern multiboot::Mbi *mbiPointer;
@@ -65,7 +65,7 @@ static void parseMemoryMapTag(MemoryMapTag *memoryMap) {
   }
 }
 static void parseFrameBufferTag(FrameBufferTag *tag) {
-  display::frameBuffer.pointer = (uint8_t*)tag->address;
+  display::frameBuffer.pointer = (uint8_t *)tag->address;
   display::frameBuffer.width = tag->width;
   display::frameBuffer.height = tag->height;
   display::frameBuffer.depth = tag->depth;

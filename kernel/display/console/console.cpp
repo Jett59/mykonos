@@ -79,9 +79,9 @@ void print(const char *str) {
     if (column >= columns || *str == '\n') {
       column = x = 0;
       if (line < lines - 1) {
-      line++;
-      y += font::getHeight();
-      }else {
+        line++;
+        y += font::getHeight();
+      } else {
         scrollDown();
         line = lines - 1;
         y = line * font::getHeight();

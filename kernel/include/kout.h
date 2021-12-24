@@ -14,11 +14,11 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     */
-   #ifndef _KOUT_H
-   #define _KOUT_H
+#ifndef _KOUT_H
+#define _KOUT_H
 
 namespace kout {
-void print(const char* str);
+void print(const char *str);
 }
 
 #endif

@@ -45,7 +45,8 @@ void render(char c, unsigned x, unsigned y, display::Pixel foreground,
     for (unsigned glyphX = 0; glyphX < fontFile.width; glyphX++) {
       uint8_t currentByte = glyph[glyphX / 8];
       uint8_t currentBit = glyphX % 8;
-      unsigned displayX = fontFile.width - glyphX + x; // We are currently going backwards
+      unsigned displayX =
+          fontFile.width - glyphX + x; // We are currently going backwards
       unsigned displayY = y + glyphY;
       if ((currentByte & (1 << currentBit)) != 0) {
         display::writePixel(displayX, displayY, foreground);

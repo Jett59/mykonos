@@ -23,7 +23,7 @@ extern "C" int strlen(const char *str) {
   }
   return i;
 }
-extern "C" char* strcpy(char* dst, const char* src) {
+extern "C" char *strcpy(char *dst, const char *src) {
   int size = strlen(src);
   memcpy(dst, src, size);
   dst[size] = 0;
