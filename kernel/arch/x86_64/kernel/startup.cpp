@@ -39,12 +39,19 @@ extern "C" [[noreturn]] void kstart() {
   multiboot::parseMbi();
   paging::initPageTables();
   display::initFrameBuffer();
-  kout::print(
-      "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/+\n");
-  kout::print("\n");
-  kout::print(
-      "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/+\n");
-  while (true) {
-    __asm__("hlt");
+  for (int i = 0; i < 5000; i ++) {
+    if (i % 2 == 0) {
+      kout::print("Divisible by 2, ");
+    }
+    if (i % 3 == 0) {
+      kout::print("Divisible by 3, ");
+    }
+    if (i % 5 == 0) {
+      kout::print("Divisible by 5, ");
+    }
+    kout::print("\n");
   }
+    while (true) {
+      __asm__("hlt");
+    }
 }

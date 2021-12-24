@@ -29,6 +29,8 @@ void writeCharacter(unsigned x, unsigned y, char c);
 
 void writeString(unsigned x, unsigned y, const char *string);
 
+void removeCharacter(unsigned x, unsigned y);
+
 unsigned getWidth();
 unsigned getHeight();
 } // namespace display

@@ -31,4 +31,7 @@ void writeString(unsigned x, unsigned y, const char *str) {
     font::render(str[i], x + i * font::getWidth(), y, FOREGROUND, BACKGROUND);
   }
 }
+void removeCharacter(unsigned x, unsigned y) {
+  font::render(' ', x, y, FOREGROUND, BACKGROUND);
+}
 } // namespace display

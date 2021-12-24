@@ -29,7 +29,40 @@ static unsigned lines, columns;
 
 static char *screenBuffer;
 #define SCREEN_BUFFER_CHARACTER(COLUMN, LINE)                                  \
-  (screenBuffer[LINE * (columns + 1) + COLUMN])
+  (screenBuffer[(LINE) * (columns + 1) + (COLUMN)])
+#define SCREEN_BUFFER_LINE(LINE) (&screenBuffer[(LINE) * (columns + 1)])
+
+void scrollDown() {
+  unsigned x = 0;
+  unsigned y = 0;
+  for (unsigned i = 1; i < lines; i++) {
+    x = 0;
+    y += font::getHeight();
+    char *line = SCREEN_BUFFER_LINE(i);
+    char *previousLine = SCREEN_BUFFER_LINE(i - 1);
+    int lineLength = strlen(line);
+    unsigned previousLineLength = strlen(previousLine);
+    for (unsigned i = lineLength; i < (unsigned)previousLineLength; i++) {
+      display::removeCharacter(x, y - font::getHeight());
+      x += font::getWidth();
+    }
+    strcpy(previousLine, line);
+    x = 0;
+    for (unsigned i = 0; i < (unsigned)lineLength; i++) {
+      display::writeCharacter(x, y - font::getHeight(), previousLine[i]);
+      x += font::getWidth();
+    }
+  }
+  char *lastLine = SCREEN_BUFFER_LINE(lines - 1);
+  int lastLineLength = strlen(lastLine);
+  x = 0;
+  y = font::getHeight() * (lines - 1);
+  for (unsigned i = 0; i < (unsigned)lastLineLength; i++) {
+    display::removeCharacter(x, y);
+    x += font::getWidth();
+  }
+  lastLine[0] = 0;
+}
 
 void print(const char *str) {
   if (columns == 0) {
@@ -45,16 +78,22 @@ void print(const char *str) {
   while (*str != 0) {
     if (column >= columns || *str == '\n') {
       column = x = 0;
+      if (line < lines - 1) {
       line++;
       y += font::getHeight();
+      }else {
+        scrollDown();
+        line = lines - 1;
+        y = line * font::getHeight();
+      }
       if (*str == '\n') {
         str++;
         continue;
       }
     }
     display::writeCharacter(x, y, *str);
-    SCREEN_BUFFER_CHARACTER(x, y) = *str;
-    SCREEN_BUFFER_CHARACTER(x + 1, y) = 0;
+    SCREEN_BUFFER_CHARACTER(column, line) = *str;
+    SCREEN_BUFFER_CHARACTER(column + 1, line) = 0;
     str++;
     x += font::getWidth();
     column++;

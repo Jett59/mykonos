@@ -58,7 +58,7 @@ static PageTableEntry *getPageTableEntry(void *virtualAddress,
   // Make sure the page tables all exist
   // Check the pml4 entry
   if ((PML4ENTRY(pml4Index) & PageTableFlags::PRESENT) == 0) {
-    if (allocatePageTable) {
+    if (allocatePageTables) {
       PML4ENTRY(pml4Index) = allocatePageTable();
       memset(PML3TABLE(pml4Index), 0, 4096);
     } else {
@@ -66,7 +66,7 @@ static PageTableEntry *getPageTableEntry(void *virtualAddress,
     }
   }
   if ((PML3ENTRY(pml4Index, pml3Index) & PageTableFlags::PRESENT) == 0) {
-    if (allocatePageTable) {
+    if (allocatePageTables) {
       PML3ENTRY(pml4Index, pml3Index) = allocatePageTable();
       memset(PML2TABLE(pml4Index, pml3Index), 0, 4096);
     } else {
@@ -75,7 +75,7 @@ static PageTableEntry *getPageTableEntry(void *virtualAddress,
   }
   if ((PML2ENTRY(pml4Index, pml3Index, pml2Index) & PageTableFlags::PRESENT) ==
       0) {
-    if (allocatePageTable) {
+    if (allocatePageTables) {
       PML2ENTRY(pml4Index, pml3Index, pml2Index) = allocatePageTable();
       memset(PML1TABLE(pml4Index, pml3Index, pml2Index), 0, 4096);
     } else {
