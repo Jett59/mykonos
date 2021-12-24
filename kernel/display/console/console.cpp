@@ -22,23 +22,27 @@
 namespace kout {
 static unsigned line, column;
 static unsigned lines, columns;
-void print(const char* str) {
-    if (columns == 0) {
-      columns = display::getWidth() / font::getWidth();
-      lines = display::getHeight() / font::getHeight();
-    }
+void print(const char *str) {
+  if (columns == 0) {
+    columns = display::getWidth() / font::getWidth();
+    lines = display::getHeight() / font::getHeight();
+  }
   unsigned x = column * font::getWidth();
   unsigned y = line * font::getHeight();
   while (*str != 0) {
+    if (column >= columns || *str == '\n') {
+      column = x = 0;
+      line++;
+      y += font::getHeight();
+      if (*str == '\n') {
+        str++;
+        continue;
+      }
+    }
     display::writeCharacter(x, y, *str);
     str++;
     x += font::getWidth();
     column++;
-    if (column >= columns) {
-      column = x = 0;
-      line++;
-      y += font::getHeight();
-    }
   }
 }
-}
+} // namespace kout

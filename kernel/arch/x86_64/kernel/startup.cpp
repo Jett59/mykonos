@@ -39,9 +39,11 @@ extern "C" [[noreturn]] void kstart() {
   multiboot::parseMbi();
   paging::initPageTables();
   display::initFrameBuffer();
-  kout::print("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/+");
   kout::print(
-      "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/+");
+      "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/+\n");
+  kout::print("\n");
+  kout::print(
+      "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/+\n");
   while (true) {
     __asm__("hlt");
   }
