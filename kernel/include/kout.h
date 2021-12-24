@@ -14,16 +14,11 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     */
-#ifndef _STRING_H
-#define _STRING_H
+#ifndef _KOUT_H
+#define _KOUT_H
 
-#include <stddef.h>
-
-extern "C" {
-void *memset(void *str, int c, size_t size);
-void *memcpy(void *dst, const void *src, size_t size);
-int strlen(const char *str);
-char *strcpy(char *dst, const char *src);
+namespace kout {
+void print(const char *str);
 }
 
 #endif

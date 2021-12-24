@@ -14,16 +14,18 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     */
-#ifndef _STRING_H
-#define _STRING_H
+#include <string.h>
 
-#include <stddef.h>
-
-extern "C" {
-void *memset(void *str, int c, size_t size);
-void *memcpy(void *dst, const void *src, size_t size);
-int strlen(const char *str);
-char *strcpy(char *dst, const char *src);
+extern "C" int strlen(const char *str) {
+  int i;
+  for (i = 0; *str != 0; i++) {
+    str++;
+  }
+  return i;
 }
-
-#endif
+extern "C" char *strcpy(char *dst, const char *src) {
+  int size = strlen(src);
+  memcpy(dst, src, size);
+  dst[size] = 0;
+  return dst;
+}

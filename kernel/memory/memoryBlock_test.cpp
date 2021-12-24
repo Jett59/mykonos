@@ -47,7 +47,7 @@ bool blockMapTest(::test::Logger logger) {
   return true;
 }
 ADD_TEST(blockMapTest);
-}  // namespace test
+} // namespace test
 } // namespace memory
 
 #endif

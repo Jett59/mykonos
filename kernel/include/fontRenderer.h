@@ -20,9 +20,10 @@
 #include <display.h>
 
 namespace font {
-void render(char c, unsigned x, unsigned y, display::Pixel foreground, display::Pixel background);
+void render(char c, unsigned x, unsigned y, display::Pixel foreground,
+            display::Pixel background);
 unsigned getWidth();
 unsigned getHeight();
-}  // namespace font
+} // namespace font
 
 #endif

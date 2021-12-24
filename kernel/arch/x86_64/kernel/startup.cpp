@@ -18,8 +18,8 @@
 #include <mbi.h>
 #include <pageTableInit.h>
 
-#include <fontRenderer.h>
 #include <frameBuffer.h>
+#include <kout.h>
 
 typedef void (*ConstructorOrDestructor)();
 
@@ -39,7 +39,7 @@ extern "C" [[noreturn]] void kstart() {
   multiboot::parseMbi();
   paging::initPageTables();
   display::initFrameBuffer();
-  display::writeString(0, 20, "Hello, World!");
+  kout::print("Initialised the console");
   while (true) {
     __asm__("hlt");
   }

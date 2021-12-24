@@ -17,14 +17,21 @@
 #include <display.h>
 #include <fontRenderer.h>
 
-#define FOREGROUND {.r = 0xFF, .g = 0xFF, .b = 0xFF}
-#define BACKGROUND {.r = 0, .g = 0, .b = 0}
+#define FOREGROUND                                                             \
+  { .r = 0xFF, .g = 0xFF, .b = 0xFF }
+#define BACKGROUND                                                             \
+  { .r = 0, .g = 0, .b = 0 }
 
 namespace display {
-    void writeString(unsigned x, unsigned y, const char* str) {
-      for (unsigned i = 0; str[i] != 0; i ++) {
-        font::render(str[i], x + i * font::getWidth(), y, FOREGROUND,
-                     BACKGROUND);
-      }
-      }
+void writeCharacter(unsigned x, unsigned y, char c) {
+  font::render(c, x, y, FOREGROUND, BACKGROUND);
 }
+void writeString(unsigned x, unsigned y, const char *str) {
+  for (unsigned i = 0; str[i] != 0; i++) {
+    font::render(str[i], x + i * font::getWidth(), y, FOREGROUND, BACKGROUND);
+  }
+}
+void removeCharacter(unsigned x, unsigned y) {
+  font::render(' ', x, y, FOREGROUND, BACKGROUND);
+}
+} // namespace display

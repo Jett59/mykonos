@@ -29,6 +29,6 @@ struct FrameBuffer {
 };
 extern FrameBuffer frameBuffer;
 void initFrameBuffer();
-}  // namespace display
+} // namespace display
 
 #endif
