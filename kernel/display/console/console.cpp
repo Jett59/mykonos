@@ -19,13 +19,26 @@
 #include <display.h>
 #include <fontRenderer.h>
 
+#include <kmalloc.h>
+
+#include <string.h>
+
 namespace kout {
 static unsigned line, column;
 static unsigned lines, columns;
+
+static char *screenBuffer;
+#define SCREEN_BUFFER_CHARACTER(COLUMN, LINE)                                  \
+  (screenBuffer[LINE * (columns + 1) + COLUMN])
+
 void print(const char *str) {
   if (columns == 0) {
     columns = display::getWidth() / font::getWidth();
     lines = display::getHeight() / font::getHeight();
+    screenBuffer = (char *)memory::kmalloc((columns + 1) * lines);
+    for (unsigned i = 0; i < lines; i++) {
+      SCREEN_BUFFER_CHARACTER(0, i) = 0;
+    }
   }
   unsigned x = column * font::getWidth();
   unsigned y = line * font::getHeight();
@@ -40,6 +53,8 @@ void print(const char *str) {
       }
     }
     display::writeCharacter(x, y, *str);
+    SCREEN_BUFFER_CHARACTER(x, y) = *str;
+    SCREEN_BUFFER_CHARACTER(x + 1, y) = 0;
     str++;
     x += font::getWidth();
     column++;
