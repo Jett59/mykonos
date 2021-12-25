@@ -21,6 +21,8 @@
 #include <frameBuffer.h>
 #include <kout.h>
 
+#include <test.h>
+
 typedef void (*ConstructorOrDestructor)();
 
 extern "C" {
@@ -39,7 +41,12 @@ extern "C" [[noreturn]] void kstart() {
   multiboot::parseMbi();
   paging::initPageTables();
   display::initFrameBuffer();
-  kout::print("Initialised the console");
+  kout::print("Initialised the console\n\n");
+  if (test::runTests(kout::print)) {
+    // Continue
+  } else {
+    // The tests failed! Abort
+  }
   while (true) {
     __asm__("hlt");
   }

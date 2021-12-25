@@ -23,11 +23,12 @@ include arch/$(ARCH)/Make.properties
 
 # Find the steps
 include arch/$(ARCH)/Make.steps
+include test/Make.steps
 include memory/Make.steps
 include display/Make.steps
 
 # Enable runtime tests if requested
-ifeq ($(DEBUG),runtime)
+ifeq ($(TEST),ON)
  CPPFLAGS+=-DRUNTIME_TESTS
  STEPS+=$(TEST_STEPS)
 endif

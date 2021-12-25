@@ -14,18 +14,26 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
-#ifndef _TEST_H
-#define _TEST_H
+#include <test.h>
+
+extern "C" {
+extern test::TestFunction __test_array_start[0];
+extern test::TestFunction __test_array_end[0];
+}
 
 namespace test {
-typedef void (*Logger)(const char *);
-typedef bool (*TestFunction)(Logger);
-
-bool runTests(Logger logger);
-} // namespace test
-
-#define ADD_TEST(FUNCTION_NAME)                                                \
-  ::test::TestFunction testTable_##FUNCTION_NAME                               \
-      __attribute__((section(".test_array"))) = &FUNCTION_NAME
-
+bool runTests(Logger logger) {
+#ifdef RUNTIME_TESTS
+  logger("Running tests...\n");
+  for (TestFunction *testFunction = __test_array_start;
+       testFunction != __test_array_end; testFunction++) {
+    if (!(*testFunction)(logger)) {
+      logger("A test failed!\n");
+      return false;
+    }
+  }
+  logger("All tests passed\n");
 #endif
+  return true;
+}
+} // namespace test
