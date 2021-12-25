@@ -44,7 +44,7 @@ extern "C" [[noreturn]] void kstart() {
   kout::print("Initialised the console\n\n");
   if (test::runTests(kout::print)) {
     // Continue
-  }else {
+  } else {
     // The tests failed! Abort
   }
   while (true) {

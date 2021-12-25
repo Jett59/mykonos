@@ -22,7 +22,7 @@ typedef void (*Logger)(const char *);
 typedef bool (*TestFunction)(Logger);
 
 bool runTests(Logger logger);
-}  // namespace test
+} // namespace test
 
 #define ADD_TEST(FUNCTION_NAME)                                                \
   ::test::TestFunction testTable_##FUNCTION_NAME                               \

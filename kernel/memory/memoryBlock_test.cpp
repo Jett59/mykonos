@@ -26,7 +26,7 @@ namespace test {
 bool blockMapTest(::test::Logger logger) {
   logger("blockMapTest:\n");
   BlockMap map;
-  map.addBlock(Block((void*)0x1000, (void *)0x3000));
+  map.addBlock(Block((void *)0x1000, (void *)0x3000));
   // Simple allocation test
   void *ptr;
   if ((ptr = map.allocate(0x2000)) == nullptr) {
