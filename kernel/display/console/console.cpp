@@ -99,4 +99,23 @@ void print(const char *str) {
     column++;
   }
 }
+void print(unsigned long value, unsigned long base) {
+  char buffer[sizeof(unsigned long) * 8 + 1];
+  unsigned i = 0;
+  do {
+    buffer[i++] =
+        "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ+/"
+            [value % base];
+    value /= base;
+  } while (value != 0);
+  buffer[i] = 0;
+  unsigned count = i;
+  unsigned end = i - 1;
+  for (i = 0; i < count / 2; i++) {
+    char temp = buffer[i];
+    buffer[i] = buffer[end - i];
+    buffer[end - i] = temp;
+  }
+  print(buffer);
+}
 } // namespace kout

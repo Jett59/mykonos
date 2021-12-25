@@ -19,6 +19,8 @@
 
 namespace kout {
 void print(const char *str);
-}
+void print(unsigned long value, unsigned long base);
+static inline void print(unsigned long value) { print(value, 10); }
+} // namespace kout
 
 #endif
