@@ -26,20 +26,22 @@ namespace test {
 bool blockMapTest(::test::Logger logger) {
   logger("blockMapTest:\n");
   BlockMap map;
-  map.addBlock(Block(nullptr, (void *)0x2000));
+  map.addBlock(Block((void*)0x1000, (void *)0x3000));
   // Simple allocation test
-  if (map.allocate(0x2000) == nullptr) {
+  void *ptr;
+  if ((ptr = map.allocate(0x2000)) == nullptr) {
     logger("blockMapTest failed: Allocator not working properly\n");
     return false;
   }
+  logger("blockMapTest: simple allocation test passed\n");
   // Free and allocate again
-  map.returnMemory((void *)nullptr, 0x2000);
+  map.returnMemory(ptr, 0x2000);
   if (map.allocate(0x2000) == nullptr) {
     logger("blockMapTest failed: Allocate/free does not work properly\n");
     return false;
   }
+  logger("blockMapTest: Allocate/free test passed\n");
   // Stress test (test the merging function)
-  logger("Running the stress tester\n");
   for (int i = 0; i < 1000; i++) {
     void *allocatedMemory = map.allocate(0x2000 / (i + 1));
     if (allocatedMemory == nullptr) {
@@ -49,7 +51,8 @@ bool blockMapTest(::test::Logger logger) {
       map.returnMemory(allocatedMemory, 0x2000 / (i + 1));
     }
   }
-  logger("blockMapTest succeeded\n");
+  logger("blockMapTest: Passed stress tester");
+  logger("blockMapTest: Succeeded\n");
   return true;
 }
 ADD_TEST(blockMapTest);
