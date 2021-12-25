@@ -23,6 +23,7 @@ include arch/$(ARCH)/Make.properties
 
 # Find the steps
 include arch/$(ARCH)/Make.steps
+include test/Make.steps
 include memory/Make.steps
 include display/Make.steps
 
