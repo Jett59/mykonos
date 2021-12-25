@@ -36,7 +36,8 @@ bool blockMapTest(::test::Logger logger) {
   logger("blockMapTest: simple allocation test passed\n");
   // Free and allocate again
   map.returnMemory(ptr, 0x2000);
-  if ((ptr = map.allocate(0x2000)) == nullptr) {
+  ptr = map.allocate(0x2000);
+  if (ptr == nullptr) {
     logger("blockMapTest failed: Allocate/free does not work properly\n");
     return false;
   }
