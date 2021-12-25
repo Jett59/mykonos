@@ -36,10 +36,11 @@ bool blockMapTest(::test::Logger logger) {
   logger("blockMapTest: simple allocation test passed\n");
   // Free and allocate again
   map.returnMemory(ptr, 0x2000);
-  if (map.allocate(0x2000) == nullptr) {
+  if ((ptr = map.allocate(0x2000)) == nullptr) {
     logger("blockMapTest failed: Allocate/free does not work properly\n");
     return false;
   }
+  map.returnMemory(ptr, 0x2000);
   logger("blockMapTest: Allocate/free test passed\n");
   // Stress test (test the merging function)
   for (int i = 0; i < 1000; i++) {
@@ -51,7 +52,7 @@ bool blockMapTest(::test::Logger logger) {
       map.returnMemory(allocatedMemory, 0x2000 / (i + 1));
     }
   }
-  logger("blockMapTest: Passed stress tester");
+  logger("blockMapTest: Passed stress tester\n");
   logger("blockMapTest: Succeeded\n");
   return true;
 }
