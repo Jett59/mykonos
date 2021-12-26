@@ -88,7 +88,7 @@ bool blockMapTest(::test::Logger logger) {
            "the middle\n");
     return false;
   }
-  logger("blockMapTest: Passed reserve test");
+  logger("blockMapTest: Passed reserve test\n");
   logger("blockMapTest: Succeeded\n");
   return true;
 }
