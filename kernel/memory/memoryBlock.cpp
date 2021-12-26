@@ -64,6 +64,34 @@ void *BlockMap::allocate(size_t amount) {
   }
   return nullptr; // Not enough room in the block map
 }
+void BlockMap::reserve(Block blockToRemove) {
+  size_t blockToRemoveStart = (size_t)blockToRemove.getStart();
+  size_t blockToRemoveEnd = (size_t)blockToRemove.getEnd();
+  for (unsigned i = 0; i < numBlocks; i++) {
+    Block &currentBlock = blocks[i];
+    size_t currentBlockStart = (size_t)currentBlock.getStart();
+    size_t currentBlockEnd = (size_t)currentBlock.getEnd();
+    if (currentBlockStart >= blockToRemoveEnd) {
+      continue;
+    } else if (currentBlockEnd <= blockToRemoveStart) {
+      continue;
+    } else if (currentBlockStart >= blockToRemoveStart &&
+               currentBlockEnd <=
+                   blockToRemoveEnd) { // currentBlock is inside blockToRemove
+      currentBlock = Block();
+    } else { // There is some intersection between the blocks
+    if (currentBlockStart >= blockToRemoveStart) {
+      currentBlock.start = blockToRemove.end;
+    }else if (currentBlockEnd <= blockToRemoveEnd) {
+      currentBlock.start = blockToRemove.end;
+    }else { // blockToRemove is entirely inside currentBlock
+      currentBlock = Block();
+      addBlock(Block((void *)currentBlockStart, (void *)blockToRemoveEnd));
+      addBlock(Block((void *)blockToRemoveEnd, (void *)currentBlockEnd));
+    }
+    }
+  }
+}
 
 void BlockBuffer::addBlock(Block block) {
   if (numBlocks < BLOCK_BUFFER_SIZE) {

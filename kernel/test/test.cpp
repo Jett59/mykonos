@@ -33,6 +33,8 @@ bool runTests(Logger logger) {
     }
   }
   logger("All tests passed\n");
+#else
+  logger("---Skipping tests: not a debug build\n");
 #endif
   return true;
 }

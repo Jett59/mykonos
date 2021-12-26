@@ -54,6 +54,13 @@ bool blockMapTest(::test::Logger logger) {
     }
   }
   logger("blockMapTest: Passed stress tester\n");
+  // Reserve test
+  map.reserve(Block((void *)0x1000, (void *)0x3000)); // Reserve the whole map
+  if (map.allocate(1) != nullptr) {
+    logger("blockMapTest failed: reserving memory failed");
+    return false;
+  }
+  logger("blockMapTest: Passed reserve test");
   logger("blockMapTest: Succeeded\n");
   return true;
 }
