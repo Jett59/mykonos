@@ -67,6 +67,7 @@ void *BlockMap::allocate(size_t amount) {
 void BlockMap::reserve(Block blockToRemove) {
   size_t blockToRemoveStart = (size_t)blockToRemove.getStart();
   size_t blockToRemoveEnd = (size_t)blockToRemove.getEnd();
+  merge();
   for (unsigned i = 0; i < numBlocks; i++) {
     Block &currentBlock = blocks[i];
     size_t currentBlockStart = (size_t)currentBlock.getStart();
@@ -83,10 +84,10 @@ void BlockMap::reserve(Block blockToRemove) {
     if (currentBlockStart >= blockToRemoveStart) {
       currentBlock.start = blockToRemove.end;
     }else if (currentBlockEnd <= blockToRemoveEnd) {
-      currentBlock.start = blockToRemove.end;
+      currentBlock.end = blockToRemove.start;
     }else { // blockToRemove is entirely inside currentBlock
       currentBlock = Block();
-      addBlock(Block((void *)currentBlockStart, (void *)blockToRemoveEnd));
+      addBlock(Block((void *)currentBlockStart, (void *)blockToRemoveStart));
       addBlock(Block((void *)blockToRemoveEnd, (void *)currentBlockEnd));
     }
     }
