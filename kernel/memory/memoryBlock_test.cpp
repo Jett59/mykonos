@@ -83,6 +83,11 @@ bool blockMapTest(::test::Logger logger) {
     logger("blockMapTest failed: Reserving in the middle of a block failed\n");
     return false;
   }
+  if (map.allocate(1) != nullptr) {
+    logger("blockMapTest failed: Excess memory in the block after reserving in "
+           "the middle");
+    return false;
+  }
   logger("blockMapTest: Passed reserve test");
   logger("blockMapTest: Succeeded\n");
   return true;
