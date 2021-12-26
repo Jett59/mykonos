@@ -54,6 +54,41 @@ bool blockMapTest(::test::Logger logger) {
     }
   }
   logger("blockMapTest: Passed stress tester\n");
+  map = BlockMap();
+  // Reserve test
+  map.reserve(Block((void *)0x1000, (void *)0x3000)); // Reserve the whole map
+  if (map.allocate(1) != nullptr) {
+    logger("blockMapTest failed: reserving memory failed\n");
+    return false;
+  }
+  map.addBlock(Block((void *)0x1000, (void *)0x3000));
+  map.reserve(Block((void *)0x1000, (void *)0x2000));
+  if (map.allocate(0x1000) != (void *)0x2000) {
+    logger("blockMapTest failed: Reserving from the start of a block failed\n");
+    return false;
+  }
+  map.addBlock(Block((void *)0x1000, (void *)0x3000));
+  map.reserve(Block((void *)0x1800, (void *)0x2800));
+  if (map.allocate(0x1000) != nullptr) {
+    logger("blockMapTest failed: Reserving the middle of a block "
+           "failed\n");
+    return false;
+  }
+  if (map.allocate(0x800) != (void *)0x1000) {
+    logger(
+        "blockMapTest failed: Reserving in the middle of the block failed\n");
+    return false;
+  }
+  if (map.allocate(0x800) != (void *)0x2800) {
+    logger("blockMapTest failed: Reserving in the middle of a block failed\n");
+    return false;
+  }
+  if (map.allocate(1) != nullptr) {
+    logger("blockMapTest failed: Excess memory in the block after reserving in "
+           "the middle\n");
+    return false;
+  }
+  logger("blockMapTest: Passed reserve test\n");
   logger("blockMapTest: Succeeded\n");
   return true;
 }

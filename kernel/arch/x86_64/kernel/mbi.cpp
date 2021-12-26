@@ -21,6 +21,9 @@
 
 extern "C" {
 extern multiboot::Mbi *mbiPointer;
+
+extern void *kernelPhysicalAddress[0];
+extern void *kernelPhysicalEnd[0];
 }
 
 namespace memory {
@@ -63,6 +66,9 @@ static void parseMemoryMapTag(MemoryMapTag *memoryMap) {
       memory::physicalMemory.addBlock(memory::Block(entryBase, entryEnd));
     }
   }
+  memory::physicalMemory.reserve(
+      memory::Block((void *)PAGE_ALIGN_DOWN((size_t)kernelPhysicalAddress),
+                    (void *)PAGE_ALIGN_UP((size_t)kernelPhysicalEnd)));
 }
 static void parseFrameBufferTag(FrameBufferTag *tag) {
   display::frameBuffer.pointer = (uint8_t *)tag->address;
