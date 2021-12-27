@@ -43,8 +43,9 @@ void kfree(void *ptr) {
   }
 }
 void *mapAddress(void *physicalAddress, size_t size) {
+  void *physicalEnd = (void *)PAGE_ALIGN_UP((size_t)physicalAddress + size);
   physicalAddress = (void *)PAGE_ALIGN_DOWN((size_t)physicalAddress);
-  size = PAGE_ALIGN_UP(size);
+  size = (size_t)((size_t)physicalEnd - (size_t)physicalAddress);
   void *ptr = virtualMemory.allocate(size);
   for (size_t i = 0; i < size; i += PAGE_SIZE) {
     paging::mapPage(ADD_TO_POINTER(ptr, i), ADD_TO_POINTER(physicalAddress, i),
