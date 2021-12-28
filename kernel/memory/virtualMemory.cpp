@@ -24,9 +24,8 @@ extern char kernelHeapStart, kernelHeapEnd;
 }
 
 namespace memory {
-static BlockMap virtualMemoryMap;
-BlockAllocator virtualMemory(virtualMemoryMap);
+BlockMap virtualMemory;
 __attribute__((constructor)) static void initVirtualMemory() {
-  virtualMemoryMap.addBlock(Block(&kernelHeapStart, &kernelHeapEnd));
+  virtualMemory.addBlock(Block(&kernelHeapStart, &kernelHeapEnd));
 }
 } // namespace memory
