@@ -65,34 +65,6 @@ public:
   }
   void reserve(Block block);
 };
-#define BLOCK_BUFFER_SIZE 256
-class BlockBuffer {
-private:
-  Block blocks[BLOCK_BUFFER_SIZE];
-  unsigned numBlocks = 0;
-
-public:
-  void addBlock(Block block);
-  Block removeBlock(void *startAddress);
-};
-class BlockAllocator {
-private:
-  BlockBuffer allocated;
-  BlockMap &freeMemory;
-
-public:
-  BlockAllocator(BlockMap &freeMemory) : freeMemory(freeMemory) {}
-  void *allocate(size_t amount) {
-    void *result = freeMemory.allocate(amount);
-    allocated.addBlock(Block(result, (void *)((uint8_t *)result + amount)));
-    return result;
-  }
-  size_t free(void *ptr) {
-    size_t size = allocated.removeBlock(ptr).capacity();
-    freeMemory.returnMemory(ptr, size);
-    return size;
-  }
-};
 } // namespace memory
 
 #endif

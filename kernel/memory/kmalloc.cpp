@@ -26,18 +26,30 @@
 #define ADD_TO_POINTER(PTR, AMOUNT) ((void *)((uint8_t *)PTR + AMOUNT))
 
 namespace memory {
+struct KmallocHeader {
+  size_t size;
+};
 void *kmalloc(size_t size) {
   size = PAGE_ALIGN_UP(size);
   void *ptr = virtualMemory.allocate(size);
+  if (ptr == nullptr) {
+    return nullptr;
+  }
   for (size_t i = 0; i < size; i += PAGE_SIZE) {
     paging::mapPage(ADD_TO_POINTER(ptr, i),
                     (void *)(memory::allocateFrame() * PAGE_SIZE),
                     paging::PageTableFlags::WRITABLE, true);
   }
+  KmallocHeader *headerPtr = (KmallocHeader *)ptr;
+  *headerPtr = {.size = size};
+  ptr = (void *)(headerPtr + 1);
   return ptr;
 }
 void kfree(void *ptr) {
-  size_t size = virtualMemory.free(ptr);
+  KmallocHeader *headerPtr = (KmallocHeader *)ptr - 1;
+  size_t size = headerPtr->size;
+  ptr = (void *)headerPtr;
+  virtualMemory.returnMemory(ptr, size);
   for (size_t i = 0; i < size; i += PAGE_SIZE) {
     paging::unmapPage(ADD_TO_POINTER(ptr, i));
   }

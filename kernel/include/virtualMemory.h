@@ -20,7 +20,7 @@
 #include <memoryBlock.h>
 
 namespace memory {
-extern BlockAllocator virtualMemory;
+extern BlockMap virtualMemory;
 }
 
 #endif
