@@ -35,7 +35,7 @@ bool kmallocTest(::test::Logger logger) {
       break;
     }
   }
-  // Yes, clean up
+  // Clean up
   for (int i = 0; i < numAllocated; i++) {
     kfree(allocatedMemory[i]);
   }
