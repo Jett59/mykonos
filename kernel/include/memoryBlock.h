@@ -65,17 +65,6 @@ public:
   }
   void reserve(Block block);
 };
-#define BLOCK_BUFFER_SIZE 256
-class BlockBuffer {
-private:
-  Block blocks[BLOCK_BUFFER_SIZE];
-  unsigned numBlocks = 0;
-
-public:
-  void addBlock(Block block);
-  Block removeBlock(void *startAddress);
-};
-
 } // namespace memory
 
 #endif
