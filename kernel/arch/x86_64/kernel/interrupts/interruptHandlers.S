@@ -50,7 +50,7 @@ noErrorCodeExceptionHandler 2 /*#NMI: Non-maskable interrupt*/
 noErrorCodeExceptionHandler 3 /*#BP: Breakpoint*/
 noErrorCodeExceptionHandler 4 /*#OF: Overflow*/
 noErrorCodeExceptionHandler 5 /*#BR: Bound range exceeded*/
-noErrorCodeExceptionHandler 6 /*#OF: Invalid opcode*/
+noErrorCodeExceptionHandler 6 /*#UD: Invalid opcode*/
 noErrorCodeExceptionHandler 7 /*#NM: Device not available*/
 errorCodeExceptionHandler 8 /*#DF: Double fault*/
 reservedExceptions 1
