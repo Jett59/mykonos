@@ -48,7 +48,6 @@ extern "C" [[noreturn]] void kstart() {
     // Continue
     interrupts::init();
     kout::print("Installed interrupt handlers\n");
-    __asm__ volatile("int $0xFF");
   } else {
     // The tests failed! Abort
   }
