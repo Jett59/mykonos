@@ -31,6 +31,16 @@ struct IdtEntry {
   uint16_t offsetMiddle; // 31:16
   uint32_t offsetHigh;   // 63:32
   uint32_t reserved;
+
+  IdtEntry() {}
+  IdtEntry(void (*function)(), int istNum, bool trap) : gdtSelector(8), istEntry(istNum), type(trap ? 0xF : 0xE), present(1) {
+    uint64_t functionPointer = (uint64_t)function;
+    offsetLow = functionPointer & 0xFFFF;
+    functionPointer >>= 16;
+    offsetMiddle = functionPointer & 0xFFFF;
+    functionPointer >>= 16;
+    offsetHigh = functionPointer;
+  }
 } __attribute__((packed));
 static_assert(sizeof(IdtEntry) == 16, "IdtEntry must be 16 bytes");
 

@@ -14,16 +14,21 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
-#include <idt.h>
-#include <interrupts.h>
 
-typedef void (*InterruptHandlerFunction)();
+currentInterruptNumber = 32
+.rept 256 - 32 /*Number of real (non-exception) interrupts*/
+.section .text.interruptHandlers, "ax"
+1:
+pushq $currentInterruptNumber
+jmp genericInterruptHandler
 
-extern "C" {
-extern InterruptHandlerFunction idtFunctions[256];
-}
+.section .rodata.interruptHandlers, "a"
+.quad 1b
 
-namespace interrupts {
-static IdtEntry idt[256];
-static IdtPointer idtPointer;
-} // namespace interrupts
+currentInterruptNumber = currentInterruptNumber + 1
+.endr
+
+.section .text.interruptHandlers, "ax"
+genericInterruptHandler:
+addq $8, %rsp
+iretq
