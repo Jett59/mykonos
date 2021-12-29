@@ -127,6 +127,8 @@ gdt_pointer:
 .word gdt_end - gdt - 1 /*Size - 1*/
 .quad gdt /*Pointer*/
 
+.section .rodata, "a"
+
 gdt:
 .quad 0 /*The first descriptor must be null*/
 .quad GDT_PRESENT | GDT_LONG | GDT_NOT_SYSTEM | GDT_EXECUTABLE /*Kernel code segment*/

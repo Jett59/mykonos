@@ -23,6 +23,8 @@
 
 #include <test.h>
 
+#include <interrupts.h>
+
 typedef void (*ConstructorOrDestructor)();
 
 extern "C" {
@@ -44,7 +46,9 @@ extern "C" [[noreturn]] void kstart() {
   kout::print("Initialised the console\n\n");
   if (test::runTests(kout::print)) {
     // Continue
-    kout::print(10203ul);
+    interrupts::init();
+    kout::print("Installed interrupt handlers\n");
+    __asm__ volatile("int $0xFF");
   } else {
     // The tests failed! Abort
   }

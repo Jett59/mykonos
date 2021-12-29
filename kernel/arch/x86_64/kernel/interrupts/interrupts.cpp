@@ -28,9 +28,12 @@ static IdtEntry idt[256];
 static IdtPointer idtPointer;
 void init() {
   for (int i = 0; i < 256; i++) {
-    idt[i] =
-        IdtEntry(idtFunctions[i], 0,
-                 i < 32); // First 32 are traps (exceptions), the rest are interrupts
+    idt[i] = IdtEntry(
+        idtFunctions[i], 0,
+        i < 32); // First 32 are traps (exceptions), the rest are interrupts
   }
+  idtPointer.pointer = idt;
+  idtPointer.limit = sizeof(idt) - 1;
+  __asm__ volatile("lidt %0" : : "m"(idtPointer) : "memory");
 }
 } // namespace interrupts
