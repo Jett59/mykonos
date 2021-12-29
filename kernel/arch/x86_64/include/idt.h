@@ -20,24 +20,24 @@
 #include <stdint.h>
 
 namespace interrupts {
-struct IdtEntry __attribute__((packed)) {
+struct IdtEntry {
   uint16_t offsetLow; // 15:0
   uint16_t gdtSelector;
   uint8_t istEntry; // 3-bit interrupt stack table number
   uint8_t type : 4; // 0xE = interrupt gate, 0xF = trap gate
   uint8_t zero : 1; // Must be zero
   uint8_t privilege : 2;
-  uint8_t present;
+  uint8_t present : 1;
   uint16_t offsetMiddle; // 31:16
   uint32_t offsetHigh;   // 63:32
   uint32_t reserved;
-};
+} __attribute__((packed));
 static_assert(sizeof(IdtEntry) == 16, "IdtEntry must be 16 bytes");
 
-struct IdtPointer __attribute__((packed)) {
+struct IdtPointer {
   uint16_t limit; // size - 1
   IdtEntry *pointer;
-};
+} __attribute__((packed));
 static_assert(sizeof(IdtPointer) == 10, "IdtPointer must be 10 bytes");
 } // namespace interrupts
 
