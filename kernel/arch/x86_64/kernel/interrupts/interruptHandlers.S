@@ -34,6 +34,12 @@ jmp genericExceptionHandler
 .quad 1b
 .endm
 
+.macro reservedExceptions count=1
+.rep \count
+errorCodeExceptionHandler -1
+.endr
+.endm
+
 .section .rodata.interruptHandlers, "a"
 .globl idtFunctions
 idtFunctions:
@@ -47,7 +53,7 @@ noErrorCodeExceptionHandler 5 /*#BR: Bound range exceeded*/
 noErrorCodeExceptionHandler 6 /*#OF: Invalid opcode*/
 noErrorCodeExceptionHandler 7 /*#NM: Device not available*/
 errorCodeExceptionHandler 8 /*#DF: Double fault*/
-/*Skip 9*/
+reservedExceptions 1
 errorCodeExceptionHandler 10 /*#TS: Invalid tss*/
 errorCodeExceptionHandler 11 /*#NP: Segment not present*/
 errorCodeExceptionHandler 12 /*#SS: Stack exception*/
@@ -57,12 +63,13 @@ noErrorCodeExceptionHandler 16 /*#MF: X87 FPU exception*/
 errorCodeExceptionHandler 17 /*#AC: Alignment check exception*/
 noErrorCodeExceptionHandler 18 /*#MC: Machine check*/
 noErrorCodeExceptionHandler 19 /*#XF: SSE exception*/
-/*Skip 20*/
+reservedExceptions 1
 errorCodeExceptionHandler 21 /*#CP: Control transfer exception*/
-/*Skip a few*/
+reservedExceptions 7
 noErrorCodeExceptionHandler 28 /*#HV: Hypervisor injection exception*/
 errorCodeExceptionHandler 29 /*#VC: VMM communication error*/
 errorCodeExceptionHandler 30 /*#SX: Security exception*/
+reservedExceptions 1
 
 currentInterruptNumber = 32
 .rept 256 - 32 /*Number of real (non-exception) interrupts*/

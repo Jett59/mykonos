@@ -26,4 +26,11 @@ extern InterruptHandlerFunction idtFunctions[256];
 namespace interrupts {
 static IdtEntry idt[256];
 static IdtPointer idtPointer;
+void init() {
+  for (int i = 0; i < 256; i++) {
+    idt[i] =
+        IdtEntry(idtFunctions[i], 0,
+                 i < 32); // First 32 are traps (exceptions), the rest are interrupts
+  }
+}
 } // namespace interrupts
