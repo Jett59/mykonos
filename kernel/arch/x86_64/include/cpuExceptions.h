@@ -17,15 +17,15 @@
 #ifndef _CPU_EXCEPTIONS_H
 #define _CPU_EXCEPTIONS_H
 
-#define CPU_DE 0 /*Division exception*/
-#define CPU_DB 1 /*Debug*/
+#define CPU_DE 0  /*Division exception*/
+#define CPU_DB 1  /*Debug*/
 #define CPU_NMI 2 /*Non-Maskable Interrupt*/
 #define CPU_BP 3  /*Breakpoint*/
-#define CPU_OF 4 /*Overflow exception*/
-#define CPU_BR 5 /*Bound Range exception*/
-#define CPU_UD 6 /*Invalid opcode*/
-#define CPU_NM 7 /*Device not available*/
-#define CPU_DF 8 /*Double fault*/
+#define CPU_OF 4  /*Overflow exception*/
+#define CPU_BR 5  /*Bound Range exception*/
+#define CPU_UD 6  /*Invalid opcode*/
+#define CPU_NM 7  /*Device not available*/
+#define CPU_DF 8  /*Double fault*/
 #define CPU_TS 10 /*Invalid TSS*/
 #define CPU_NP 11 /*Segment Not Present*/
 #define CPU_SS 12 /*Stack exception*/
