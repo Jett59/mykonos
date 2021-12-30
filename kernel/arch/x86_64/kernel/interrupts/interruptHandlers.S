@@ -103,6 +103,7 @@ pushq %r10
 pushq %r11
 movq 8(%rbp), %rdi /*Exception number*/
 movq 16(%rbp), %rsi /*Error code*/
+leaq 24(%rbp), %rdx /*Interrupt stack frame*/
 callq handleCpuException
 popq %r11
 popq %r10

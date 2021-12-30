@@ -20,8 +20,21 @@
 
 #include <stdint.h>
 
-extern "C" void handleCpuException(uint64_t exceptionNumber,
-                                   uint64_t errorCode) {
+struct InterruptStackFrame {
+  void *rip;
+  uint64_t cs;
+  uint64_t rflags;
+  void *rsp;
+  uint64_t ss;
+};
+static_assert(sizeof(InterruptStackFrame) == 40,
+              "InterruptStackFrame must be 40 bytes");
+
+extern "C" void handleCpuException(uint64_t exceptionNumber, uint64_t errorCode,
+                                   InterruptStackFrame *interruptStackFrame) {
+  kout::print("Exception at address 0x");
+  kout::print((unsigned long)interruptStackFrame->rip, 16);
+  kout::print(":\n");
   switch (exceptionNumber) {
   case CPU_DE: {
     kout::print("Division exception\n");
