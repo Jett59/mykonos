@@ -50,7 +50,9 @@ extern "C" [[noreturn]] void kstart() {
     // Continue
     interrupts::init();
     kout::print("Installed interrupt handlers\n");
-    __asm__ volatile("mov (%0), %1" : : "c"(0), "a"(0));
+    __asm__ volatile(
+        "movw $0x80, %ax;"
+        "movw %ax, %ds");
     kpanic("It all worked");
   } else {
     // The tests failed! Abort

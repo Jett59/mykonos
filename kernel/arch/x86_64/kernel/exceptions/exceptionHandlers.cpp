@@ -48,7 +48,7 @@ extern "C" void handleCpuException(uint64_t exceptionNumber,
     break;
   }
   case CPU_UD: {
-    kout::print("Invalid opcode");
+    kout::print("Invalid opcode\n");
     break;
   }
   case CPU_NM: {
@@ -56,7 +56,7 @@ extern "C" void handleCpuException(uint64_t exceptionNumber,
     break;
   }
   case CPU_DF: {
-    kout::print("Double fault");
+    kout::print("Double fault\n");
     break;
   }
   case CPU_TS: {
@@ -74,8 +74,8 @@ extern "C" void handleCpuException(uint64_t exceptionNumber,
     break;
   }
   case CPU_GP: {
-    kout::print("General protection fault (");
-    kout::print(errorCode);
+    kout::print("General protection fault (0x");
+    kout::print(errorCode, 16);
     kout::print(")\n");
     break;
   }
@@ -114,11 +114,11 @@ extern "C" void handleCpuException(uint64_t exceptionNumber,
     break;
   }
   case CPU_VC: {
-    kout::print("VMM injection exception\n");
+    kout::print("VMM communication exception\n");
     break;
   }
   case CPU_SX: {
-    kout::print("Security exception");
+    kout::print("Security exception\n");
     break;
   }
   default:

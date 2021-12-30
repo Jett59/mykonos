@@ -57,7 +57,7 @@ reservedExceptions 1
 errorCodeExceptionHandler 10 /*#TS: Invalid tss*/
 errorCodeExceptionHandler 11 /*#NP: Segment not present*/
 errorCodeExceptionHandler 12 /*#SS: Stack exception*/
-errorCodeExceptionHandler 14 /*#GP: General protection fault*/
+errorCodeExceptionHandler 13 /*#GP: General protection fault*/
 errorCodeExceptionHandler 14 /*#PF: Page fault*/
 reservedExceptions 1
 noErrorCodeExceptionHandler 16 /*#MF: X87 FPU exception*/
