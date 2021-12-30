@@ -26,6 +26,7 @@ include arch/$(ARCH)/Make.steps
 include test/Make.steps
 include memory/Make.steps
 include display/Make.steps
+include error/Make.steps
 
 # Enable runtime tests if requested
 ifeq ($(TEST),ON)

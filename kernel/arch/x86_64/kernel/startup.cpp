@@ -25,6 +25,8 @@
 
 #include <interrupts.h>
 
+#include <kpanic.h>
+
 typedef void (*ConstructorOrDestructor)();
 
 extern "C" {
@@ -48,10 +50,9 @@ extern "C" [[noreturn]] void kstart() {
     // Continue
     interrupts::init();
     kout::print("Installed interrupt handlers\n");
+    kpanic("It all worked");
   } else {
     // The tests failed! Abort
-  }
-  while (true) {
-    __asm__("hlt");
+    kpanic("The tests failed!");
   }
 }
