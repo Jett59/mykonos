@@ -57,8 +57,9 @@ reservedExceptions 1
 errorCodeExceptionHandler 10 /*#TS: Invalid tss*/
 errorCodeExceptionHandler 11 /*#NP: Segment not present*/
 errorCodeExceptionHandler 12 /*#SS: Stack exception*/
-errorCodeExceptionHandler 14 /*#GP: General protection fault*/
+errorCodeExceptionHandler 13 /*#GP: General protection fault*/
 errorCodeExceptionHandler 14 /*#PF: Page fault*/
+reservedExceptions 1
 noErrorCodeExceptionHandler 16 /*#MF: X87 FPU exception*/
 errorCodeExceptionHandler 17 /*#AC: Alignment check exception*/
 noErrorCodeExceptionHandler 18 /*#MC: Machine check*/
@@ -72,7 +73,7 @@ errorCodeExceptionHandler 30 /*#SX: Security exception*/
 reservedExceptions 1
 
 currentInterruptNumber = 32
-.rept 256 - 32 /*Number of real (non-exception) interrupts*/
+.rept 255 - 32 /*Number of real (non-exception) interrupts*/
 .section .text.interruptHandlers, "ax"
 1:
 pushq $currentInterruptNumber
@@ -89,6 +90,31 @@ genericInterruptHandler:
 addq $8, %rsp
 iretq
 genericExceptionHandler:
-cli
-1: hlt
-jmp 1b
+pushq %rbp
+movq %rsp, %rbp
+pushq %rax
+pushq %rcx
+pushq %rdx
+pushq %rdi
+pushq %rsi
+pushq %r8
+pushq %r9
+pushq %r10
+pushq %r11
+movq 8(%rbp), %rdi /*Exception number*/
+movq 16(%rbp), %rsi /*Error code*/
+leaq 24(%rbp), %rdx /*Interrupt stack frame*/
+callq handleCpuException
+popq %r11
+popq %r10
+popq %r9
+popq %r8
+popq %rsi
+popq %rdi
+popq %rdx
+popq %rcx
+popq %rax
+movq %rbp, %rsp
+popq %rbp
+subq $16, %rsp /*Remove exception number and error code*/
+iretq
