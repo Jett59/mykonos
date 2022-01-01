@@ -56,6 +56,9 @@ void *mapAddress(void *physicalAddress, size_t size) {
   physicalAddress = (void *)PAGE_ALIGN_DOWN((size_t)physicalAddress);
   size = (size_t)((size_t)physicalEnd - (size_t)physicalAddress);
   void *ptr = virtualMemory.allocate(size);
+  if (ptr == nullptr) {
+    return nullptr;
+  }
   for (size_t i = 0; i < size; i += PAGE_SIZE) {
     paging::mapPage(ADD_TO_POINTER(ptr, i), ADD_TO_POINTER(physicalAddress, i),
                     paging::PageTableFlags::WRITABLE, false);

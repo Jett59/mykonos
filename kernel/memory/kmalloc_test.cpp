@@ -47,7 +47,22 @@ bool kmallocTest(::test::Logger logger) {
   logger("kmallocTest: Succeeded\n");
   return true;
 }
+bool mapMemoryTest(::test::Logger logger) {
+  logger("mapMemoryTest:\n");
+  for (int i = 0; i < 4096; i++) {
+    void *ptr = mapAddress(nullptr, 1048576);
+    if (ptr == nullptr) {
+      logger("mapMemoryTest: Stress test failed\n");
+      return false;
+    } else {
+      unmapMemory(ptr, 1048576);
+    }
+  }
+  logger("mapMemoryTest: Succeeded\n");
+  return true;
+}
 ADD_TEST(kmallocTest);
+ADD_TEST(mapMemoryTest);
 } // namespace test
 } // namespace memory
 
