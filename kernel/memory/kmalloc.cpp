@@ -30,7 +30,7 @@ struct KmallocHeader {
   size_t size;
 };
 void *kmalloc(size_t size) {
-  size = PAGE_ALIGN_UP(size);
+  size = PAGE_ALIGN_UP(size + sizeof(KmallocHeader));
   void *ptr = virtualMemory.allocate(size);
   if (ptr == nullptr) {
     return nullptr;
@@ -49,10 +49,7 @@ void kfree(void *ptr) {
   KmallocHeader *headerPtr = (KmallocHeader *)ptr - 1;
   size_t size = headerPtr->size;
   ptr = (void *)headerPtr;
-  virtualMemory.returnMemory(ptr, size);
-  for (size_t i = 0; i < size; i += PAGE_SIZE) {
-    paging::unmapPage(ADD_TO_POINTER(ptr, i));
-  }
+  unmapMemory(ptr, size);
 }
 void *mapAddress(void *physicalAddress, size_t size) {
   void *physicalEnd = (void *)PAGE_ALIGN_UP((size_t)physicalAddress + size);
@@ -64,5 +61,14 @@ void *mapAddress(void *physicalAddress, size_t size) {
                     paging::PageTableFlags::WRITABLE, false);
   }
   return ptr;
+}
+void unmapMemory(void *address, size_t size) {
+  void *endAddress = (void *)PAGE_ALIGN_UP((size_t)address + size);
+  address = (void *)PAGE_ALIGN_DOWN((size_t)address);
+  size = (size_t)endAddress - (size_t)address;
+  virtualMemory.returnMemory(address, size);
+  for (size_t i = 0; i < size; i += PAGE_SIZE) {
+    paging::unmapPage(ADD_TO_POINTER(address, i));
+  }
 }
 } // namespace memory

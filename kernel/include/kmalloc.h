@@ -24,6 +24,7 @@ void *kmalloc(size_t size);
 void kfree(void *ptr);
 
 void *mapAddress(void *physicalAddress, size_t size);
+void unmapMemory(void *address, size_t size);
 } // namespace memory
 
 #endif
