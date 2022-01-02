@@ -58,6 +58,7 @@ bool mapMemoryTest(::test::Logger logger) {
       unmapMemory(ptr, 1048576);
     }
   }
+  logger("mapMemoryTest: Passed stress test\n");
   logger("mapMemoryTest: Succeeded\n");
   return true;
 }

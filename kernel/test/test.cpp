@@ -25,17 +25,25 @@ namespace test {
 bool runTests(Logger logger) {
 #ifdef RUNTIME_TESTS
   logger("Running tests...\n");
+  unsigned passed = 0, failed = 0;
   for (TestFunction *testFunction = __test_array_start;
        testFunction != __test_array_end; testFunction++) {
-    if (!(*testFunction)(logger)) {
-      logger("A test failed!\n");
-      return false;
+    if ((*testFunction)(logger)) {
+      passed++;
+    } else {
+      failed++;
     }
   }
-  logger("All tests passed\n");
+  if (failed == 0) {
+    logger("All tests passed\n");
+    return true;
+  } else {
+    logger("There were test failures\n");
+    return false;
+  }
 #else
   logger("Skipping tests: not a debug build\n");
-#endif
   return true;
+#endif
 }
 } // namespace test
