@@ -19,7 +19,7 @@
 extern "C" void *memset(void *str, int c, size_t n) {
   void *tmpStr = str;
   __asm__ volatile("rep stosq"
-                   : "=D"(tmpStr)
+                   : "+D"(tmpStr)
                    : "a"((unsigned char)c * 0x0101010101010101), "c"(n / 8)
                    : "memory");
   __asm__ volatile("rep stosb"
@@ -32,7 +32,7 @@ extern "C" void *memcpy(void *dst, const void *src, size_t n) {
   void *tmpDst = dst;
   const void *tmpSrc = src;
   __asm__ volatile("rep movsq"
-                   : "=D"(tmpDst), "=S"(tmpSrc)
+                   : "+D"(tmpDst), "+S"(tmpSrc)
                    : "c"(n / 8)
                    : "memory");
   __asm__ volatile("rep movsb"
@@ -41,9 +41,9 @@ extern "C" void *memcpy(void *dst, const void *src, size_t n) {
                    : "memory");
   return dst;
 }
-int memcmp(const void *a, const void *b, size_t n) {
+extern "C" int memcmp(const void *a, const void *b, size_t n) {
   size_t finalN = n;
-  __asm__ volatile("repe cmpsb" : "=c"(finalN) : "D"(a), "S"(b) : "memory");
+  __asm__ volatile("repe cmpsb" : "+c"(finalN) : "D"(a), "S"(b) : "memory");
   if (finalN == 0) {
     return 0;
   } else {
