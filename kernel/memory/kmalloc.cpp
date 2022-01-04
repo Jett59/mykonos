@@ -52,6 +52,7 @@ void kfree(void *ptr) {
   unmapMemory(ptr, size);
 }
 void *mapAddress(void *physicalAddress, size_t size) {
+  size_t pageOffset = (size_t)physicalAddress % PAGE_SIZE;
   void *physicalEnd = (void *)PAGE_ALIGN_UP((size_t)physicalAddress + size);
   physicalAddress = (void *)PAGE_ALIGN_DOWN((size_t)physicalAddress);
   size = (size_t)((size_t)physicalEnd - (size_t)physicalAddress);
@@ -63,7 +64,7 @@ void *mapAddress(void *physicalAddress, size_t size) {
     paging::mapPage(ADD_TO_POINTER(ptr, i), ADD_TO_POINTER(physicalAddress, i),
                     paging::PageTableFlags::WRITABLE, false);
   }
-  return ptr;
+  return ADD_TO_POINTER(ptr, pageOffset);
 }
 void unmapMemory(void *address, size_t size) {
   void *endAddress = (void *)PAGE_ALIGN_UP((size_t)address + size);
