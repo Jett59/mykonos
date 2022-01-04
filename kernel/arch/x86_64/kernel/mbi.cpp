@@ -97,5 +97,7 @@ static void parseFrameBufferTag(FrameBufferTag *tag) {
 static void parseOldRsdpTag(OldRsdpTag *tag) {
   memcpy(&acpi::rsdp, &tag->rsdp, sizeof(acpi::RsdpV1));
 }
-static void parseNewRsdpTag(NewRsdpTag *tag) { acpi::rsdp = tag->rsdp; }
+static void parseNewRsdpTag(NewRsdpTag *tag) {
+  memcpy(&acpi::rsdp, &tag->rsdp, sizeof(acpi::RsdpV2));
+}
 } // namespace multiboot
