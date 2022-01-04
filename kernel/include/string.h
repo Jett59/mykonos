@@ -27,4 +27,8 @@ int strlen(const char *str);
 char *strcpy(char *dst, const char *src);
 }
 
+static inline bool memeq(const void *a, const void *b, size_t n) {
+  return memcmp(a, b, n) == 0;
+}
+
 #endif

@@ -39,6 +39,8 @@ bool memcmpTest(::test::Logger logger) {
     logger("memcmpTest: Failed inequality test\n");
     return false;
   }
+  logger("memcmpTest: Passed inequality test\n");
+  logger("memcmpTest: Succeeded\n");
   return true;
 }
 ADD_TEST(memcmpTest);
