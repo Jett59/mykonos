@@ -14,6 +14,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     */
+#include <string.h>
 
 #include <mbi.h>
 #include <pageTableInit.h>
@@ -26,6 +27,8 @@
 #include <interrupts.h>
 
 #include <kpanic.h>
+
+#include <acpi/rsdp.h>
 
 typedef void (*ConstructorOrDestructor)();
 
@@ -49,7 +52,16 @@ extern "C" [[noreturn]] void kstart() {
   if (test::runTests(kout::print)) {
     // Continue
     interrupts::init();
-    kout::print("Installed interrupt handlers\n");
+    kout::print("Installed interrupt handlers\n\n");
+    if (!memeq(acpi::rsdp.signature, "RSD PTR ", 8)) {
+      kpanic("No acpi found");
+    }
+    if (!acpi::rsdp.doChecksum()) {
+      kpanic("Checksum of rsdp failed");
+    }
+    kout::print("Found rsdp (revision: ");
+    kout::print(acpi::rsdp.revision);
+    kout::print(")\n");
     kpanic("It all worked");
   } else {
     // The tests failed! Abort

@@ -19,6 +19,8 @@
 
 #include <stdint.h>
 
+#include <acpi/rsdp.h>
+
 namespace multiboot {
 struct MbiTag {
   uint32_t type;
@@ -26,6 +28,8 @@ struct MbiTag {
 };
 #define MBI_TAG_MEMORY 6
 #define MBI_TAG_FRAME_BUFFER 8
+#define MBI_TAG_RSDP_OLD 14
+#define MBI_TAG_RSDP_NEW 15
 
 struct MemoryMapTag {
   uint32_t type;
@@ -41,9 +45,9 @@ struct MemoryMapTag {
 };
 static_assert(
     sizeof(MemoryMapTag) == 16,
-    "Invalid padding added to MemoryMapTag. Add __attribute__((__packed__))");
+    "Invalid padding added to MemoryMapTag. Add __attribute__((packed))");
 
-struct __attribute__((__packed__)) FrameBufferTag {
+struct __attribute__((packed)) FrameBufferTag {
   uint32_t type;
   uint32_t size;
   uint64_t address;
@@ -55,6 +59,21 @@ struct __attribute__((__packed__)) FrameBufferTag {
 };
 static_assert(sizeof(FrameBufferTag) == 29,
               "Invalid padding in FrameBufferTag");
+
+struct OldRsdpTag {
+  uint32_t type;
+  uint32_t size;
+  acpi::RsdpV1 rsdp;
+};
+static_assert(sizeof(OldRsdpTag) == sizeof(acpi::RsdpV1) + 8,
+              "Invalid padding added to OldRsdpTag");
+struct NewRsdpTag {
+  uint32_t type;
+  uint32_t size;
+  acpi::RsdpV2 rsdp;
+};
+static_assert(sizeof(NewRsdpTag) == sizeof(acpi::RsdpV2) + 8,
+              "Invalid padding added to NewRsdpTag");
 
 void parseMbi();
 class Mbi {

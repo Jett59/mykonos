@@ -18,6 +18,9 @@
 #include <mbi.h>
 #include <pageConstants.h>
 #include <physicalMemory.h>
+#include <string.h>
+
+#include <acpi/rsdp.h>
 
 extern "C" {
 extern multiboot::Mbi *mbiPointer;
@@ -28,6 +31,10 @@ extern void *kernelPhysicalEnd[0];
 
 namespace memory {
 BlockMap physicalMemory;
+}
+
+namespace acpi {
+RsdpV2 rsdp;
 }
 
 namespace multiboot {
@@ -41,6 +48,8 @@ void parseMbi() {
 }
 static void parseMemoryMapTag(MemoryMapTag *memoryMap);
 static void parseFrameBufferTag(FrameBufferTag *tag);
+static void parseOldRsdpTag(OldRsdpTag *tag);
+static void parseNewRsdpTag(NewRsdpTag *tag);
 static void parseMbiTag(uint32_t type, MbiTag *tag) {
   switch (type) {
   case MBI_TAG_MEMORY: {
@@ -49,6 +58,14 @@ static void parseMbiTag(uint32_t type, MbiTag *tag) {
   }
   case MBI_TAG_FRAME_BUFFER: {
     parseFrameBufferTag((FrameBufferTag *)tag);
+    break;
+  }
+  case MBI_TAG_RSDP_OLD: {
+    parseOldRsdpTag((OldRsdpTag *)tag);
+    break;
+  }
+  case MBI_TAG_RSDP_NEW: {
+    parseNewRsdpTag((NewRsdpTag *)tag);
     break;
   }
   default:
@@ -76,5 +93,11 @@ static void parseFrameBufferTag(FrameBufferTag *tag) {
   display::frameBuffer.height = tag->height;
   display::frameBuffer.depth = tag->depth;
   display::frameBuffer.pitch = tag->pitch;
+}
+static void parseOldRsdpTag(OldRsdpTag *tag) {
+  memcpy(&acpi::rsdp, &tag->rsdp, sizeof(acpi::RsdpV1));
+}
+static void parseNewRsdpTag(NewRsdpTag *tag) {
+  memcpy(&acpi::rsdp, &tag->rsdp, sizeof(acpi::RsdpV2));
 }
 } // namespace multiboot
