@@ -43,6 +43,8 @@ public:
 protected:
   TableManager(TableType type) : type(type) {}
 };
-} // namespace acpi
+
+TableManager* loadTable(void* physicalAddress);
+}  // namespace acpi
 
 #endif

@@ -14,5 +14,40 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     */
-   #include <acpi/tables.h>
-   #include <acpi/rsdt.h>
+#include <acpi/tables.h>
+
+#include <acpi/rsdt.h>
+
+#include <kmalloc.h>
+#include <string.h>
+
+namespace acpi {
+typedef TableManager *(*TableManagerCreator)(TableHeader *);
+
+struct TableHandler {
+  char signature[5]; // Includes unused null pointer
+  TableManagerCreator creator;
+};
+
+TableManager *loadRsdt(TableHeader *header) {
+  return new RsdtTableManager(header);
+}
+
+static TableHandler tableHandlers[] = {{"RSDT", loadRsdt}, {"XSDT", loadRsdt}};
+#define numTableHandlers (sizeof(tableHandlers) / sizeof(TableHandler))
+
+TableManager *loadTable(void *physicalAddress) {
+  TableHeader *header =
+      (TableHeader *)memory::mapAddress(physicalAddress, sizeof(TableHeader));
+  size_t tableSize = header->length;
+  memory::unmapMemory(header, sizeof(TableHeader));
+  header = (TableHeader *)memory::mapAddress(physicalAddress, tableSize);
+  for (unsigned i = 0; i < numTableHandlers; i++) {
+    TableHandler &handler = tableHandlers[i];
+    if (memeq(header->signature, handler.signature, 4)) {
+      return handler.creator(header);
+    }
+  }
+  return nullptr;
+}
+} // namespace acpi
