@@ -19,6 +19,7 @@
 #include <acpi/rsdt.h>
 
 #include <kmalloc.h>
+#include <kout.h>
 #include <string.h>
 
 namespace acpi {
@@ -36,18 +37,47 @@ TableManager *loadRsdt(TableHeader *header) {
 static TableHandler tableHandlers[] = {{"RSDT", loadRsdt}, {"XSDT", loadRsdt}};
 #define numTableHandlers (sizeof(tableHandlers) / sizeof(TableHandler))
 
+static bool doChecksum(TableHeader *header) {
+  unsigned char *tablePointer = (unsigned char *)header;
+  unsigned char sum = 0;
+  for (unsigned i = 0; i < header->length; i++) {
+    sum += tablePointer[i];
+  }
+  return sum == 0;
+}
+
 TableManager *loadTable(void *physicalAddress) {
+  kout::print("Loading table at 0x");
+  kout::print((unsigned long)physicalAddress, 16);
+  kout::print(": ");
   TableHeader *header =
       (TableHeader *)memory::mapAddress(physicalAddress, sizeof(TableHeader));
+  char nullTerminatedSignature[5];
+  memcpy(nullTerminatedSignature, header->signature, 4);
+  nullTerminatedSignature[4] = 0;
+  kout::print(nullTerminatedSignature);
+  kout::print(" with ");
   size_t tableSize = header->length;
+  kout::print("Size: ");
+  kout::print(tableSize);
+  kout::print("\n");
+  if (tableSize < sizeof(TableHeader)) {
+    kout::print("Invalid table: Size too small\n");
+    return nullptr;
+  }
   memory::unmapMemory(header, sizeof(TableHeader));
   header = (TableHeader *)memory::mapAddress(physicalAddress, tableSize);
+  if (!doChecksum(header)) {
+    kout::print("Table did not pass checksum\n");
+    return nullptr;
+  }
   for (unsigned i = 0; i < numTableHandlers; i++) {
     TableHandler &handler = tableHandlers[i];
     if (memeq(header->signature, handler.signature, 4)) {
       return handler.creator(header);
     }
   }
+  memory::unmapMemory(header, tableSize);
   return nullptr;
 }
 } // namespace acpi
