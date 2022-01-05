@@ -38,6 +38,8 @@ class TableManager {
 public:
   const TableType type;
 
+  virtual ~TableManager() {}
+
 protected:
   TableManager(TableType type) : type(type) {}
 };
