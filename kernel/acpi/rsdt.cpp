@@ -25,6 +25,29 @@ RsdtTableManager::RsdtTableManager(TableHeader *header)
   numChildren = (header->length - sizeof(TableHeader)) / entrySize;
   children = new TableManager *[numChildren];
   // TODO: Load the subtables
+  uint8_t *entryStart = (uint8_t *)header + sizeof(TableHeader);
+  for (unsigned i = 0; i < numChildren; i++) {
+    switch (entrySize) {
+    case 4: {
+      children[i] = loadTable((void *)(size_t)((uint32_t *)entryStart)[i]);
+      break;
+    }
+    case 8: {
+      children[i] = loadTable((void *)(size_t)((uint64_t *)entryStart)[i]);
+      break;
+    }
+    default:
+      children[i] = nullptr;
+      break;
+    }
+  }
   memory::unmapMemory(header, header->length);
+}
+RsdtTableManager::~RsdtTableManager() {
+  for (unsigned i = 0; i < numChildren; i++) {
+    if (children[i] != nullptr) {
+      delete children[i];
+    }
+  }
 }
 } // namespace acpi

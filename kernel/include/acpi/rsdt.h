@@ -25,8 +25,9 @@ namespace acpi {
 class RsdtTableManager : public TableManager {
 public:
   RsdtTableManager(TableHeader *header);
+  virtual ~RsdtTableManager();
 
-private:
+ private:
   TableManager **children;
   size_t numChildren;
 };
