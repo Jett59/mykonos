@@ -27,7 +27,8 @@ public:
   RsdtTableManager(TableHeader *header);
   virtual ~RsdtTableManager();
 
-      private : TableManager **children;
+private:
+  TableManager **children;
   size_t numChildren;
 };
 } // namespace acpi
