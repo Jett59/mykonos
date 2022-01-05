@@ -44,7 +44,7 @@ protected:
   TableManager(TableType type) : type(type) {}
 };
 
-TableManager* loadTable(void* physicalAddress);
-}  // namespace acpi
+TableManager *loadTable(void *physicalAddress);
+} // namespace acpi
 
 #endif

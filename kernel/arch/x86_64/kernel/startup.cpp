@@ -70,7 +70,7 @@ extern "C" [[noreturn]] void kstart() {
     if (rsdt == nullptr) {
       kpanic("Error loading rsdt");
     }
-      kout::print("Found rsdt\n");
+    kout::print("Found rsdt\n");
     kpanic("It all worked");
   } else {
     // The tests failed! Abort
