@@ -33,7 +33,7 @@ struct TableHeader {
 };
 static_assert(sizeof(TableHeader) == 36, "TableHeader incorrect size");
 
-enum class TableType {};
+enum class TableType { RSDT };
 class TableManager {
 public:
   const TableType type;

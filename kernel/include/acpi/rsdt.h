@@ -14,5 +14,22 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     */
-   #include <acpi/tables.h>
-   #include <acpi/rsdt.h>
+#ifndef _ACPI_RSDT_H
+#define _ACPI_RSDT_H
+
+#include <acpi/tables.h>
+
+#include <stddef.h>
+
+namespace acpi {
+class RsdtTableManager : public TableManager {
+public:
+  RsdtTableManager(TableHeader *header);
+
+private:
+  TableManager **children;
+  size_t numChildren;
+};
+} // namespace acpi
+
+#endif

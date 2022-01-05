@@ -14,5 +14,17 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     */
-   #include <acpi/tables.h>
-   #include <acpi/rsdt.h>
+#include <acpi/rsdt.h>
+
+#include <kmalloc.h>
+
+namespace acpi {
+RsdtTableManager::RsdtTableManager(TableHeader *header)
+    : TableManager(TableType::RSDT) {
+  size_t entrySize = header->signature[0] == 'X' ? 8 : 4;
+  numChildren = (header->length - sizeof(TableHeader)) / entrySize;
+  children = new TableManager *[numChildren];
+  // TODO: Load the subtables
+  memory::unmapMemory(header, header->length);
+}
+} // namespace acpi
