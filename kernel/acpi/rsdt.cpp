@@ -24,7 +24,6 @@ RsdtTableManager::RsdtTableManager(TableHeader *header)
   size_t entrySize = header->signature[0] == 'X' ? 8 : 4;
   numChildren = (header->length - sizeof(TableHeader)) / entrySize;
   children = new TableManager *[numChildren];
-  // TODO: Load the subtables
   uint8_t *entryStart = (uint8_t *)header + sizeof(TableHeader);
   for (unsigned i = 0; i < numChildren; i++) {
     switch (entrySize) {
