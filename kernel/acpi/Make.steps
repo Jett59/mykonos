@@ -1,0 +1,1 @@
+STEPS+=acpi/tables.o acpi/rsdt.o

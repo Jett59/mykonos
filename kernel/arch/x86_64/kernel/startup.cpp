@@ -29,6 +29,7 @@
 #include <kpanic.h>
 
 #include <acpi/rsdp.h>
+#include <acpi/tables.h>
 
 typedef void (*ConstructorOrDestructor)();
 
@@ -62,6 +63,14 @@ extern "C" [[noreturn]] void kstart() {
     kout::print("Found rsdp (revision: ");
     kout::print(acpi::rsdp.revision);
     kout::print(")\n");
+    void *rsdtAddress = (acpi::rsdp.revision >= 2)
+                            ? (void *)(size_t)acpi::rsdp.xsdtAddress
+                            : (void *)(size_t)acpi::rsdp.rsdtAddress;
+    acpi::TableManager *rsdt = acpi::loadTable(rsdtAddress);
+    if (rsdt == nullptr) {
+      kpanic("Error loading rsdt");
+    }
+    kout::print("Found rsdt\n");
     kpanic("It all worked");
   } else {
     // The tests failed! Abort

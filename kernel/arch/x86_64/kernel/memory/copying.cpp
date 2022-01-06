@@ -42,11 +42,12 @@ extern "C" void *memcpy(void *dst, const void *src, size_t n) {
   return dst;
 }
 extern "C" int memcmp(const void *a, const void *b, size_t n) {
-  size_t finalN = n;
-  __asm__ volatile("repe cmpsb" : "+c"(finalN) : "D"(a), "S"(b) : "memory");
-  if (finalN == 0) {
-    return 0;
-  } else {
-    return ((unsigned char *)a)[n - finalN] - ((unsigned char *)b)[n - finalN];
+  unsigned char *aPointer = (unsigned char *)a;
+  unsigned char *bPointer = (unsigned char *)b;
+  for (size_t i = 0; i < n; i++) {
+    if (aPointer[i] != bPointer[i]) {
+      return aPointer[i] - bPointer[i];
+    }
   }
+  return 0;
 }

@@ -22,12 +22,22 @@ bool memcmpTest(::test::Logger logger) {
   logger("memcmpTest:\n");
   char buffer1[] = "Hello, World!";
   char buffer2[] = "Hello, There!";
+  char buffer3[] = "Test";
+  char buffer4[] = "Best";
   if (memcmp(buffer1, buffer1, sizeof(buffer1)) != 0) {
     logger("memcmpTest: equality test failed\n");
     return false;
   }
   if (memcmp(buffer2, buffer2, sizeof(buffer2)) != 0) {
     logger("memcmpTest: equality test failed\n");
+    return false;
+  }
+  if (memcmp(buffer3, buffer3, strlen(buffer3)) != 0) {
+    logger("memcmpTest: Equality test failed on small array\n");
+    return false;
+  }
+  if (memcmp(buffer4, buffer4, strlen(buffer4)) != 0) {
+    logger("memcmpTest: Equality test failed on small array\n");
     return false;
   }
   logger("memcmpTest: Passed equality test\n");
@@ -37,6 +47,14 @@ bool memcmpTest(::test::Logger logger) {
   }
   if (memcmp(buffer2, buffer1, sizeof(buffer2)) == 0) {
     logger("memcmpTest: Failed inequality test\n");
+    return false;
+  }
+  if (memcmp(buffer3, buffer4, strlen(buffer3)) == 0) {
+    logger("memcmpTest: Inequality test failed on small array\n");
+    return false;
+  }
+  if (memcmp(buffer4, buffer3, strlen(buffer4) == 0)) {
+    logger("memcmpTest: Inequality test failed on small array\n");
     return false;
   }
   logger("memcmpTest: Passed inequality test\n");

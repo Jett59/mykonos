@@ -76,3 +76,12 @@ void unmapMemory(void *address, size_t size) {
   }
 }
 } // namespace memory
+
+void *operator new(size_t size) { return memory::kmalloc(size); }
+void *operator new[](size_t size) { return memory::kmalloc(size); }
+
+void operator delete(void *ptr) { memory::kfree(ptr); }
+void operator delete[](void *ptr) { memory::kfree(ptr); }
+
+void operator delete(void *ptr, size_t) { memory::kfree(ptr); }
+void operator delete[](void *ptr, size_t) { memory::kfree(ptr); }
