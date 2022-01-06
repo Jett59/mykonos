@@ -49,8 +49,8 @@ static bool doChecksum(TableHeader *header) {
 
 TableManager *loadTable(void *physicalAddress) {
   kout::print("Loading ACPI table: ");
-  TableHeader *header =
-      (TableHeader *)memory::mapAddress(physicalAddress, sizeof(TableHeader), true);
+  TableHeader *header = (TableHeader *)memory::mapAddress(
+      physicalAddress, sizeof(TableHeader), true);
   char nullTerminatedSignature[5];
   memcpy(nullTerminatedSignature, header->signature, 4);
   nullTerminatedSignature[4] = 0;
