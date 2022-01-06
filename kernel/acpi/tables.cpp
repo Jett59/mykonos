@@ -48,20 +48,15 @@ static bool doChecksum(TableHeader *header) {
 }
 
 TableManager *loadTable(void *physicalAddress) {
-  kout::print("Loading table at 0x");
-  kout::print((unsigned long)physicalAddress, 16);
-  kout::print(": ");
+  kout::print("Loading ACPI table: ");
   TableHeader *header =
       (TableHeader *)memory::mapAddress(physicalAddress, sizeof(TableHeader));
   char nullTerminatedSignature[5];
   memcpy(nullTerminatedSignature, header->signature, 4);
   nullTerminatedSignature[4] = 0;
   kout::print(nullTerminatedSignature);
-  kout::print(" with ");
-  size_t tableSize = header->length;
-  kout::print("Size: ");
-  kout::print(tableSize);
   kout::print("\n");
+  size_t tableSize = header->length;
   if (tableSize < sizeof(TableHeader)) {
     kout::print("Invalid table: Size too small\n");
     return nullptr;
@@ -75,9 +70,6 @@ TableManager *loadTable(void *physicalAddress) {
   for (unsigned i = 0; i < numTableHandlers; i++) {
     TableHandler handler = tableHandlers[i];
     if (memeq(header->signature, handler.signature, 4)) {
-      kout::print("Matching against handler accepting signature '");
-      kout::print(handler.signature);
-      kout::print("'\n");
       return handler.creator(header);
     }
   }
