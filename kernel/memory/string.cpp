@@ -29,3 +29,13 @@ extern "C" char *strcpy(char *dst, const char *src) {
   dst[size] = 0;
   return dst;
 }
+extern "C" char *strchr(const char *str, int c) {
+  char chr = (char)c;
+  int len = strlen(str);
+  for (int i = 0; i < len; i++) {
+    if (str[i] == chr) {
+      return str + i;
+    }
+  }
+  return 0;
+}
