@@ -18,9 +18,6 @@
 
 #include <kmalloc.h>
 
-// REMOVETHIS
-#include <kout.h>
-
 namespace acpi {
 RsdtTableManager::RsdtTableManager(TableHeader *header)
     : TableManager(TableType::RSDT) {
@@ -54,5 +51,6 @@ RsdtTableManager::~RsdtTableManager() {
       delete children[i];
     }
   }
+  delete[] children;
 }
 } // namespace acpi
