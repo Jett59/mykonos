@@ -75,7 +75,7 @@ void print(const char *str, int len) {
   }
   unsigned x = column * font::getWidth();
   unsigned y = line * font::getHeight();
-  for (int i = 0; i < len; i ++) {
+  for (int i = 0; i < len; i++) {
     if (column >= columns || *str == '\n') {
       column = x = 0;
       if (line < lines - 1) {

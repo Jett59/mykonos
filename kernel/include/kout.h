@@ -25,6 +25,6 @@ static inline void print(const char *str) { print(str, strlen(str)); }
 void print(unsigned long value, unsigned long base = 10);
 
 void printf(const char *format, ...);
-}  // namespace kout
+} // namespace kout
 
 #endif

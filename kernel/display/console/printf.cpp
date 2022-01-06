@@ -25,67 +25,67 @@ void printf(const char *format, ...) {
   va_list args;
   va_start(args, format);
   while (*format != 0) {
-      if (*format == '%') {
-        format++;
-        switch (*format) {
-            case 'n': {
-              break;
-            }
-            case '%': {
-              print("%", 1);
-              break;
-            }
-            case 'c': {
-              char c = (char)va_arg(args, int);
-              print(&c, 1);
-              break;
-            }
-            case 'd': {
-              int n = va_arg(args, int);
-              print(n);
-              break;
-            }
-            case 'l': {
-              long l = va_arg(args, long);
-              print(l);
-              break;
-            }
-            case 'o': {
-              long l = va_arg(args, long);
-              print(l, 8);
-              break;
-            }
-            case 'p': {
-              void *ptr = va_arg(args, void *);
-              print("0x");
-              print((unsigned long)ptr, 16);
-              break;
-            }
-              case 's': {
-                const char *str = va_arg(args, const char *);
-                print(str);
-                break;
-              }
-              case 'x': {
-                long l = va_arg(args, long);
-                print(l, 16);
-                break;
-              }
-              default:
-                print("<unknown type specifier>");
-            }
-            format++;
-      } else {
-        const char *nextSpecifier = strchr(format, '%');
-        int len;
-        if (nextSpecifier != 0) {
-          len = nextSpecifier - format;
-        }else {
-          len = strlen(format);
-        }
-        print(format, len);
-        format += len;
+    if (*format == '%') {
+      format++;
+      switch (*format) {
+      case 'n': {
+        break;
       }
+      case '%': {
+        print("%", 1);
+        break;
+      }
+      case 'c': {
+        char c = (char)va_arg(args, int);
+        print(&c, 1);
+        break;
+      }
+      case 'd': {
+        int n = va_arg(args, int);
+        print(n);
+        break;
+      }
+      case 'l': {
+        long l = va_arg(args, long);
+        print(l);
+        break;
+      }
+      case 'o': {
+        long l = va_arg(args, long);
+        print(l, 8);
+        break;
+      }
+      case 'p': {
+        void *ptr = va_arg(args, void *);
+        print("0x");
+        print((unsigned long)ptr, 16);
+        break;
+      }
+      case 's': {
+        const char *str = va_arg(args, const char *);
+        print(str);
+        break;
+      }
+      case 'x': {
+        long l = va_arg(args, long);
+        print(l, 16);
+        break;
+      }
+      default:
+        print("<unknown type specifier>");
+      }
+      format++;
+    } else {
+      const char *nextSpecifier = strchr(format, '%');
+      int len;
+      if (nextSpecifier != 0) {
+        len = nextSpecifier - format;
+      } else {
+        len = strlen(format);
+      }
+      print(format, len);
+      format += len;
+    }
   }
   va_end(args);
 }
