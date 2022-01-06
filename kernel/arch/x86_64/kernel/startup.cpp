@@ -71,6 +71,10 @@ extern "C" [[noreturn]] void kstart() {
       kpanic("Error loading rsdt");
     }
     kout::print("Found rsdt\n");
+    kout::printf(
+        "Testing %s with a hexadecimal 0x%x and octal 0%o as well as a char "
+        "%c and long %l\n",
+        "printf", 32l, 32l, ';', 32);
     kpanic("It all worked");
   } else {
     // The tests failed! Abort

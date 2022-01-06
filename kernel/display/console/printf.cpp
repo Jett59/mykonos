@@ -74,7 +74,8 @@ void printf(const char *format, ...) {
               default:
                 print("<unknown type specifier>");
             }
-      }else {
+            format++;
+      } else {
         const char *nextSpecifier = strchr(format, '%');
         int len;
         if (nextSpecifier != 0) {
@@ -83,8 +84,8 @@ void printf(const char *format, ...) {
           len = strlen(format);
         }
         print(format, len);
+        format += len;
       }
-      format++;
   }
   va_end(args);
 }
