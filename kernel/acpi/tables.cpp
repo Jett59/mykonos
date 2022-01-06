@@ -14,6 +14,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     */
+#include <acpi/rsdp.h>
 #include <acpi/tables.h>
 
 #include <acpi/rsdt.h>
@@ -72,11 +73,15 @@ TableManager *loadTable(void *physicalAddress) {
     return nullptr;
   }
   for (unsigned i = 0; i < numTableHandlers; i++) {
-    TableHandler &handler = tableHandlers[i];
+    TableHandler handler = tableHandlers[i];
     if (memeq(header->signature, handler.signature, 4)) {
+      kout::print("Matching against handler accepting signature '");
+      kout::print(handler.signature);
+      kout::print("'\n");
       return handler.creator(header);
     }
   }
+  // No suitable handler
   memory::unmapMemory(header, tableSize);
   return nullptr;
 }

@@ -18,27 +18,33 @@
 
 #include <kmalloc.h>
 
+// REMOVETHIS
+#include <kout.h>
+
 namespace acpi {
 RsdtTableManager::RsdtTableManager(TableHeader *header)
     : TableManager(TableType::RSDT) {
   size_t entrySize = header->signature[0] == 'X' ? 8 : 4;
   numChildren = (header->length - sizeof(TableHeader)) / entrySize;
   children = new TableManager *[numChildren];
-  uint8_t *entryStart = (uint8_t *)header + sizeof(TableHeader);
+  uint8_t *entry = (uint8_t *)header + sizeof(TableHeader);
   for (unsigned i = 0; i < numChildren; i++) {
     switch (entrySize) {
     case 4: {
-      children[i] = loadTable((void *)(size_t)((uint32_t *)entryStart)[i]);
+      uint32_t entryValue = *(uint32_t *)entry;
+      children[i] = loadTable((void *)(size_t)entryValue);
       break;
     }
     case 8: {
-      children[i] = loadTable((void *)(size_t)((uint64_t *)entryStart)[i]);
+      uint64_t entryValue = *(uint64_t *)entry;
+      children[i] = loadTable((void *)(size_t)entryValue);
       break;
     }
     default:
       children[i] = nullptr;
       break;
     }
+    entry += entrySize;
   }
   memory::unmapMemory(header, header->length);
 }
