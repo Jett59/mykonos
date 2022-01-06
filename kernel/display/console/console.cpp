@@ -36,12 +36,12 @@ void scrollDown() {
   unsigned x = 0;
   unsigned y = 0;
   for (unsigned i = 1; i < lines; i++) {
-    x = 0;
     y += font::getHeight();
     char *line = SCREEN_BUFFER_LINE(i);
     char *previousLine = SCREEN_BUFFER_LINE(i - 1);
     int lineLength = strlen(line);
     unsigned previousLineLength = strlen(previousLine);
+    x = lineLength * font::getWidth();
     for (unsigned i = lineLength; i < (unsigned)previousLineLength; i++) {
       display::removeCharacter(x, y - font::getHeight());
       x += font::getWidth();
