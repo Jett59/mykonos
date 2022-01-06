@@ -23,7 +23,7 @@ namespace memory {
 void *kmalloc(size_t size);
 void kfree(void *ptr);
 
-void *mapAddress(void *physicalAddress, size_t size);
+void *mapAddress(void *physicalAddress, size_t size, bool cacheable);
 void unmapMemory(void *address, size_t size);
 } // namespace memory
 

@@ -85,10 +85,13 @@ static PageTableEntry *getPageTableEntry(void *virtualAddress,
   return &PML1ENTRY(pml4Index, pml3Index, pml2Index, pml1Index);
 }
 void mapPage(void *virtualAddress, void *physicalAddress, PageTableFlags flags,
-             bool allocated) {
+             bool allocated, bool cacheable) {
   flags |= PageTableFlags::PRESENT;
   if (allocated) {
     flags |= PageTableFlags::ALLOCATED;
+  }
+  if (!cacheable) {
+    flags |= PageTableFlags::UNCACHEABLE;
   }
   PageTableEntry pageTableEntry =
       (PageTableEntry)((uint64_t)flags | ((uint64_t)physicalAddress & ~4095ul));

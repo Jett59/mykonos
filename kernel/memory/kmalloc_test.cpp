@@ -50,7 +50,7 @@ bool kmallocTest(::test::Logger logger) {
 bool mapMemoryTest(::test::Logger logger) {
   logger("mapMemoryTest:\n");
   for (int i = 0; i < 4096; i++) {
-    void *ptr = mapAddress(nullptr, 1048576);
+    void *ptr = mapAddress(nullptr, 1048576, true);
     if (ptr == nullptr) {
       logger("mapMemoryTest: Stress test failed\n");
       return false;
