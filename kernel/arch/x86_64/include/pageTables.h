@@ -25,6 +25,7 @@ enum class PageTableFlags : uint64_t {
   PRESENT = 1 << 0,
   WRITABLE = 1 << 1,
   USER = 1 << 2,
+  UNCACHEABLE = 1 << 4,
   // Available bits
   ALLOCATED = 1 << 11
 };

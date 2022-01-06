@@ -38,7 +38,7 @@ void *kmalloc(size_t size) {
   for (size_t i = 0; i < size; i += PAGE_SIZE) {
     paging::mapPage(ADD_TO_POINTER(ptr, i),
                     (void *)(memory::allocateFrame() * PAGE_SIZE),
-                    paging::PageTableFlags::WRITABLE, true);
+                    paging::PageTableFlags::WRITABLE, true, true);
   }
   KmallocHeader *headerPtr = (KmallocHeader *)ptr;
   *headerPtr = {.size = size};
@@ -51,7 +51,7 @@ void kfree(void *ptr) {
   ptr = (void *)headerPtr;
   unmapMemory(ptr, size);
 }
-void *mapAddress(void *physicalAddress, size_t size) {
+void *mapAddress(void *physicalAddress, size_t size, bool cacheable) {
   size_t pageOffset = (size_t)physicalAddress % PAGE_SIZE;
   void *physicalEnd = (void *)PAGE_ALIGN_UP((size_t)physicalAddress + size);
   physicalAddress = (void *)PAGE_ALIGN_DOWN((size_t)physicalAddress);
@@ -62,7 +62,7 @@ void *mapAddress(void *physicalAddress, size_t size) {
   }
   for (size_t i = 0; i < size; i += PAGE_SIZE) {
     paging::mapPage(ADD_TO_POINTER(ptr, i), ADD_TO_POINTER(physicalAddress, i),
-                    paging::PageTableFlags::WRITABLE, false);
+                    paging::PageTableFlags::WRITABLE, false, cacheable);
   }
   return ADD_TO_POINTER(ptr, pageOffset);
 }

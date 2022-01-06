@@ -21,7 +21,7 @@
 
 namespace paging {
 void mapPage(void *virtualAddress, void *physicalAddress, PageTableFlags flags,
-             bool allocated);
+             bool allocated, bool cacheable);
 void unmapPage(void *virtualAddress);
 } // namespace paging
 

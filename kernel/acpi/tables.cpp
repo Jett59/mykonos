@@ -50,7 +50,7 @@ static bool doChecksum(TableHeader *header) {
 TableManager *loadTable(void *physicalAddress) {
   kout::print("Loading ACPI table: ");
   TableHeader *header =
-      (TableHeader *)memory::mapAddress(physicalAddress, sizeof(TableHeader));
+      (TableHeader *)memory::mapAddress(physicalAddress, sizeof(TableHeader), true);
   char nullTerminatedSignature[5];
   memcpy(nullTerminatedSignature, header->signature, 4);
   nullTerminatedSignature[4] = 0;
@@ -62,9 +62,10 @@ TableManager *loadTable(void *physicalAddress) {
     return nullptr;
   }
   memory::unmapMemory(header, sizeof(TableHeader));
-  header = (TableHeader *)memory::mapAddress(physicalAddress, tableSize);
+  header = (TableHeader *)memory::mapAddress(physicalAddress, tableSize, true);
   if (!doChecksum(header)) {
     kout::print("Table did not pass checksum\n");
+    memory::unmapMemory(header, header->length);
     return nullptr;
   }
   for (unsigned i = 0; i < numTableHandlers; i++) {
