@@ -23,6 +23,8 @@ namespace kout {
 void print(const char *str, int len);
 static inline void print(const char *str) { print(str, strlen(str)); }
 void print(unsigned long value, unsigned long base = 10);
-} // namespace kout
+
+void printf(const char *format, ...);
+}  // namespace kout
 
 #endif

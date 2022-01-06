@@ -1,7 +1,7 @@
 STEPS+=display/frameBuffer.o
 STEPS+=display/font/font.o display/font/psfRenderer.o
 STEPS+=display/stringWriter.o
-STEPS+=display/console/console.o
+STEPS+=display/console/console.o display/console/printf.o
 
 %.o: %.psf
 	echo "objcopy $@"

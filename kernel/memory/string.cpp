@@ -34,7 +34,7 @@ extern "C" char *strchr(const char *str, int c) {
   int len = strlen(str);
   for (int i = 0; i < len; i++) {
     if (str[i] == chr) {
-      return str + i;
+      return (char *)str + i;
     }
   }
   return 0;
