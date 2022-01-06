@@ -51,10 +51,7 @@ TableManager *loadTable(void *physicalAddress) {
   kout::print("Loading ACPI table: ");
   TableHeader *header = (TableHeader *)memory::mapAddress(
       physicalAddress, sizeof(TableHeader), true);
-  char nullTerminatedSignature[5];
-  memcpy(nullTerminatedSignature, header->signature, 4);
-  nullTerminatedSignature[4] = 0;
-  kout::print(nullTerminatedSignature);
+  kout::print(header->signature, 4);
   kout::print("\n");
   size_t tableSize = header->length;
   if (tableSize < sizeof(TableHeader)) {

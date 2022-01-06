@@ -17,10 +17,14 @@
 #ifndef _KOUT_H
 #define _KOUT_H
 
+#include <string.h>
+
 namespace kout {
-void print(const char *str);
-void print(unsigned long value, unsigned long base);
-static inline void print(unsigned long value) { print(value, 10); }
+void print(const char *str, int len);
+static inline void print(const char *str) { print(str, strlen(str)); }
+void print(unsigned long value, unsigned long base = 10);
+
+void printf(const char *format, ...);
 } // namespace kout
 
 #endif

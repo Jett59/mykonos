@@ -64,7 +64,7 @@ void scrollDown() {
   lastLine[0] = 0;
 }
 
-void print(const char *str) {
+void print(const char *str, int len) {
   if (columns == 0) {
     columns = display::getWidth() / font::getWidth();
     lines = display::getHeight() / font::getHeight();
@@ -75,7 +75,7 @@ void print(const char *str) {
   }
   unsigned x = column * font::getWidth();
   unsigned y = line * font::getHeight();
-  while (*str != 0) {
+  for (int i = 0; i < len; i++) {
     if (column >= columns || *str == '\n') {
       column = x = 0;
       if (line < lines - 1) {

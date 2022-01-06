@@ -19,7 +19,7 @@
 #define MULTIBOOT2_MAGIC 0xE85250D6
 #define MULTIBOOT2_ARCHITECTURE 0
 
-.section .multiboot
+.section .multiboot, "a"
 
 .align 8
 multiboot_header:
