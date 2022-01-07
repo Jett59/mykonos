@@ -49,6 +49,7 @@ struct MadtEntry {
 static_assert(sizeof(MadtEntry) == 2, "MadtEntry has not been packed");
 #define MADT_TYPE_LOCAL_APIC 0
 #define MADT_TYPE_IO_APIC 1
+#define MADT_TYPE_GSI_OVERRIDE 2
 struct MadtLocalApicEntry {
   uint8_t type;
   uint8_t length;

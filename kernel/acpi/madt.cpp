@@ -29,20 +29,33 @@ MadtTableManager::MadtTableManager(TableHeader *header)
   hasPic = (madt->flags & MADT_FLAGS_PIC) != 0;
   MadtEntry *entry = (MadtEntry *)((uint8_t *)madt + sizeof(MadtTable));
   while ((size_t)entry - (size_t)madt < madt->header.length) {
-      switch (entry->type) {
-          case MADT_TYPE_LOCAL_APIC: {
-            MadtLocalApicEntry *localApicEntry = (MadtLocalApicEntry *)entry;
-            kout::printf("Found local APIC with id %d\n",
-                         localApicEntry->acpiId);
-                         if (numLocalApics < MAX_LOCAL_APICS) {
-                           localApics[numLocalApics++].apicId =
-                               localApicEntry->apicId;
-                         }
-            break;
-          }
-          default:
-            kout::printf("Unknown MADT entry type %d\n", entry->type);
+    switch (entry->type) {
+    case MADT_TYPE_LOCAL_APIC: {
+      MadtLocalApicEntry *localApicEntry = (MadtLocalApicEntry *)entry;
+      kout::printf("Found local APIC with id %d\n", localApicEntry->acpiId);
+      if (numLocalApics < MAX_LOCAL_APICS) {
+        localApics[numLocalApics++].apicId = localApicEntry->apicId;
       }
+      break;
+    }
+    case MADT_TYPE_IO_APIC: {
+      MadtIoApicEntry *ioApicEntry = (MadtIoApicEntry *)entry;
+      kout::printf("Found IO APIC with id %d starting at interrupt %d\n",
+                   ioApicEntry->ioApicId, ioApicEntry->gsiBase);
+      if (numIoApics < MAX_IO_APICS) {
+        apic::IoApicDescriptor &ioApicDescriptor = ioApics[numIoApics++];
+        ioApicDescriptor.gsiBase = ioApicEntry->gsiBase;
+        ioApicDescriptor.physicalAddress =
+            (void *)(size_t)ioApicEntry->physicalAddress;
+      }
+      break;
+    }
+    case MADT_TYPE_GSI_OVERRIDE: {
+      break; // Don't print unnecessary warnings
+    }
+    default:
+      kout::printf("Unknown MADT entry type %d\n", entry->type);
+    }
     entry = (MadtEntry *)((uint8_t *)entry + entry->length);
   }
 }
