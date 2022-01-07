@@ -25,5 +25,9 @@ MadtTableManager::MadtTableManager(TableHeader *header)
   MadtTable *madt = (MadtTable *)header;
   localApicAddress = (void *)(size_t)madt->localInterruptController;
   hasPic = (madt->flags & MADT_FLAGS_PIC) != 0;
+  MadtEntry *entry = (MadtEntry *)((uint8_t *)madt + sizeof(MadtTable));
+  while ((size_t)entry - (size_t)madt < madt->header.length) {
+    entry = (MadtEntry *)((uint8_t *)entry + entry->length);
+  }
 }
 } // namespace acpi

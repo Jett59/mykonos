@@ -18,6 +18,7 @@
 #include <acpi/tables.h>
 
 #include <acpi/rsdt.h>
+#include <acpi/madt.h>
 
 #include <kmalloc.h>
 #include <kout.h>
@@ -34,8 +35,11 @@ struct TableHandler {
 TableManager *loadRsdt(TableHeader *header) {
   return new RsdtTableManager(header);
 }
+TableManager *loadMadt(TableHeader *header) {
+  return new MadtTableManager(header);
+}
 
-static TableHandler tableHandlers[] = {{"RSDT", loadRsdt}, {"XSDT", loadRsdt}};
+static TableHandler tableHandlers[] = {{"RSDT", loadRsdt}, {"XSDT", loadRsdt}, {"APIC", loadMadt}};
 #define numTableHandlers (sizeof(tableHandlers) / sizeof(TableHandler))
 
 static bool doChecksum(TableHeader *header) {

@@ -25,7 +25,6 @@ namespace acpi {
 class MadtTableManager : public TableManager {
 public:
   MadtTableManager(TableHeader *header);
-  virtual ~MadtTableManager();
 
 private:
   bool hasPic;
