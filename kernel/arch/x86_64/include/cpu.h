@@ -18,6 +18,7 @@
 #define _CPU_H
 
 namespace cpu {
+static inline void relax() { __asm__ volatile("pause"); }
 [[noreturn]] static inline void hault() {
   __asm__ volatile("cli");
   for (;;) {

@@ -19,18 +19,25 @@
 
 #include <stdint.h>
 
+#include <cpu.h>
+
 namespace lock {
 class Spinlock {
 private:
   uint8_t lock = 0;
 
 public:
+  Spinlock() = default;
+  // We don't want spinlocks to be copied
+  Spinlock(const Spinlock &) = delete;
+  Spinlock &operator=(const Spinlock &) = delete;
+
   bool locked() { return __atomic_load_n(&lock, __ATOMIC_SEQ_CST); }
   void acquire() {
     while (true) {
-      // Wait for the lock to be unlocked
-      while (locked())
-        ;
+      while (locked()) {
+        cpu::relax();
+      }
       if (__sync_bool_compare_and_swap(&lock, 0, 1)) {
         break;
       }
