@@ -32,7 +32,7 @@ public:
   Spinlock(const Spinlock &) = delete;
   Spinlock &operator=(const Spinlock &) = delete;
 
-  bool locked() { return __atomic_load_n(&lock, __ATOMIC_SEQ_CST); }
+  bool locked() { return __atomic_load_n(&lock, __ATOMIC_SEQ_CST) != 0; }
   void acquire() {
     while (true) {
       while (locked()) {
