@@ -50,9 +50,6 @@ MadtTableManager::MadtTableManager(TableHeader *header)
       }
       break;
     }
-    case MADT_TYPE_GSI_OVERRIDE: {
-      break; // Don't print unnecessary warnings
-    }
     default:
       kout::printf("Unknown MADT entry type %d\n", entry->type);
     }
