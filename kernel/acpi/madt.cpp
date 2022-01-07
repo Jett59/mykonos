@@ -14,37 +14,16 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     */
-#ifndef _ACPI_TABLES_H
-#define _ACPI_TABLES_H
+#include <acpi/madt.h>
+#include <apic.h>
 
-#include <stdint.h>
+#include <stddef.h>
 
 namespace acpi {
-struct TableHeader {
-  char signature[4];
-  uint32_t length;
-  uint8_t revision;
-  uint8_t checksum;
-  char oemId[6];
-  char oemTableId[8];
-  uint32_t oemRevision;
-  char creatorId[4];
-  uint32_t creatorRevision;
-};
-static_assert(sizeof(TableHeader) == 36, "TableHeader incorrect size");
-
-enum class TableType { RSDT, MADT };
-class TableManager {
-public:
-  const TableType type;
-
-  virtual ~TableManager() {}
-
-protected:
-  TableManager(TableType type) : type(type) {}
-};
-
-TableManager *loadTable(void *physicalAddress);
+MadtTableManager::MadtTableManager(TableHeader *header)
+    : TableManager(TableType::MADT) {
+  MadtTable *madt = (MadtTable *)header;
+  localApicAddress = (void *)(size_t)madt->localInterruptController;
+  hasPic = (madt->flags & MADT_FLAGS_PIC) != 0;
+}
 } // namespace acpi
-
-#endif
