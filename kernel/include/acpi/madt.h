@@ -22,6 +22,13 @@
 #include <apic.h>
 
 namespace acpi {
+  #define MAX_GSI_OVERRIDES 16
+struct MadtGsiOverride {
+  bool levelTriggered;
+  bool activeHigh;
+  uint8_t source;
+  uint32_t destination;
+};
 class MadtTableManager : public TableManager {
 public:
   MadtTableManager(TableHeader *header);
@@ -33,6 +40,8 @@ private:
   apic::LocalApicDescriptor localApics[MAX_LOCAL_APICS];
   unsigned numIoApics = 0;
   apic::IoApicDescriptor ioApics[MAX_IO_APICS];
+  unsigned numGsiOverrides = 0;
+  MadtGsiOverride gsiOverrides[MAX_GSI_OVERRIDES];
 };
 struct __attribute__((packed)) MadtTable {
   TableHeader header;
@@ -71,6 +80,16 @@ struct MadtIoApicEntry {
 };
 static_assert(sizeof(MadtIoApicEntry) == 12,
               "MadtIoApicEntry has not been packed");
+struct __attribute__((packed)) MadtGsiOverrideEntry {
+  uint8_t type;
+  uint8_t length;
+  uint8_t bus;
+  uint8_t source;
+  uint32_t destination;
+  uint16_t flags;
+};
+static_assert(sizeof(MadtGsiOverrideEntry) == 10,
+              "MadtGsiOverrideEntry has not been packed");
 } // namespace acpi
 
 #endif

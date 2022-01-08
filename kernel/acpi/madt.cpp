@@ -19,6 +19,7 @@
 
 #include <stddef.h>
 
+#include <kmalloc.h>
 #include <kout.h>
 
 namespace acpi {
@@ -32,7 +33,6 @@ MadtTableManager::MadtTableManager(TableHeader *header)
     switch (entry->type) {
     case MADT_TYPE_LOCAL_APIC: {
       MadtLocalApicEntry *localApicEntry = (MadtLocalApicEntry *)entry;
-      kout::printf("Found local APIC with id %d\n", localApicEntry->acpiId);
       if (numLocalApics < MAX_LOCAL_APICS) {
         localApics[numLocalApics++].apicId = localApicEntry->apicId;
       }
@@ -40,8 +40,6 @@ MadtTableManager::MadtTableManager(TableHeader *header)
     }
     case MADT_TYPE_IO_APIC: {
       MadtIoApicEntry *ioApicEntry = (MadtIoApicEntry *)entry;
-      kout::printf("Found IO APIC with id %d starting at interrupt %d\n",
-                   ioApicEntry->ioApicId, ioApicEntry->gsiBase);
       if (numIoApics < MAX_IO_APICS) {
         apic::IoApicDescriptor &ioApicDescriptor = ioApics[numIoApics++];
         ioApicDescriptor.gsiBase = ioApicEntry->gsiBase;
@@ -50,10 +48,24 @@ MadtTableManager::MadtTableManager(TableHeader *header)
       }
       break;
     }
+    case MADT_TYPE_GSI_OVERRIDE: {
+      MadtGsiOverrideEntry *gsiOverrideEntry = (MadtGsiOverrideEntry *)entry;
+      if (numGsiOverrides < MAX_GSI_OVERRIDES) {
+        MadtGsiOverride &gsiOverride = gsiOverrides[numGsiOverrides++];
+        gsiOverride.activeHigh = (gsiOverrideEntry->flags & 2) == 0;
+        gsiOverride.levelTriggered = (gsiOverrideEntry->flags & 8) != 0;
+        gsiOverride.source = gsiOverrideEntry->source;
+        gsiOverride.destination = gsiOverrideEntry->destination;
+      }
+      break;
+    }
     default:
       kout::printf("Unknown MADT entry type %d\n", entry->type);
     }
     entry = (MadtEntry *)((uint8_t *)entry + entry->length);
   }
+  kout::printf("Found %d local APICs, %d io APICs and %d GSI overrides\n",
+              numLocalApics, numIoApics, numGsiOverrides);
+  memory::unmapMemory(header, header->length);
 }
 } // namespace acpi
