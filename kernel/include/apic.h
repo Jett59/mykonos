@@ -14,37 +14,22 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     */
-#ifndef _ACPI_TABLES_H
-#define _ACPI_TABLES_H
+#ifndef _APIC_H
+#define _APIC_H
+
+#define MAX_LOCAL_APICS 64
+#define MAX_IO_APICS 24
 
 #include <stdint.h>
 
-namespace acpi {
-struct TableHeader {
-  char signature[4];
-  uint32_t length;
-  uint8_t revision;
-  uint8_t checksum;
-  char oemId[6];
-  char oemTableId[8];
-  uint32_t oemRevision;
-  char creatorId[4];
-  uint32_t creatorRevision;
+namespace apic {
+struct LocalApicDescriptor {
+  uint8_t apicId;
 };
-static_assert(sizeof(TableHeader) == 36, "TableHeader incorrect size");
-
-enum class TableType { RSDT, MADT };
-class TableManager {
-public:
-  const TableType type;
-
-  virtual ~TableManager() {}
-
-protected:
-  TableManager(TableType type) : type(type) {}
+struct IoApicDescriptor {
+  void *physicalAddress;
+  uint32_t gsiBase;
 };
-
-TableManager *loadTable(void *physicalAddress);
-} // namespace acpi
+} // namespace apic
 
 #endif
