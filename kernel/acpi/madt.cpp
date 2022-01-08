@@ -33,7 +33,8 @@ MadtTableManager::MadtTableManager(TableHeader *header)
     switch (entry->type) {
     case MADT_TYPE_LOCAL_APIC: {
       MadtLocalApicEntry *localApicEntry = (MadtLocalApicEntry *)entry;
-      if (numLocalApics < MAX_LOCAL_APICS) {
+      if ((localApicEntry->flags & MADT_FLAGS_ENABLED) != 0 &&
+          numLocalApics < MAX_LOCAL_APICS) {
         localApics[numLocalApics++].apicId = localApicEntry->apicId;
       }
       break;
@@ -65,7 +66,7 @@ MadtTableManager::MadtTableManager(TableHeader *header)
     entry = (MadtEntry *)((uint8_t *)entry + entry->length);
   }
   kout::printf("Found %d local APICs, %d io APICs and %d GSI overrides\n",
-              numLocalApics, numIoApics, numGsiOverrides);
+               numLocalApics, numIoApics, numGsiOverrides);
   memory::unmapMemory(header, header->length);
 }
 } // namespace acpi

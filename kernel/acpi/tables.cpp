@@ -17,8 +17,8 @@
 #include <acpi/rsdp.h>
 #include <acpi/tables.h>
 
-#include <acpi/rsdt.h>
 #include <acpi/madt.h>
+#include <acpi/rsdt.h>
 
 #include <kmalloc.h>
 #include <kout.h>
@@ -39,7 +39,8 @@ TableManager *loadMadt(TableHeader *header) {
   return new MadtTableManager(header);
 }
 
-static TableHandler tableHandlers[] = {{"RSDT", loadRsdt}, {"XSDT", loadRsdt}, {"APIC", loadMadt}};
+static TableHandler tableHandlers[] = {
+    {"RSDT", loadRsdt}, {"XSDT", loadRsdt}, {"APIC", loadMadt}};
 #define numTableHandlers (sizeof(tableHandlers) / sizeof(TableHandler))
 
 static bool doChecksum(TableHeader *header) {

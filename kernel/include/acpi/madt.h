@@ -22,7 +22,7 @@
 #include <apic.h>
 
 namespace acpi {
-  #define MAX_GSI_OVERRIDES 16
+#define MAX_GSI_OVERRIDES 16
 struct MadtGsiOverride {
   bool levelTriggered;
   bool activeHigh;
