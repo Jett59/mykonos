@@ -26,7 +26,7 @@ public:
 
 private:
   void *physicalAddress;
-  uint8_t numComparators;
+  uint8_t numComparators = 0;
   bool legacyReplacementCapable;
 };
 struct __attribute__((packed)) HpetTable {
