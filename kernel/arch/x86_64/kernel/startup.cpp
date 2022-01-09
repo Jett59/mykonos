@@ -49,11 +49,10 @@ extern "C" [[noreturn]] void kstart() {
   multiboot::parseMbi();
   paging::initPageTables();
   display::initFrameBuffer();
+  interrupts::init();
   kout::print("Initialized the console\n\n");
   if (test::runTests(kout::print)) {
     // Continue
-    interrupts::init();
-    kout::print("Installed interrupt handlers\n\n");
     if (!memeq(acpi::rsdp.signature, "RSD PTR ", 8)) {
       kpanic("No acpi found");
     }
