@@ -27,7 +27,7 @@ public:
 private:
   void *physicalAddress;
   uint8_t numComparators;
-  bool legacyReplacement;
+  bool legacyReplacementCapable;
 };
 struct __attribute__((packed)) HpetTable {
   TableHeader header;
@@ -35,7 +35,7 @@ struct __attribute__((packed)) HpetTable {
   uint8_t numComparators : 5;
   uint8_t counterSize : 1; // 0 = 32 bits, 1 = 64 bits
   uint8_t reserved : 1;
-  uint8_t legacyReplacement : 1;
+  uint8_t legacyReplacementCapable : 1;
   uint16_t vendorId;
   Address adress;
   uint8_t hpetNumber;

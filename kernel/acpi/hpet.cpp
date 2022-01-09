@@ -17,11 +17,22 @@
 #include <acpi/hpet.h>
 
 #include <kmalloc.h>
+#include <kout.h>
 
 namespace acpi {
 HpetTableManager::HpetTableManager(TableHeader *header)
     : TableManager(TableType::HPET) {
   HpetTable *hpet = (HpetTable *)header;
+  if (hpet->counterSize != 1) {
+    kout::print("Unusable HPET: 32 bit counter\n");
+  } else if (hpet->adress.adressSpace != 0) {
+    kout::print("Unusable HPET: Not memory mapped\n");
+  } else {
+    legacyReplacementCapable = hpet->legacyReplacementCapable;
+    numComparators = hpet->numComparators + 1;
+    physicalAddress = (void *)(size_t)hpet->adress.address;
+    kout::printf("Found HPET with %d comparators\n", numComparators);
+  }
   memory::unmapMemory(header, header->length);
 }
 } // namespace acpi
