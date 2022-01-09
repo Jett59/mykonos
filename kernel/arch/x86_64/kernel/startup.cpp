@@ -60,9 +60,7 @@ extern "C" [[noreturn]] void kstart() {
     if (!acpi::rsdp.doChecksum()) {
       kpanic("Checksum of rsdp failed");
     }
-    kout::print("Found rsdp (revision: ");
-    kout::print(acpi::rsdp.revision);
-    kout::print(")\n");
+    kout::printf("Found rsdp (revision: %d)\n", acpi::rsdp.revision);
     void *rsdtAddress = (acpi::rsdp.revision >= 2)
                             ? (void *)(size_t)acpi::rsdp.xsdtAddress
                             : (void *)(size_t)acpi::rsdp.rsdtAddress;
