@@ -56,9 +56,11 @@ RsdtTableManager::~RsdtTableManager() {
 
 TableManager *RsdtTableManager::get(TableType type, int num) {
   for (size_t i = 0; i < numChildren; i++) {
-    if (children[i]->type == type) {
-      if (num-- == 0) {
-        return children[i];
+    if (children[i] != nullptr) {
+      if (children[i]->type == type) {
+        if (num-- == 0) {
+          return children[i];
+        }
       }
     }
   }
