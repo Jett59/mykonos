@@ -30,6 +30,10 @@ public:
 private:
   TableManager **children;
   size_t numChildren;
+
+  TableManager *operator[](size_t i) {
+    return i < numChildren ? children[i] : nullptr;
+  }
 };
 } // namespace acpi
 
