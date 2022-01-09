@@ -43,8 +43,10 @@ TableManager *loadHpet(TableHeader *header) {
   return new HpetTableManager(header);
 }
 
-static TableHandler tableHandlers[] = {
-    {"RSDT", loadRsdt}, {"XSDT", loadRsdt}, {"APIC", loadMadt}, {"HPET", loadHpet}};
+static TableHandler tableHandlers[] = {{"RSDT", loadRsdt},
+                                       {"XSDT", loadRsdt},
+                                       {"APIC", loadMadt},
+                                       {"HPET", loadHpet}};
 #define numTableHandlers (sizeof(tableHandlers) / sizeof(TableHandler))
 
 static bool doChecksum(TableHeader *header) {
