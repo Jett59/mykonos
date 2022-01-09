@@ -49,7 +49,7 @@ extern "C" [[noreturn]] void kstart() {
   multiboot::parseMbi();
   paging::initPageTables();
   display::initFrameBuffer();
-  kout::print("Initialised the console\n\n");
+  kout::print("Initialized the console\n\n");
   if (test::runTests(kout::print)) {
     // Continue
     interrupts::init();
