@@ -35,6 +35,8 @@ private:
     return i < numChildren ? children[i] : nullptr;
   }
   size_t childCount() { return numChildren; }
+
+  TableManager *get(TableType type, int num = 0);
 };
 } // namespace acpi
 
