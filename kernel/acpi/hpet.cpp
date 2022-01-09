@@ -20,8 +20,8 @@
 
 namespace acpi {
 HpetTableManager::HpetTableManager(TableHeader *header)
-    : type(TableType::HPET) {
-  memory::unmapMemory(header);
-  ;
+    : TableManager(TableType::HPET) {
+  HpetTable *hpet = (HpetTable *)header;
+  memory::unmapMemory(header, header->length);
 }
 } // namespace acpi

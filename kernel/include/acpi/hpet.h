@@ -29,6 +29,22 @@ private:
   uint8_t numComparators;
   bool legacyReplacement;
 };
+struct __attribute__((packed)) HpetTable {
+  TableHeader header;
+  uint8_t hardwareRevId;
+  uint8_t numComparators : 5;
+  uint8_t counterSize : 1; // 0 = 32 bits, 1 = 64 bits
+  uint8_t reserved : 1;
+  uint8_t legacyReplacement : 1;
+  uint16_t vendorId;
+  Address adress;
+  uint8_t hpetNumber;
+  uint16_t
+      minimumTicks; // Minimum ticks to not lose interrupts in periodic mode
+  uint8_t pageProtection;
+};
+static_assert(sizeof(HpetTable) == sizeof(TableHeader) + 20,
+              "HpetTable is not packed");
 } // namespace acpi
 
 #endif
