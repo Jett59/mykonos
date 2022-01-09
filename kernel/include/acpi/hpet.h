@@ -28,6 +28,10 @@ private:
   void *physicalAddress;
   uint8_t numComparators = 0;
   bool legacyReplacementCapable;
+
+  void *getPhysicalAddress() { return physicalAddress; }
+  uint8_t comparatorCount() { return numComparators; }
+  bool isLegacyReplacementCapable() { return legacyReplacementCapable; }
 };
 struct __attribute__((packed)) HpetTable {
   TableHeader header;
