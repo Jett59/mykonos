@@ -54,20 +54,20 @@ extern "C" [[noreturn]] void kstart() {
   if (test::runTests(kout::print)) {
     // Continue
     if (!memeq(acpi::rsdp.signature, "RSD PTR ", 8)) {
-      kpanic("No acpi found");
+      kpanic("No ACPI found");
     }
     if (!acpi::rsdp.doChecksum()) {
-      kpanic("Checksum of rsdp failed");
+      kpanic("Checksum of RSDP failed");
     }
-    kout::printf("Found rsdp (revision: %d)\n", acpi::rsdp.revision);
+    kout::printf("Found RSDP (revision: %d)\n", acpi::rsdp.revision);
     void *rsdtAddress = (acpi::rsdp.revision >= 2)
                             ? (void *)(size_t)acpi::rsdp.xsdtAddress
                             : (void *)(size_t)acpi::rsdp.rsdtAddress;
     acpi::TableManager *rsdt = acpi::loadTable(rsdtAddress);
     if (rsdt == nullptr) {
-      kpanic("Error loading rsdt");
+      kpanic("Error loading RSDT");
     }
-    kout::print("Found rsdt\n");
+    kout::print("Found RSDT\n");
     kpanic("It all worked");
   } else {
     // The tests failed! Abort
