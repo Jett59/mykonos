@@ -32,8 +32,16 @@ struct TableHeader {
   uint32_t creatorRevision;
 };
 static_assert(sizeof(TableHeader) == 36, "TableHeader incorrect size");
+struct __attribute__((packed)) Address {
+  uint8_t adressSpace;
+  uint8_t bitWidth;
+  uint8_t bitOffset;
+  uint8_t reserved;
+  uint64_t address;
+};
+static_assert(sizeof(Address) == 12, "Address is not packed");
 
-enum class TableType { RSDT, MADT };
+enum class TableType { RSDT, MADT, HPET };
 class TableManager {
 public:
   const TableType type;

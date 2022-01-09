@@ -17,6 +17,7 @@
 #include <acpi/rsdp.h>
 #include <acpi/tables.h>
 
+#include <acpi/hpet.h>
 #include <acpi/madt.h>
 #include <acpi/rsdt.h>
 
@@ -38,9 +39,14 @@ TableManager *loadRsdt(TableHeader *header) {
 TableManager *loadMadt(TableHeader *header) {
   return new MadtTableManager(header);
 }
+TableManager *loadHpet(TableHeader *header) {
+  return new HpetTableManager(header);
+}
 
-static TableHandler tableHandlers[] = {
-    {"RSDT", loadRsdt}, {"XSDT", loadRsdt}, {"APIC", loadMadt}};
+static TableHandler tableHandlers[] = {{"RSDT", loadRsdt},
+                                       {"XSDT", loadRsdt},
+                                       {"APIC", loadMadt},
+                                       {"HPET", loadHpet}};
 #define numTableHandlers (sizeof(tableHandlers) / sizeof(TableHandler))
 
 static bool doChecksum(TableHeader *header) {
