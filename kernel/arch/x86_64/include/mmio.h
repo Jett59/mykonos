@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2021  Jett Thompson
+    Copyright (C) 2022  Jett Thompson
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -13,19 +13,23 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
-*/
-#ifndef _CPU_H
-#define _CPU_H
+    */
+#ifndef _MMIO_H
+#define _MMIO_H
 
-namespace cpu {
-static inline void mfence() { __asm__ volatile("mfence" : : : "memory"); }
-static inline void relax() { __asm__ volatile("pause"); }
-[[noreturn]] static inline void hault() {
-  __asm__ volatile("cli");
-  for (;;) {
-    __asm__ volatile("hlt");
-  }
+#include <stdint.h>
+
+#include <cpu.h>
+
+namespace mmio {
+template <typename T> static inline void write(T *ptr, T value) {
+  cpu::mfence();
+  *ptr = value;
 }
-} // namespace cpu
+template <typename T> static inline T read(T *ptr) {
+  cpu::mfence();
+  return *ptr;
+}
+} // namespace mmio
 
 #endif

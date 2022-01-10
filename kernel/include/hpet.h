@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2021  Jett Thompson
+    Copyright (C) 2022  Jett Thompson
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -13,19 +13,35 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
-*/
-#ifndef _CPU_H
-#define _CPU_H
+    */
+#ifndef _HPET_H
+#define _HPET_H
 
-namespace cpu {
-static inline void mfence() { __asm__ volatile("mfence" : : : "memory"); }
-static inline void relax() { __asm__ volatile("pause"); }
-[[noreturn]] static inline void hault() {
-  __asm__ volatile("cli");
-  for (;;) {
-    __asm__ volatile("hlt");
+#include <stddef.h>
+#include <stdint.h>
+
+#include <kmalloc.h>
+
+#include <mmio.h>
+
+namespace hpet {
+class Hpet {
+public:
+  Hpet(void *physicalAddress)
+      : registerPointer(
+            (uint64_t *)memory::mapAddress(physicalAddress, 1024, false)) {}
+  ~Hpet() { memory::unmapMemory(registerPointer, 1024); }
+
+private:
+  uint64_t *registerPointer;
+  
+  void writeRegister(size_t offset, uint64_t value) {
+    mmio::write(registerPointer + (offset / 8), value);
   }
-}
-} // namespace cpu
+  uint64_t readRegister(size_t offset) {
+    return mmio::read(registerPointer + (offset / 8));
+  }
+};
+} // namespace hpet
 
 #endif
