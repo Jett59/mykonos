@@ -14,30 +14,44 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     */
-#ifndef _ACPI_RSDT_H
-#define _ACPI_RSDT_H
-
-#include <acpi/tables.h>
+#ifndef _HPET_H
+#define _HPET_H
 
 #include <stddef.h>
+#include <stdint.h>
 
-namespace acpi {
-class RsdtTableManager : public TableManager {
+#include <mmio.h>
+
+#define HPET_REGISTER_COUNTER 0xf0
+
+namespace hpet {
+class Hpet {
 public:
-  RsdtTableManager(TableHeader *header);
-  virtual ~RsdtTableManager();
+  Hpet(void *physicalAddress);
+  ~Hpet();
 
-  TableManager *operator[](size_t i) {
-    return i < numChildren ? children[i] : nullptr;
+  Hpet(Hpet &other) = delete;
+  Hpet &operator=(Hpet &other) = delete;
+
+  uint64_t nanoTime() {
+    return (readRegister(HPET_REGISTER_COUNTER) * frequencyFemtos) / 1000000;
   }
-  size_t childCount() { return numChildren; }
+  uint64_t getFrequencyKhz() { return 1000000000000l / frequencyFemtos; }
 
-  TableManager *get(TableType type, int num = 0);
+  void reset();
 
 private:
-  TableManager **children;
-  size_t numChildren;
+  uint64_t *registerPointer;
+
+  uint64_t frequencyFemtos;
+
+  void writeRegister(size_t offset, uint64_t value) {
+    mmio::write(registerPointer + (offset / 8), value);
+  }
+  uint64_t readRegister(size_t offset) {
+    return mmio::read(registerPointer + (offset / 8));
+  }
 };
-} // namespace acpi
+} // namespace hpet
 
 #endif

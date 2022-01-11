@@ -14,30 +14,22 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     */
-#ifndef _ACPI_RSDT_H
-#define _ACPI_RSDT_H
+#ifndef _MMIO_H
+#define _MMIO_H
 
-#include <acpi/tables.h>
+#include <stdint.h>
 
-#include <stddef.h>
+#include <cpu.h>
 
-namespace acpi {
-class RsdtTableManager : public TableManager {
-public:
-  RsdtTableManager(TableHeader *header);
-  virtual ~RsdtTableManager();
-
-  TableManager *operator[](size_t i) {
-    return i < numChildren ? children[i] : nullptr;
-  }
-  size_t childCount() { return numChildren; }
-
-  TableManager *get(TableType type, int num = 0);
-
-private:
-  TableManager **children;
-  size_t numChildren;
-};
-} // namespace acpi
+namespace mmio {
+template <typename T> static inline void write(T *ptr, T value) {
+  cpu::mfence();
+  *ptr = value;
+}
+template <typename T> static inline T read(T *ptr) {
+  cpu::mfence();
+  return *ptr;
+}
+} // namespace mmio
 
 #endif

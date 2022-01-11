@@ -28,8 +28,12 @@
 
 #include <kpanic.h>
 
+#include <acpi/hpet.h>
 #include <acpi/rsdp.h>
+#include <acpi/rsdt.h>
 #include <acpi/tables.h>
+
+#include <hpet.h>
 
 typedef void (*ConstructorOrDestructor)();
 
@@ -63,11 +67,24 @@ extern "C" [[noreturn]] void kstart() {
     void *rsdtAddress = (acpi::rsdp.revision >= 2)
                             ? (void *)(size_t)acpi::rsdp.xsdtAddress
                             : (void *)(size_t)acpi::rsdp.rsdtAddress;
-    acpi::TableManager *rsdt = acpi::loadTable(rsdtAddress);
+    acpi::RsdtTableManager *rsdt =
+        (acpi::RsdtTableManager *)acpi::loadTable(rsdtAddress);
     if (rsdt == nullptr) {
       kpanic("Error loading RSDT");
     }
     kout::print("Found RSDT\n");
+    acpi::HpetTableManager *hpetTableManager =
+        (acpi::HpetTableManager *)rsdt->get(acpi::TableType::HPET);
+    if (hpetTableManager == nullptr) {
+      kpanic("No HPET found");
+    }
+    if (hpetTableManager->comparatorCount() == 0) {
+      kpanic("No usable HPET found");
+    }
+    hpet::Hpet hpet(hpetTableManager->getPhysicalAddress());
+    kout::printf("HPET says current time is %lns sinse reset (with precision "
+                 "of %lkHz)\n",
+                 hpet.nanoTime(), hpet.getFrequencyKhz());
     kpanic("It all worked");
   } else {
     // The tests failed! Abort

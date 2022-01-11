@@ -18,6 +18,7 @@
 #define _CPU_H
 
 namespace cpu {
+static inline void mfence() { __asm__ volatile("mfence" : : : "memory"); }
 static inline void relax() { __asm__ volatile("pause"); }
 [[noreturn]] static inline void hault() {
   __asm__ volatile("cli");

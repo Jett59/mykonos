@@ -24,6 +24,10 @@ class HpetTableManager : public TableManager {
 public:
   HpetTableManager(TableHeader *header);
 
+  void *getPhysicalAddress() { return physicalAddress; }
+  uint8_t comparatorCount() { return numComparators; }
+  bool isLegacyReplacementCapable() { return legacyReplacementCapable; }
+
 private:
   void *physicalAddress;
   uint8_t numComparators = 0;
