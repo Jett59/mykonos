@@ -31,4 +31,4 @@ void LocalApic::init(void *physicalAddress) {
                       LOCAL_APIC_SPURIOUS_INTERRUPT_REGISTER_ENABLE);
   }
 }
-}
+} // namespace apic
