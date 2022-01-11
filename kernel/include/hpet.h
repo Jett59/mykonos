@@ -36,6 +36,7 @@ public:
   uint64_t nanoTime() {
     return (readRegister(HPET_REGISTER_COUNTER) * frequencyFemtos) / 1000000;
   }
+  uint64_t getFrequencyKhz() { return 1000000000000l / frequencyFemtos; }
 
   void reset();
 
