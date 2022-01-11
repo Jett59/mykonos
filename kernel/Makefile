@@ -28,6 +28,7 @@ include memory/Make.steps
 include display/Make.steps
 include error/Make.steps
 include acpi/Make.steps
+include drivers/Make.steps
 
 # Enable runtime tests if requested
 ifeq ($(TEST),ON)

@@ -20,21 +20,27 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include <kmalloc.h>
-
 #include <mmio.h>
+
+#define HPET_REGISTER_COUNTER 0xf0
 
 namespace hpet {
 class Hpet {
 public:
-  Hpet(void *physicalAddress)
-      : registerPointer(
-            (uint64_t *)memory::mapAddress(physicalAddress, 1024, false)) {}
-  ~Hpet() { memory::unmapMemory(registerPointer, 1024); }
+  Hpet(void *physicalAddress);
+  ~Hpet();
+
+  uint64_t nanoTime() {
+    return (readRegister(HPET_REGISTER_COUNTER) * frequencyFemtos) / 1000000;
+  }
+
+  void reset();
 
 private:
   uint64_t *registerPointer;
-  
+
+  uint64_t frequencyFemtos;
+
   void writeRegister(size_t offset, uint64_t value) {
     mmio::write(registerPointer + (offset / 8), value);
   }
