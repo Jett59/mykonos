@@ -82,7 +82,8 @@ extern "C" [[noreturn]] void kstart() {
       kpanic("No usable HPET found");
     }
     hpet::Hpet hpet(hpetTableManager->getPhysicalAddress());
-    kout::printf("HPET says current time is %l (with precision of %lkHz)\n", hpet.nanoTime(), hpet.getFrequencyKhz());
+    kout::printf("HPET says current time is %lns sinse reset (with precision of %lkHz)\n",
+                 hpet.nanoTime(), hpet.getFrequencyKhz());
     kpanic("It all worked");
   } else {
     // The tests failed! Abort
