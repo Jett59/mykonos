@@ -33,6 +33,8 @@
 #include <acpi/rsdt.h>
 #include <acpi/tables.h>
 
+#include <hpet.h>
+
 typedef void (*ConstructorOrDestructor)();
 
 extern "C" {
@@ -79,6 +81,8 @@ extern "C" [[noreturn]] void kstart() {
     if (hpetTableManager->comparatorCount() == 0) {
       kpanic("No usable HPET found");
     }
+    hpet::Hpet hpet(hpetTableManager->getPhysicalAddress());
+    kout::printf("HPET says current time is %l\n", hpet.nanoTime());
     kpanic("It all worked");
   } else {
     // The tests failed! Abort

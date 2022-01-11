@@ -30,6 +30,9 @@ public:
   Hpet(void *physicalAddress);
   ~Hpet();
 
+  Hpet(Hpet &other) = delete;
+  Hpet &operator=(Hpet &other) = delete;
+
   uint64_t nanoTime() {
     return (readRegister(HPET_REGISTER_COUNTER) * frequencyFemtos) / 1000000;
   }
