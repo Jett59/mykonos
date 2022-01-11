@@ -17,5 +17,5 @@
 #include <apic.h>
 
 namespace apic {
-uint32_t *localApicRegisters = nullptr;
+LocalApic localApic;
 }

@@ -20,9 +20,11 @@
 #define MAX_LOCAL_APICS 64
 #define MAX_IO_APICS 24
 
+#include <stddef.h>
 #include <stdint.h>
 
 #include <kmalloc.h>
+#include <mmio.h>
 
 namespace apic {
 struct LocalApicDescriptor {
@@ -33,12 +35,26 @@ struct IoApicDescriptor {
   uint32_t gsiBase;
 };
 
-extern uint32_t *localApicRegisters;
+class LocalApic {
+public:
+  void init(void *physicalAddress) {
+    if (registers == nullptr) {
+      registers = (uint32_t *)memory::mapAddress(physicalAddress, 4096, false);
+    }
+  }
 
-static inline void initLocalApic(void *physicalAddress) {
-  localApicRegisters =
-      (uint32_t *)memory::mapAddress(physicalAddress, 4096, false);
-}
+private:
+  uint32_t *registers = nullptr;
+
+  void writeRegister(size_t offset, uint32_t value) {
+    mmio::write(registers + (offset / 4), value);
+  }
+  uint32_t readRegister(size_t offset) {
+    return mmio::read(registers + (offset / 4));
+  }
+};
+
+extern LocalApic localApic;
 } // namespace apic
 
 #endif

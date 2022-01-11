@@ -90,11 +90,11 @@ extern "C" [[noreturn]] void kstart() {
                  hpet.nanoTime(), hpet.getFrequencyKhz());
     acpi::MadtTableManager *madt =
         (acpi::MadtTableManager *)rsdt->get(acpi::TableType::MADT);
-        if (madt == nullptr) {
-          kpanic("No MADT found");
-        }
-        apic::initLocalApic(madt->getLocalApicAddress());
-        kpanic("It all worked");
+    if (madt == nullptr) {
+      kpanic("No MADT found");
+    }
+    apic::localApic.init(madt->getLocalApicAddress());
+    kpanic("It all worked");
   } else {
     // The tests failed! Abort
     kpanic("The tests failed!");
