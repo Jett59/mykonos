@@ -94,6 +94,8 @@ extern "C" [[noreturn]] void kstart() {
       kpanic("No MADT found");
     }
     apic::localApic.init(madt->getLocalApicAddress());
+    kout::printf("Initialized local APIC with version %x\n",
+                 apic::localApic.getVersion());
     kpanic("It all worked");
   } else {
     // The tests failed! Abort

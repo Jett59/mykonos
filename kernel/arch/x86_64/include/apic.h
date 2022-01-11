@@ -35,13 +35,15 @@ struct IoApicDescriptor {
   uint32_t gsiBase;
 };
 
+#define LOCAL_APIC_VERSION_REGISTER 0x30
+
+#define LOCAL_APIC_SPURIOUS_INTERRUPT_VECTOR 0xff
+
 class LocalApic {
 public:
-  void init(void *physicalAddress) {
-    if (registers == nullptr) {
-      registers = (uint32_t *)memory::mapAddress(physicalAddress, 4096, false);
-    }
-  }
+  void init(void *physicalAddress);
+
+  uint32_t getVersion() { return readRegister(LOCAL_APIC_VERSION_REGISTER); }
 
 private:
   uint32_t *registers = nullptr;

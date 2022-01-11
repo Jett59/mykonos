@@ -16,6 +16,19 @@
     */
 #include <apic.h>
 
+#define LOCAL_APIC_SPURIOUS_INTERRUPT_REGISTER 0xf0
+
+#define LOCAL_APIC_SPURIOUS_INTERRUPT_REGISTER_ENABLE (1 << 8)
+
 namespace apic {
 LocalApic localApic;
+
+void LocalApic::init(void *physicalAddress) {
+  if (registers == nullptr) {
+    registers = (uint32_t *)memory::mapAddress(physicalAddress, 4096, false);
+    writeRegister(LOCAL_APIC_SPURIOUS_INTERRUPT_REGISTER,
+                  LOCAL_APIC_SPURIOUS_INTERRUPT_VECTOR |
+                      LOCAL_APIC_SPURIOUS_INTERRUPT_REGISTER_ENABLE);
+  }
+}
 }
