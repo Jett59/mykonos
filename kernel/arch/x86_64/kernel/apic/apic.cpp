@@ -14,31 +14,8 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     */
-#ifndef _APIC_H
-#define _APIC_H
-
-#define MAX_LOCAL_APICS 64
-#define MAX_IO_APICS 24
-
-#include <stdint.h>
-
-#include <kmalloc.h>
+#include <apic.h>
 
 namespace apic {
-struct LocalApicDescriptor {
-  uint8_t apicId;
-};
-struct IoApicDescriptor {
-  void *physicalAddress;
-  uint32_t gsiBase;
-};
-
-extern uint32_t *localApicRegisters;
-
-static inline void initLocalApic(void *physicalAddress) {
-  localApicRegisters =
-      (uint32_t *)memory::mapAddress(physicalAddress, 4096, false);
+uint32_t *localApicRegisters = nullptr;
 }
-} // namespace apic
-
-#endif
