@@ -29,11 +29,14 @@
 #include <kpanic.h>
 
 #include <acpi/hpet.h>
+#include <acpi/madt.h>
 #include <acpi/rsdp.h>
 #include <acpi/rsdt.h>
 #include <acpi/tables.h>
 
 #include <hpet.h>
+
+#include <apic.h>
 
 typedef void (*ConstructorOrDestructor)();
 
@@ -85,6 +88,14 @@ extern "C" [[noreturn]] void kstart() {
     kout::printf("HPET says current time is %lns sinse reset (with precision "
                  "of %lkHz)\n",
                  hpet.nanoTime(), hpet.getFrequencyKhz());
+    acpi::MadtTableManager *madt =
+        (acpi::MadtTableManager *)rsdt->get(acpi::TableType::MADT);
+    if (madt == nullptr) {
+      kpanic("No MADT found");
+    }
+    apic::localApic.init(madt->getLocalApicAddress());
+    kout::printf("Initialized local APIC with version %x\n",
+                 apic::localApic.getVersion());
     kpanic("It all worked");
   } else {
     // The tests failed! Abort

@@ -33,6 +33,24 @@ class MadtTableManager : public TableManager {
 public:
   MadtTableManager(TableHeader *header);
 
+  bool getHasPic() { return hasPic; }
+  void *getLocalApicAddress() { return localApicAddress; }
+
+  unsigned localApicCount() { return numLocalApics; }
+  apic::LocalApicDescriptor getLocalApic(size_t i) {
+    return i < numLocalApics ? localApics[i] : apic::LocalApicDescriptor();
+  }
+
+  unsigned ioApicCount() { return numIoApics; }
+  apic::IoApicDescriptor getIoApic(size_t i) {
+    return i < numIoApics ? ioApics[i] : apic::IoApicDescriptor();
+  }
+
+  unsigned gsiOverrideCount() { return numGsiOverrides; }
+  MadtGsiOverride getGsiOverride(size_t i) {
+    return i < numGsiOverrides ? gsiOverrides[i] : MadtGsiOverride();
+  }
+
 private:
   bool hasPic;
   void *localApicAddress;

@@ -14,22 +14,21 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     */
-#ifndef _APIC_H
-#define _APIC_H
+#include <apic.h>
 
-#define MAX_LOCAL_APICS 64
-#define MAX_IO_APICS 24
+#define LOCAL_APIC_SPURIOUS_INTERRUPT_REGISTER 0xf0
 
-#include <stdint.h>
+#define LOCAL_APIC_SPURIOUS_INTERRUPT_REGISTER_ENABLE (1 << 8)
 
 namespace apic {
-struct LocalApicDescriptor {
-  uint8_t apicId;
-};
-struct IoApicDescriptor {
-  void *physicalAddress;
-  uint32_t gsiBase;
-};
-} // namespace apic
+LocalApic localApic;
 
-#endif
+void LocalApic::init(void *physicalAddress) {
+  if (registers == nullptr) {
+    registers = (uint32_t *)memory::mapAddress(physicalAddress, 4096, false);
+    writeRegister(LOCAL_APIC_SPURIOUS_INTERRUPT_REGISTER,
+                  LOCAL_APIC_SPURIOUS_INTERRUPT_VECTOR |
+                      LOCAL_APIC_SPURIOUS_INTERRUPT_REGISTER_ENABLE);
+  }
+}
+} // namespace apic
