@@ -22,11 +22,11 @@
 #include <cpu.h>
 
 namespace mmio {
-template <typename T> static inline void write(T *ptr, T value) {
+template <typename T> static inline void write(volatile T *ptr, T value) {
   cpu::mfence();
   *ptr = value;
 }
-template <typename T> static inline T read(T *ptr) {
+template <typename T> static inline T read(volatile T *ptr) {
   cpu::mfence();
   return *ptr;
 }

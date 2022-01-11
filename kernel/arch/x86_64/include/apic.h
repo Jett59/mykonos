@@ -37,13 +37,17 @@ struct IoApicDescriptor {
 
 #define LOCAL_APIC_VERSION_REGISTER 0x30
 
+#define LOCAL_APIC_VERSION_MASK 0xFF
+
 #define LOCAL_APIC_SPURIOUS_INTERRUPT_VECTOR 0xff
 
 class LocalApic {
 public:
   void init(void *physicalAddress);
 
-  uint32_t getVersion() { return readRegister(LOCAL_APIC_VERSION_REGISTER); }
+  uint32_t getVersion() {
+    return readRegister(LOCAL_APIC_VERSION_REGISTER) & LOCAL_APIC_VERSION_MASK;
+  }
 
 private:
   uint32_t *registers = nullptr;
