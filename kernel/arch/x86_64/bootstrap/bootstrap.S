@@ -146,5 +146,5 @@ initial_stack_top:
 .section .smp-trampoline, "ax"
 .code16
 cli
-1: hlt
+1:
 jmp 1b

@@ -37,8 +37,10 @@ struct IoApicDescriptor {
 
 #define LOCAL_APIC_VERSION_REGISTER 0x30
 #define LOCAL_APIC_ERROR_REGISTER 0x280
+#define LOCAL_APIC_ID_REGISTER 0x20
 
 #define LOCAL_APIC_VERSION_MASK 0xFF
+#define LOCAL_APIC_ID_POSITION 24
 
 #define LOCAL_APIC_SPURIOUS_INTERRUPT_VECTOR 0xff
 
@@ -58,13 +60,16 @@ public:
   uint32_t getVersion() {
     return readRegister(LOCAL_APIC_VERSION_REGISTER) & LOCAL_APIC_VERSION_MASK;
   }
+  uint8_t getApicId() {
+    return readRegister(LOCAL_APIC_ID_REGISTER) >> LOCAL_APIC_ID_POSITION;
+  }
 
   void clearErrors() { writeRegister(LOCAL_APIC_ERROR_REGISTER, 0); }
 
   void sendIpi(uint8_t vector, uint8_t messageType, bool logicalDestination,
                bool assert, bool levelTriggered, uint8_t destinationApicId);
 
- private:
+private:
   uint32_t *registers = nullptr;
 
   void writeRegister(size_t offset, uint32_t value) {

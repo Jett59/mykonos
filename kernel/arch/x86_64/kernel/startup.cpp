@@ -37,6 +37,7 @@
 #include <hpet.h>
 
 #include <apic.h>
+#include <smp.h>
 
 typedef void (*ConstructorOrDestructor)();
 
@@ -96,6 +97,18 @@ extern "C" [[noreturn]] void kstart() {
     apic::localApic.init(madt->getLocalApicAddress());
     kout::printf("Initialized local APIC with version %x\n",
                  apic::localApic.getVersion());
+    kout::print("Beginning SMP initialization\n");
+    uint8_t myApicId = apic::localApic.getApicId();
+    for (unsigned i = 0; i < madt->localApicCount(); i++) {
+      uint8_t apicId = madt->getLocalApic(i).apicId;
+      if (apicId != myApicId) {
+        if (smp::startCpu(apicId, hpet)) {
+          kout::printf("Started CPU %d\n", i);
+        } else {
+          kout::printf("CPU %d failed to start\n", i);
+        }
+      }
+    }
     kpanic("It all worked");
   } else {
     // The tests failed! Abort
