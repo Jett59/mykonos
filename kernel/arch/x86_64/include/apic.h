@@ -42,6 +42,15 @@ struct IoApicDescriptor {
 
 #define LOCAL_APIC_SPURIOUS_INTERRUPT_VECTOR 0xff
 
+#define APIC_FIXED_IPI 0
+#define APIC_LOWEST_PRIORITY_IPI 1
+#define APIC_SMI_IPI 2
+#define APIC_REMOTE_READ_IPI 3
+#define APIC_NMI_IPI 4
+#define APIC_INIT_IPI 5
+#define APIC_STARTUP_IPI 6
+#define APIC_EXTERNAL_INTERRUPT_IPI 7
+
 class LocalApic {
 public:
   void init(void *physicalAddress);
