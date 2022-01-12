@@ -22,6 +22,11 @@ kernelVirtualOffset = 0xFFFF800000000000;
 kernelHeapSize = 512m;
 
 SECTIONS {
+    /*Put this at the start of the binary to remove linker warnings*/
+    . = 0x8000;
+    .smp-trampoline : {
+        KEEP(*(.smp-trampoline));
+    }
     . = 0x200000 + SIZEOF_HEADERS;
     kernelPhysicalAddress = .;
     kernelVirtualAddress = . + kernelVirtualOffset;

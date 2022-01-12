@@ -142,3 +142,9 @@ gdt_end:
 initial_stack:
 .fill 65536 /*Should be fine*/
 initial_stack_top:
+
+.section .smp-trampoline, "ax"
+.code16
+cli
+1: hlt
+jmp 1b
