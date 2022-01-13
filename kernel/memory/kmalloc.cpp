@@ -29,7 +29,7 @@ namespace memory {
 struct KmallocHeader {
   size_t size;
 };
-void *kmalloc(size_t size) {
+void *allocateMemory(size_t size) {
   size = PAGE_ALIGN_UP(size + sizeof(KmallocHeader));
   void *ptr = virtualMemory.allocate(size);
   if (ptr == nullptr) {
@@ -40,6 +40,10 @@ void *kmalloc(size_t size) {
                     (void *)(memory::allocateFrame() * PAGE_SIZE),
                     paging::PageTableFlags::WRITABLE, true, true);
   }
+  return ptr;
+}
+void *kmalloc(size_t size) {
+  void *ptr = allocateMemory(size);
   KmallocHeader *headerPtr = (KmallocHeader *)ptr;
   *headerPtr = {.size = size};
   ptr = (void *)(headerPtr + 1);

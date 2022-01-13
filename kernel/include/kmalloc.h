@@ -25,6 +25,11 @@ void kfree(void *ptr);
 
 void *mapAddress(void *physicalAddress, size_t size, bool cacheable);
 void unmapMemory(void *address, size_t size);
+
+void *allocateMemory(size_t size);
+static inline void freeMemory(void *ptr, size_t size) {
+  unmapMemory(ptr, size);
+}
 } // namespace memory
 
 #endif
