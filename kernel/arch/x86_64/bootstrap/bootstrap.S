@@ -158,7 +158,7 @@ smpIdtPointer:
 .quad 0 /*Null pointer*/
 
 .align 8
-/*Set up the segment registers and load the gdt/idt*/
+/*Set up the segment registers and load the idt*/
 movw %cs, %ax
 movw %ax, %ds
 lidt (0x8012)
