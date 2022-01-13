@@ -40,6 +40,7 @@ SECTIONS {
     . += kernelVirtualOffset;
     .text : AT(ADDR(.text) - kernelVirtualOffset) {
         *(.text*);
+        KEEP(*(.smp-trampoline));
     }
     .rodata : AT(ADDR(.rodata) - kernelVirtualOffset) {
         *(.rodata*);

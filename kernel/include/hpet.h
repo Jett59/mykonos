@@ -20,6 +20,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include <cpu.h>
 #include <mmio.h>
 
 #define HPET_REGISTER_COUNTER 0xf0
@@ -39,6 +40,13 @@ public:
   uint64_t getFrequencyKhz() { return 1000000000000l / frequencyFemtos; }
 
   void reset();
+
+  void wait(uint64_t nanos) {
+    uint64_t currentNanos = nanoTime();
+    while (nanoTime() < currentNanos + nanos) {
+      cpu::relax();
+    }
+  }
 
 private:
   uint64_t *registerPointer;
