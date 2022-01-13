@@ -120,6 +120,8 @@ extern "C" [[noreturn]] void kstart() {
             kout::printf("CPU %d failed to start\n", i);
             kpanic("Error starting CPUs");
           }
+        } else {
+          kout::printf("I am CPU %d\n", i);
         }
       }
     }
