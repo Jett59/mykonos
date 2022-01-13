@@ -20,8 +20,8 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include <mmio.h>
 #include <cpu.h>
+#include <mmio.h>
 
 #define HPET_REGISTER_COUNTER 0xf0
 
