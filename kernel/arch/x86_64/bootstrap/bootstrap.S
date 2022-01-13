@@ -144,7 +144,53 @@ initial_stack:
 initial_stack_top:
 
 .section .smp-trampoline, "ax"
+.globl smpTrampolineStart
+smpTrampolineStart:
 .code16
-cli
-1:
-jmp 1b
+jmp $0, $0x8020
+
+.align 8
+smpGdtPointer:
+.word gdt_end - gdt - 1 /*Size - 1*/
+.quad gdt /*Pointer*/
+smpIdtPointer:
+.word 0 /*Zero limit causes tripple fault*/
+.quad 0 /*Null pointer*/
+
+.align 8
+/*Set up the segment registers and load the gdt/idt*/
+movw %cs, %ax
+movw %ax, %ds
+lidt (0x8012)
+
+/*Load the page table*/
+movl $pml4, %esi
+movl %esi, %cr3
+
+/*Enable PAE, LME, PG and PE*/
+/*PAE*/
+movl %cr4, %eax
+orl $(1 << 5), %eax /*PAE bit*/
+movl %eax, %cr4 /*PAE enabled*/
+/*LME*/
+movl $0xC0000080, %ecx /*EFER (Extended Feature Enable Register)*/
+rdmsr /*Get EFER register*/
+orl $(1 << 8), %eax /*Set bit 8 (LME, Long Mode Enable)*/
+wrmsr /*Enable long mode*/
+/*PG and PE*/
+movl %cr0, %eax
+orl $(1 << 31) | (1 << 0), %eax /*PG (paging) bit and PE (Protection Enable) bit*/
+movl %eax, %cr0 /*Paging and protected mode enabled*/
+/*Load the gdt and leave real mode*/
+lgdt (0x8008)
+jmp $8, $0x8080
+
+.code64
+
+.align 128
+movabsq $runningCpus, %rdi
+lock incq (%rdi) /*Tell the smp init code that all is well*/
+1: hlt
+jmp * 1b(%rip)
+.globl smpTrampolineEnd
+smpTrampolineEnd:

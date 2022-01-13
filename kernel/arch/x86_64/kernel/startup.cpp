@@ -36,6 +36,8 @@
 
 #include <hpet.h>
 
+#include <kmalloc.h>
+
 #include <apic.h>
 #include <smp.h>
 
@@ -44,6 +46,8 @@ typedef void (*ConstructorOrDestructor)();
 extern "C" {
 extern ConstructorOrDestructor __init_array_start[0], __init_array_end[0];
 extern ConstructorOrDestructor __fini_array_start[0], __fini_array_end[0];
+
+extern uint8_t smpTrampolineStart, smpTrampolineEnd;
 }
 
 extern "C" [[noreturn]] void kstart() {
@@ -97,6 +101,12 @@ extern "C" [[noreturn]] void kstart() {
     apic::localApic.init(madt->getLocalApicAddress());
     kout::printf("Initialized local APIC with version %x\n",
                  apic::localApic.getVersion());
+                 // Copy smp trampoline to low memory
+    void *smpTrampolineDestination = memory::mapAddress((void *)0x8000, 0x1000, false);
+    size_t smpTrampolineSize =
+        (size_t)&smpTrampolineEnd - (size_t)&smpTrampolineStart;
+    memcpy(smpTrampolineDestination, &smpTrampolineStart, smpTrampolineSize);
+    memory::unmapMemory(smpTrampolineDestination, 4096);
     kout::print("Beginning SMP initialization\n");
     uint8_t myApicId = apic::localApic.getApicId();
     for (unsigned i = 0; i < madt->localApicCount(); i++) {
@@ -106,6 +116,7 @@ extern "C" [[noreturn]] void kstart() {
           kout::printf("Started CPU %d\n", i);
         } else {
           kout::printf("CPU %d failed to start\n", i);
+          kpanic("Error starting CPUs");
         }
       }
     }
