@@ -59,7 +59,6 @@ void scrollDown() {
   char *lastLine = SCREEN_BUFFER_LINE(lines - 1);
   int lastLineLength = strlen(lastLine);
   x = 0;
-  //y = fontHeight * (lines - 1);
   for (unsigned i = 0; i < (unsigned)lastLineLength; i++) {
     display::removeCharacter(x, y);
     x += fontWidth;
