@@ -213,7 +213,8 @@ movw %dx, %ss
 movabsq $initialStackPointers, %rsi
 movq (%rsi, %rax,8), %rsp
 
-1: hlt
-jmp * 1b(%rip)
+movq %rax, %rdi
+movabsq $kstartApCpu, %rax
+jmpq * %rax
 .globl smpTrampolineEnd
 smpTrampolineEnd:

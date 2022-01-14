@@ -19,6 +19,7 @@
 
 namespace interrupts {
 void init();
-}
+void install();
+}  // namespace interrupts
 
 #endif
