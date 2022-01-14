@@ -32,59 +32,65 @@ static char *screenBuffer;
   (screenBuffer[(LINE) * (columns + 1) + (COLUMN)])
 #define SCREEN_BUFFER_LINE(LINE) (&screenBuffer[(LINE) * (columns + 1)])
 
+static unsigned displayWidth, displayHeight;
+static unsigned fontWidth, fontHeight;
+
 void scrollDown() {
   unsigned x = 0;
   unsigned y = 0;
   for (unsigned i = 1; i < lines; i++) {
-    y += font::getHeight();
+    y += fontHeight;
     char *line = SCREEN_BUFFER_LINE(i);
     char *previousLine = SCREEN_BUFFER_LINE(i - 1);
     int lineLength = strlen(line);
     unsigned previousLineLength = strlen(previousLine);
-    x = lineLength * font::getWidth();
+    x = lineLength * fontWidth;
     for (unsigned i = lineLength; i < (unsigned)previousLineLength; i++) {
-      display::removeCharacter(x, y - font::getHeight());
-      x += font::getWidth();
+      display::removeCharacter(x, y - fontHeight);
+      x += fontWidth;
     }
     strcpy(previousLine, line);
     x = 0;
     for (unsigned i = 0; i < (unsigned)lineLength; i++) {
-      display::writeCharacter(x, y - font::getHeight(), previousLine[i]);
-      x += font::getWidth();
+      display::writeCharacter(x, y - fontHeight, previousLine[i]);
+      x += fontWidth;
     }
   }
   char *lastLine = SCREEN_BUFFER_LINE(lines - 1);
   int lastLineLength = strlen(lastLine);
   x = 0;
-  y = font::getHeight() * (lines - 1);
   for (unsigned i = 0; i < (unsigned)lastLineLength; i++) {
     display::removeCharacter(x, y);
-    x += font::getWidth();
+    x += fontWidth;
   }
   lastLine[0] = 0;
 }
 
 void print(const char *str, int len) {
   if (columns == 0) {
-    columns = display::getWidth() / font::getWidth();
-    lines = display::getHeight() / font::getHeight();
+    displayWidth = display::getWidth();
+    displayHeight = display::getHeight();
+    fontWidth = font::getWidth();
+    fontHeight = font::getHeight();
+    columns = displayWidth / fontWidth;
+    lines = displayHeight / fontHeight;
     screenBuffer = (char *)memory::kmalloc((columns + 1) * lines);
     for (unsigned i = 0; i < lines; i++) {
       SCREEN_BUFFER_CHARACTER(0, i) = 0;
     }
   }
-  unsigned x = column * font::getWidth();
-  unsigned y = line * font::getHeight();
+  unsigned x = column * fontWidth;
+  unsigned y = line * fontHeight;
   for (int i = 0; i < len; i++) {
     if (column >= columns || *str == '\n') {
       column = x = 0;
       if (line < lines - 1) {
         line++;
-        y += font::getHeight();
+        y += fontHeight;
       } else {
         scrollDown();
         line = lines - 1;
-        y = line * font::getHeight();
+        y = line * fontHeight;
       }
       if (*str == '\n') {
         str++;
@@ -95,7 +101,7 @@ void print(const char *str, int len) {
     SCREEN_BUFFER_CHARACTER(column, line) = *str;
     SCREEN_BUFFER_CHARACTER(column + 1, line) = 0;
     str++;
-    x += font::getWidth();
+    x += fontWidth;
     column++;
   }
 }
