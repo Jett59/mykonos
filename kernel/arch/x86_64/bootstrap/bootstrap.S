@@ -198,6 +198,17 @@ movl $1, %eax
 lock xaddb %al, (%rdi) /*Tell the smp init code that all is well*/
 /*Our CPU number is now in %rax*/
 
+/*Reload the gdt (see begin_long_mode above)*/
+lgdt (gdt_pointer)
+
+/*Set up the segment registers*/
+xorl %edx, %edx
+movw %dx, %ds
+movw %dx, %es
+movw %dx, %fs
+movw %dx, %gs
+movw %dx, %ss
+
 /*Get our stack from the initialStackPointer table*/
 movabsq $initialStackPointers, %rsi
 movq (%rsi, %rax,8), %rsp
