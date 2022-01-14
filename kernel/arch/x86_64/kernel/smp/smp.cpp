@@ -18,8 +18,12 @@
 
 #include <apic.h>
 
+#include <stacks.h>
+
 extern "C" {
 volatile uint8_t runningCpus = 1;
+
+void *initialStackPointers[MAX_LOCAL_APICS];
 }
 
 #define SMP_TRAMPOLINE_PAGE 8
@@ -54,5 +58,11 @@ bool startCpu(uint8_t apicId, hpet::Hpet &hpet) {
     }
   }
   return previousRunningCpus < runningCpus;
+}
+void allocateStacks(unsigned numLocalApics) {
+  // Allocate stacks for CPUs 1..numLocalApics - 1 (not for the bsp)
+  for (unsigned i = 1; i < numLocalApics; i++) {
+    initialStackPointers[i] = stacks::allocateStack();
+  }
 }
 } // namespace smp

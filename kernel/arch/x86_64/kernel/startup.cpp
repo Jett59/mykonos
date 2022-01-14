@@ -109,6 +109,7 @@ extern "C" [[noreturn]] void kstart() {
           (size_t)&smpTrampolineEnd - (size_t)&smpTrampolineStart;
       memcpy(smpTrampolineDestination, &smpTrampolineStart, smpTrampolineSize);
       memory::unmapMemory(smpTrampolineDestination, 0x1000);
+      smp::allocateStacks(madt->localApicCount());
       kout::print("Beginning SMP initialization\n");
       uint8_t myApicId = apic::localApic.getApicId();
       for (unsigned i = 0; i < madt->localApicCount(); i++) {

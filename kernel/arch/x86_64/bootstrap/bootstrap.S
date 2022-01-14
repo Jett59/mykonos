@@ -189,7 +189,10 @@ jmp $8, $0x8080
 
 .align 128
 movabsq $runningCpus, %rdi
-lock incq (%rdi) /*Tell the smp init code that all is well*/
+movl $1, %eax
+lock xaddb %al, (%rdi) /*Tell the smp init code that all is well*/
+/*Our CPU number is now in %rax*/
+
 1: hlt
 jmp * 1b(%rip)
 .globl smpTrampolineEnd
