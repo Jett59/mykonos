@@ -188,15 +188,15 @@ jmp $8, $0x8080
 .code64
 
 .align 128
-movabsq $runningCpus, %rdi
-movl $1, %eax
-lock xaddb %al, (%rdi) /*Tell the smp init code that all is well*/
-/*Our CPU number is now in %rax*/
-
 /*Enable caching*/
 movq %cr0, %rdx
 andq $~(1 << 30), %rdx
 movq %rdx, %cr0
+
+movabsq $runningCpus, %rdi
+movl $1, %eax
+lock xaddb %al, (%rdi) /*Tell the smp init code that all is well*/
+/*Our CPU number is now in %rax*/
 
 /*Get our stack from the initialStackPointer table*/
 movabsq $initialStackPointers, %rsi
