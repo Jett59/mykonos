@@ -14,15 +14,18 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     */
-#ifndef _SMP_H
-#define _SMP_H
+#ifndef _STACKS_H
+#define _STACKS_H
 
-#include <hpet.h>
-#include <stdint.h>
+#include <kmalloc.h>
 
-namespace smp {
-bool startCpu(uint8_t apicId, hpet::Hpet &hpet);
-void allocateStacks(unsigned numLocalApics);
-} // namespace smp
+#define DEFAULT_STACK_SIZE 16384
+
+namespace stacks {
+static inline void *allocateStack() {
+  return (void *)((uint8_t *)memory::allocateMemory(DEFAULT_STACK_SIZE) +
+                  DEFAULT_STACK_SIZE);
+}
+} // namespace stacks
 
 #endif
