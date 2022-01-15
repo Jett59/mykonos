@@ -57,6 +57,8 @@ class LocalApic {
 public:
   void init(void *physicalAddress);
 
+  void enable();
+
   uint32_t getVersion() {
     return readRegister(LOCAL_APIC_VERSION_REGISTER) & LOCAL_APIC_VERSION_MASK;
   }

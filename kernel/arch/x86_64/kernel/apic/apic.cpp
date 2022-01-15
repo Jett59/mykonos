@@ -28,11 +28,15 @@ LocalApic localApic;
 void LocalApic::init(void *physicalAddress) {
   if (registers == nullptr) {
     registers = (uint32_t *)memory::mapAddress(physicalAddress, 4096, false);
-    writeRegister(LOCAL_APIC_SPURIOUS_INTERRUPT_REGISTER,
-                  LOCAL_APIC_SPURIOUS_INTERRUPT_VECTOR |
-                      LOCAL_APIC_SPURIOUS_INTERRUPT_REGISTER_ENABLE);
   }
 }
+
+void LocalApic::enable() {
+  writeRegister(LOCAL_APIC_SPURIOUS_INTERRUPT_REGISTER,
+                LOCAL_APIC_SPURIOUS_INTERRUPT_VECTOR |
+                    LOCAL_APIC_SPURIOUS_INTERRUPT_REGISTER_ENABLE);
+}
+
 void LocalApic::sendIpi(uint8_t vector, uint8_t messageType,
                         bool logicalDestination, bool assert,
                         bool levelTriggered, uint8_t destinationApicId) {

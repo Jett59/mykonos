@@ -62,6 +62,7 @@ extern "C" [[noreturn]] void kstart() {
   paging::initPageTables();
   display::initFrameBuffer();
   interrupts::init();
+  interrupts::install();
   kout::print("Initialized the console\n\n");
   if (test::runTests(kout::print)) {
     // Continue
@@ -99,6 +100,7 @@ extern "C" [[noreturn]] void kstart() {
       kpanic("No MADT found");
     }
     apic::localApic.init(madt->getLocalApicAddress());
+    apic::localApic.enable();
     kout::printf("Initialized local APIC with version %x\n",
                  apic::localApic.getVersion());
     if (madt->localApicCount() > 1) {
@@ -131,4 +133,12 @@ extern "C" [[noreturn]] void kstart() {
     // The tests failed! Abort
     kpanic("The tests failed!");
   }
+}
+
+extern "C" [[noreturn]] void kstartApCpu(uint8_t cpuNumber) {
+  interrupts::install();
+  apic::localApic.enable();
+  // TODO: Do something with cpuNumber
+  (void)cpuNumber; // Suppress warnings
+  cpu::hault();
 }

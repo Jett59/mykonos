@@ -34,6 +34,6 @@ void init() {
   }
   idtPointer.pointer = idt;
   idtPointer.limit = sizeof(idt) - 1;
-  __asm__ volatile("lidt %0" : : "m"(idtPointer) : "memory");
 }
+void install() { __asm__ volatile("lidt %0" : : "m"(idtPointer) : "memory"); }
 } // namespace interrupts
