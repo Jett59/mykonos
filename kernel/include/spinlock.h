@@ -48,8 +48,9 @@ public:
     enableIrqs = oldIrqState;
   }
   void release() {
+    bool shouldReenableIrqs = enableIrqs;
     __atomic_store_n(&lock, 0, __ATOMIC_SEQ_CST);
-    if (enableIrqs) {
+    if (shouldReenableIrqs) {
       cpu::enableLocalIrqs();
     }
   }
