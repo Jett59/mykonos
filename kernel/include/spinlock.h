@@ -36,6 +36,7 @@ public:
   bool locked() { return __atomic_load_n(&lock, __ATOMIC_SEQ_CST) != 0; }
   void acquire() {
     bool oldIrqState = cpu::localIrqState();
+    cpu::disableLocalIrqs();
     while (true) {
       while (locked()) {
         cpu::relax();
