@@ -25,6 +25,7 @@ namespace lock {
 class Spinlock {
 private:
   uint8_t lock = 0;
+  bool enableIrqs = false;
 
 public:
   Spinlock() = default;
@@ -34,6 +35,8 @@ public:
 
   bool locked() { return __atomic_load_n(&lock, __ATOMIC_SEQ_CST) != 0; }
   void acquire() {
+    bool oldIrqState = cpu::localIrqState();
+    cpu::disableLocalIrqs();
     while (true) {
       while (locked()) {
         cpu::relax();
@@ -42,8 +45,15 @@ public:
         break;
       }
     }
+    enableIrqs = oldIrqState;
   }
-  void release() { __atomic_store_n(&lock, 0, __ATOMIC_SEQ_CST); }
+  void release() {
+    bool shouldReenableIrqs = enableIrqs;
+    __atomic_store_n(&lock, 0, __ATOMIC_SEQ_CST);
+    if (shouldReenableIrqs) {
+      cpu::enableLocalIrqs();
+    }
+  }
 };
 } // namespace lock
 

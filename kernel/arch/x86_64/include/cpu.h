@@ -17,7 +17,29 @@
 #ifndef _CPU_H
 #define _CPU_H
 
+#include <stdint.h>
+
 namespace cpu {
+static inline uint64_t getFlags() {
+  uint64_t result;
+  __asm__ volatile("pushfq;"
+                   "popq %0"
+                   : "=g"(result)
+                   :
+                   : "memory");
+  return result;
+}
+static inline void setFlags(uint64_t flags) {
+  __asm__ volatile("pushq %0;"
+                   "popfq"
+                   :
+                   : "g"(flags)
+                   : "memory", "cc");
+}
+static inline bool localIrqState() { return (getFlags() & (1 << 9)) != 0; }
+static inline void enableLocalIrqs() { setFlags(getFlags() | (1 << 9)); }
+static inline void disableLocalIrqs() { setFlags(getFlags() & ~(1 << 9)); }
+
 static inline void mfence() { __asm__ volatile("mfence" : : : "memory"); }
 static inline void relax() { __asm__ volatile("pause"); }
 [[noreturn]] static inline void hault() {
