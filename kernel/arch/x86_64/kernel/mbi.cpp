@@ -86,6 +86,7 @@ static void parseMemoryMapTag(MemoryMapTag *memoryMap) {
   memory::physicalMemory.reserve(
       memory::Block((void *)PAGE_ALIGN_DOWN((size_t)kernelPhysicalAddress),
                     (void *)PAGE_ALIGN_UP((size_t)kernelPhysicalEnd)));
+  memory::physicalMemory.reserve(memory::Block((void *)0x0, (void *)0x100000));
 }
 static void parseFrameBufferTag(FrameBufferTag *tag) {
   display::frameBuffer.pointer = (uint8_t *)tag->address;
