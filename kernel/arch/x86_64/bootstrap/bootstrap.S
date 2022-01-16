@@ -45,16 +45,16 @@ cpuid /*Extended feature flags*/
 testl $(1 << 29), %edx
 jz bootstrap_error /*Not supported*/
 build_page_tables:
-movl $pml3, %eax
+movl $initialPml3, %eax
 orl $3, %eax /*present | writable*/
-movl %eax, pml4
-movl %eax, pml4 + 256 * 8 /*For higher half*/
-movl $pml2, %eax
+movl %eax, initialPml4
+movl %eax, initialPml4 + 256 * 8 /*For higher half*/
+movl $initialPml2, %eax
 orl $3, %eax
-movl %eax, pml3
+movl %eax, initialPml3
 /*Now set up pml2*/
 movl $512, %ecx /*512 * 2mb = 1gb = amount mapped by pml2*/
-movl $pml2, %edi
+movl $initialPml2, %edi
 movl $0x83, %eax /*present | writable | large*/
 1: movl %eax, (%edi)
 addl $0x200000, %eax /*2mb = increment in pml2*/
@@ -62,7 +62,7 @@ addl $8, %edi /*Next entry*/
 decl %ecx
 jnz 1b /*next*/
 /*We don't put in pml1s because we use large pages*/
-movl $pml4, %eax
+movl $initialPml4, %eax
 movl %eax, %cr3 /*Tell the CPU where it is*/
 enable_long_mode:
 /*PAE, LME and PG*/
@@ -110,11 +110,11 @@ jmp * %rax
 .section .bootstrap-bss, "aw", @nobits
 /*Page tables*/
 .align 4096
-pml4:
+initialPml4:
 .fill 4096
-pml3: /*(or pdp if you prefer)*/
+initialPml3: /*(or pdp if you prefer)*/
 .fill 4096
-pml2: /*(or pde if you prefer)*/
+initialPml2: /*(or pde if you prefer)*/
 .fill 4096
 
 .globl mbiPointer
@@ -164,7 +164,7 @@ movw %ax, %ds
 lidt (0x8012)
 
 /*Load the page table*/
-movl $pml4, %esi
+movl $initialPml4, %esi
 movl %esi, %cr3
 
 /*Enable PAE, LME, PG and PE*/
@@ -188,18 +188,27 @@ jmp $8, $0x8080
 .code64
 
 .align 128
+/*Reload the gdt (see begin_long_mode above)*/
+lgdt (gdt_pointer)
+
+/*Go to the higher half*/
+movabsq $1f, %rdi
+jmpq * %rdi
+1:
 /*Enable caching*/
 movq %cr0, %rdx
 andq $~(1 << 30), %rdx
 movq %rdx, %cr0
 
+/*Load the official page tables using the recursive mapping*/
+movabsq $pml4, %rsi
+movq 511 * 8(%rsi), %rax
+movq %rax, %cr3
+
 movabsq $runningCpus, %rdi
 movl $1, %eax
 lock xaddb %al, (%rdi) /*Tell the smp init code that all is well*/
 /*Our CPU number is now in %rax*/
-
-/*Reload the gdt (see begin_long_mode above)*/
-lgdt (gdt_pointer)
 
 /*Set up the segment registers*/
 xorl %edx, %edx

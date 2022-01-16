@@ -25,11 +25,13 @@ void *kernelVirtualOffset[0];
 #define PHYSICAL_ADDRESS(PTR) ((uint64_t)PTR - (uint64_t)kernelVirtualOffset)
 
 namespace paging {
+extern "C" {
 static PageTableEntry pml1[512] __attribute__((aligned(4096)));
 static PageTableEntry pml2[512] __attribute__((aligned(4096)));
 static PageTableEntry pml3[512] __attribute__((aligned(4096)));
-static PageTableEntry pml4[512] __attribute__((aligned(4096)));
-
+// Globally accessible for use in multiprocessor initialization
+PageTableEntry pml4[512] __attribute__((aligned(4096)));
+}
 void initPageTables() {
   // Set up the mappings
   pml4[256] = (PageTableEntry)PHYSICAL_ADDRESS(pml3) | PageTableFlags::PRESENT |
