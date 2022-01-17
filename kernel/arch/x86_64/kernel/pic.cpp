@@ -21,26 +21,26 @@
 #define PIC_REMAP_BASE 0xf8
 
 namespace pic {
-    void disablePic() {
-        // Reset the PICs and remap them
-        io::writePort8(0x11, 0x20);
-        io::writePort8(0x11, 0xa0);
-        io::delay();
-        // Remap the PICs
-        io::writePort8(PIC_REMAP_BASE, 0x21);
-        io::writePort8(PIC_REMAP_BASE, 0xa1);
-        io::delay();
-        // Enable them
-        io::writePort8(4, 0x21);
-        io::writePort8(2, 0xa1);
-        io::delay();
-        io::writePort8(1, 0x21);
-        io::writePort8(1, 0xa1);
-        io::delay();
+void disablePic() {
+  // Reset the PICs and remap them
+  io::writePort8(0x11, 0x20);
+  io::writePort8(0x11, 0xa0);
+  io::delay();
+  // Remap the PICs
+  io::writePort8(PIC_REMAP_BASE, 0x21);
+  io::writePort8(PIC_REMAP_BASE, 0xa1);
+  io::delay();
+  // Enable them
+  io::writePort8(4, 0x21);
+  io::writePort8(2, 0xa1);
+  io::delay();
+  io::writePort8(1, 0x21);
+  io::writePort8(1, 0xa1);
+  io::delay();
 
-        // Mask all IRQs
-        io::writePort8(0xff, 0x21);
-        io::writePort8(0xff, 0xa1);
-        io::delay();
-    }
+  // Mask all IRQs
+  io::writePort8(0xff, 0x21);
+  io::writePort8(0xff, 0xa1);
+  io::delay();
 }
+} // namespace pic
