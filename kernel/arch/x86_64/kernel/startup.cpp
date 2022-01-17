@@ -41,6 +41,8 @@
 #include <apic.h>
 #include <smp.h>
 
+#include <pic.h>
+
 typedef void (*ConstructorOrDestructor)();
 
 extern "C" {
@@ -103,6 +105,10 @@ extern "C" [[noreturn]] void kstart() {
     apic::localApic.enable();
     kout::printf("Initialized local APIC with version %x\n",
                  apic::localApic.getVersion());
+    if (madt->getHasPic()) {
+      kout::print("Disabling legacy PIC\n");
+      pic::disablePic();
+    }
     if (madt->localApicCount() > 1) {
       // Copy smp trampoline to low memory
       void *smpTrampolineDestination =
