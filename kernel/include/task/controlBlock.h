@@ -18,13 +18,13 @@
 #define _TASK_CONTROL_BLOCK_H
 
 namespace task {
-    struct ControlBlock {
-      void *entryPoint;
-      void *stackPointer;
-      unsigned timeSlice;
-      unsigned priority;
-      ControlBlock *next;
-    };
-    }  // namespace task
+struct ControlBlock {
+  void *entryPoint;
+  void *stackPointer;
+  unsigned timeSlice;
+  unsigned priority;
+  ControlBlock *next;
+};
+} // namespace task
 
 #endif

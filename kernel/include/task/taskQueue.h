@@ -41,11 +41,11 @@ public:
     lock.acquire();
     ControlBlock *result = head;
     if (head != nullptr) {
-        if (head == tail) {
-          head = tail = nullptr;
-        }else {
-          head = head->next;
-        }
+      if (head == tail) {
+        head = tail = nullptr;
+      } else {
+        head = head->next;
+      }
     }
     lock.release();
     return result;
