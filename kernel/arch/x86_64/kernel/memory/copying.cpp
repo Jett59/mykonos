@@ -14,7 +14,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     */
-#include <string.h>
+#include <mykonos/string.h>
 
 extern "C" void *memset(void *str, int c, size_t n) {
   void *tmpStr = str;

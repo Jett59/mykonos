@@ -15,11 +15,10 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     */
 #ifdef RUNTIME_TESTS
-// Test for memory::BlockMap
 
-#include <memoryBlock.h>
+#include <mykonos/memoryBlock.h>
 
-#include <test.h>
+#include <mykonos/test.h>
 
 namespace memory {
 namespace test {

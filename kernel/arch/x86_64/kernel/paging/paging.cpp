@@ -14,12 +14,12 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     */
-#include <pageTables.h>
-#include <paging.h>
+#include <mykonos/pageTables.h>
+#include <mykonos/paging.h>
 
-#include <physicalMemory.h>
+#include <mykonos/physicalMemory.h>
 
-#include <string.h>
+#include <mykonos/string.h>
 
 #define PML4TABLE ((*PAGE_TABLE_POINTER)[511][511][511])
 #define PML3TABLE(PML4INDEX) ((*PAGE_TABLE_POINTER)[511][511][PML4INDEX])

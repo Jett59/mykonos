@@ -14,11 +14,11 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     */
-#include <kout.h>
+#include <mykonos/kout.h>
 
 #include <stdarg.h>
 
-#include <string.h>
+#include <mykonos/string.h>
 
 namespace kout {
 void printf(const char *format, ...) {

@@ -16,7 +16,7 @@
     */
     /*Handle going into 64-bit mode*/
 
-#include <gdtbits.h>
+#include <mykonos/gdtbits.h>
 
 .code32
 

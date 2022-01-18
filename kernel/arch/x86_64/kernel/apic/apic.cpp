@@ -14,7 +14,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     */
-#include <apic.h>
+#include <mykonos/apic.h>
 
 #define LOCAL_APIC_SPURIOUS_INTERRUPT_REGISTER 0xf0
 #define LOCAL_APIC_IPI_REGISTER_LOW 0x300

@@ -14,8 +14,10 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
-#include <string.h>
-#include <test.h>
+#ifdef RUNTIME_TESTS
+
+#include <mykonos/string.h>
+#include <mykonos/test.h>
 
 namespace test {
 bool memcmpTest(::test::Logger logger) {
@@ -63,3 +65,5 @@ bool memcmpTest(::test::Logger logger) {
 }
 ADD_TEST(memcmpTest);
 } // namespace test
+
+#endif

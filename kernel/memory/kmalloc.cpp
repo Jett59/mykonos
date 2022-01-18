@@ -14,12 +14,12 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     */
-#include <kmalloc.h>
+#include <mykonos/kmalloc.h>
 
-#include <pageConstants.h>
-#include <paging.h>
-#include <physicalMemory.h>
-#include <virtualMemory.h>
+#include <mykonos/pageConstants.h>
+#include <mykonos/paging.h>
+#include <mykonos/physicalMemory.h>
+#include <mykonos/virtualMemory.h>
 
 #include <stdint.h>
 

@@ -14,11 +14,11 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     */
-#include <smp.h>
+#include <mykonos/smp.h>
 
-#include <apic.h>
+#include <mykonos/apic.h>
 
-#include <stacks.h>
+#include <mykonos/stacks.h>
 
 extern "C" {
 volatile uint8_t runningCpus = 1;

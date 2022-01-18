@@ -14,10 +14,10 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
-#include <display.h>
-#include <frameBuffer.h>
-#include <kmalloc.h>
-#include <string.h>
+#include <mykonos/display.h>
+#include <mykonos/frameBuffer.h>
+#include <mykonos/kmalloc.h>
+#include <mykonos/string.h>
 
 namespace display {
 FrameBuffer frameBuffer;

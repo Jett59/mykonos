@@ -16,8 +16,8 @@
     */
 #ifdef RUNTIME_TESTS
 
-#include <kmalloc.h>
-#include <test.h>
+#include <mykonos/kmalloc.h>
+#include <mykonos/test.h>
 
 namespace memory {
 namespace test {

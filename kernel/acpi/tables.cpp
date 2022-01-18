@@ -14,16 +14,16 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     */
-#include <acpi/rsdp.h>
-#include <acpi/tables.h>
+#include <mykonos/acpi/rsdp.h>
+#include <mykonos/acpi/tables.h>
 
-#include <acpi/hpet.h>
-#include <acpi/madt.h>
-#include <acpi/rsdt.h>
+#include <mykonos/acpi/hpet.h>
+#include <mykonos/acpi/madt.h>
+#include <mykonos/acpi/rsdt.h>
 
-#include <kmalloc.h>
-#include <kout.h>
-#include <string.h>
+#include <mykonos/kmalloc.h>
+#include <mykonos/kout.h>
+#include <mykonos/string.h>
 
 namespace acpi {
 typedef TableManager *(*TableManagerCreator)(TableHeader *);

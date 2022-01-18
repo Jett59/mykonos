@@ -14,13 +14,13 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     */
-#include <acpi/madt.h>
-#include <apic.h>
+#include <mykonos/acpi/madt.h>
+#include <mykonos/apic.h>
 
 #include <stddef.h>
 
-#include <kmalloc.h>
-#include <kout.h>
+#include <mykonos/kmalloc.h>
+#include <mykonos/kout.h>
 
 namespace acpi {
 MadtTableManager::MadtTableManager(TableHeader *header)
