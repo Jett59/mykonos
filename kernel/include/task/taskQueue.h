@@ -41,10 +41,11 @@ public:
     lock.acquire();
     ControlBlock *result = head;
     if (head != nullptr) {
-      head = head->next;
-      if (head == nullptr) {
-        tail = nullptr;
-      }
+        if (head == tail) {
+          head = tail = nullptr;
+        }else {
+          head = head->next;
+        }
     }
     lock.release();
     return result;
@@ -52,7 +53,8 @@ public:
 
 private:
   lock::Spinlock lock;
-  ControlBlock *head, *tail;
+  ControlBlock *head = nullptr;
+  ControlBlock *tail = nullptr;
 };
 } // namespace task
 
