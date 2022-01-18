@@ -14,7 +14,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
-#include <test.h>
+#include <mykonos/test.h>
 
 extern "C" {
 extern test::TestFunction __test_array_start[0];

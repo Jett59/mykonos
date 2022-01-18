@@ -15,9 +15,10 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     */
 #ifdef RUNTIME_TESTS
-#include <task/taskQueue.h>
 
-#include <test.h>
+#include <mykonos/task/taskQueue.h>
+
+#include <mykonos/test.h>
 
 namespace task {
 namespace test {

@@ -14,8 +14,8 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
-#include <display.h>
-#include <fontRenderer.h>
+#include <mykonos/display.h>
+#include <mykonos/fontRenderer.h>
 
 #define FOREGROUND                                                             \
   { .r = 0xFF, .g = 0xFF, .b = 0xFF }

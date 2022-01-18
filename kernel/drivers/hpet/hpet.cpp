@@ -14,9 +14,9 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     */
-#include <hpet.h>
+#include <mykonos/hpet.h>
 
-#include <kmalloc.h>
+#include <mykonos/kmalloc.h>
 
 #define HPET_REGISTER_GENERAL_CAPABILITIES 0x0
 #define HPET_REGISTER_GENERAL_CONFIGURATION 0x10

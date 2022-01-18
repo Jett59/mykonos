@@ -14,34 +14,34 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     */
-#include <string.h>
+#include <mykonos/string.h>
 
-#include <mbi.h>
-#include <pageTableInit.h>
+#include <mykonos/mbi.h>
+#include <mykonos/pageTableInit.h>
 
-#include <frameBuffer.h>
-#include <kout.h>
+#include <mykonos/frameBuffer.h>
+#include <mykonos/kout.h>
 
-#include <test.h>
+#include <mykonos/test.h>
 
-#include <interrupts.h>
+#include <mykonos/interrupts.h>
 
-#include <kpanic.h>
+#include <mykonos/kpanic.h>
 
-#include <acpi/hpet.h>
-#include <acpi/madt.h>
-#include <acpi/rsdp.h>
-#include <acpi/rsdt.h>
-#include <acpi/tables.h>
+#include <mykonos/acpi/hpet.h>
+#include <mykonos/acpi/madt.h>
+#include <mykonos/acpi/rsdp.h>
+#include <mykonos/acpi/rsdt.h>
+#include <mykonos/acpi/tables.h>
 
-#include <hpet.h>
+#include <mykonos/hpet.h>
 
-#include <kmalloc.h>
+#include <mykonos/kmalloc.h>
 
-#include <apic.h>
-#include <smp.h>
+#include <mykonos/apic.h>
+#include <mykonos/smp.h>
 
-#include <pic.h>
+#include <mykonos/pic.h>
 
 typedef void (*ConstructorOrDestructor)();
 

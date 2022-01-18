@@ -14,9 +14,9 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
-#include <cpuExceptions.h>
-#include <kout.h>
-#include <kpanic.h>
+#include <mykonos/cpuExceptions.h>
+#include <mykonos/kout.h>
+#include <mykonos/kpanic.h>
 
 #include <stdint.h>
 

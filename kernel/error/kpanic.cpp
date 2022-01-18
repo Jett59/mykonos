@@ -14,9 +14,9 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
-#include <cpu.h>
-#include <kout.h>
-#include <kpanic.h>
+#include <mykonos/cpu.h>
+#include <mykonos/kout.h>
+#include <mykonos/kpanic.h>
 
 extern "C" [[noreturn]] void kpanic(const char *message) {
   kout::print("Kpanic!\n");

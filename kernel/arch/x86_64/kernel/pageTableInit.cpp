@@ -14,9 +14,9 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     */
-#include <pageConstants.h>
-#include <pageTableInit.h>
-#include <pageTables.h>
+#include <mykonos/pageConstants.h>
+#include <mykonos/pageTableInit.h>
+#include <mykonos/pageTables.h>
 
 extern "C" {
 void *kernelVirtualOffset[0];

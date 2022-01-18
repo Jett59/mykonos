@@ -14,14 +14,14 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
-#include <kout.h>
+#include <mykonos/kout.h>
 
-#include <display.h>
-#include <fontRenderer.h>
+#include <mykonos/display.h>
+#include <mykonos/fontRenderer.h>
 
-#include <kmalloc.h>
+#include <mykonos/kmalloc.h>
 
-#include <string.h>
+#include <mykonos/string.h>
 
 namespace kout {
 static unsigned line, column;

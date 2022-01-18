@@ -14,8 +14,8 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
-#include <idt.h>
-#include <interrupts.h>
+#include <mykonos/idt.h>
+#include <mykonos/interrupts.h>
 
 typedef void (*InterruptHandlerFunction)();
 

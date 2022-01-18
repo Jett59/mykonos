@@ -14,13 +14,13 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
-#include <frameBuffer.h>
-#include <mbi.h>
-#include <pageConstants.h>
-#include <physicalMemory.h>
-#include <string.h>
+#include <mykonos/frameBuffer.h>
+#include <mykonos/mbi.h>
+#include <mykonos/pageConstants.h>
+#include <mykonos/physicalMemory.h>
+#include <mykonos/string.h>
 
-#include <acpi/rsdp.h>
+#include <mykonos/acpi/rsdp.h>
 
 extern "C" {
 extern multiboot::Mbi *mbiPointer;

@@ -14,7 +14,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     */
-#include <string.h>
+#include <mykonos/string.h>
 
 extern "C" int strlen(const char *str) {
   int i;

@@ -14,9 +14,9 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     */
-#include <pic.h>
+#include <mykonos/pic.h>
 
-#include <ioPorts.h>
+#include <mykonos/ioPorts.h>
 
 #define PIC_REMAP_BASE 0xf8
 
