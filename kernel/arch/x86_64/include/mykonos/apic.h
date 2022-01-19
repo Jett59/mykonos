@@ -38,6 +38,7 @@ struct IoApicDescriptor {
 #define LOCAL_APIC_VERSION_REGISTER 0x30
 #define LOCAL_APIC_ERROR_REGISTER 0x280
 #define LOCAL_APIC_ID_REGISTER 0x20
+#define LOCAL_APIC_TIMER_LVT_REGISTER 0x320
 
 #define LOCAL_APIC_VERSION_MASK 0xFF
 #define LOCAL_APIC_ID_POSITION 24
@@ -71,6 +72,11 @@ public:
   void sendIpi(uint8_t vector, uint8_t messageType, bool logicalDestination,
                bool assert, bool levelTriggered, uint8_t destinationApicId);
 
+  void writeTimerLvt(bool periodic, bool mask, uint8_t vector) {
+    writeLvtRegister(LOCAL_APIC_TIMER_LVT_REGISTER, periodic, mask, false,
+                     LOCAL_APIC_FIXED_MESSAGE, vector);
+  }
+
 private:
   uint32_t *registers = nullptr;
 
@@ -79,6 +85,15 @@ private:
   }
   uint32_t readRegister(size_t offset) {
     return mmio::read(registers + (offset / 4));
+  }
+
+  void writeLvtRegister(size_t registerOffset, bool timerPeriodic, bool mask,
+                        bool levelTriggered, uint8_t messageType,
+                        uint8_t vector) {
+    writeRegister(registerOffset, ((uint32_t)timerPeriodic << 17) |
+                                      ((uint32_t)mask << 16) |
+                                      ((uint32_t)levelTriggered << 15) |
+                                      ((uint32_t)messageType << 8) | vector);
   }
 };
 
