@@ -17,3 +17,15 @@
 #include <mykonos/apicTimer.h>
 
 #include <mykonos/apic.h>
+
+namespace apic {
+unsigned timerTicksPer(unsigned nanos, hpet::Hpet &hpet) {
+  localApic.writeTimerLvt(false, false, APIC_TIMER_INTERRUPT);
+  localApic.writeTimerDivideRegister(APIC_DIVIDE_16);
+  localApic.writeTimerInitialCountRegister(0xffffffff);
+  hpet.wait(nanos);
+  localApic.writeTimerLvt(false, true, APIC_TIMER_INTERRUPT);
+  uint32_t ticksPassed = 0xffffffff - localApic.getTimerCurrentCount();
+  return ticksPassed * 16;
+}
+} // namespace apic

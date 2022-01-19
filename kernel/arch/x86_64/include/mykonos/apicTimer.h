@@ -19,8 +19,10 @@
 
 #include <mykonos/hpet.h>
 
+#define APIC_TIMER_INTERRUPT 0xf0
+
 namespace apic {
-unsigned getTimerTicksPer(unsigned nanos, hpet::Hpet &hpet);
+unsigned timerTicksPer(unsigned nanos, hpet::Hpet &hpet);
 void startTimer(unsigned tickFrequency);
 }  // namespace apic
 

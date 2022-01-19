@@ -43,6 +43,8 @@
 
 #include <mykonos/pic.h>
 
+#include <mykonos/apicTimer.h>
+
 typedef void (*ConstructorOrDestructor)();
 
 extern "C" {
@@ -134,6 +136,8 @@ extern "C" [[noreturn]] void kstart() {
         }
       }
     }
+    unsigned ticksPer10ms = apic::timerTicksPer(10000000, hpet);
+    kout::printf("APIC timer runs at %dHz\n", ticksPer10ms * 100);
     kpanic("It all worked");
   } else {
     // The tests failed! Abort
