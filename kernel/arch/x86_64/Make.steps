@@ -4,5 +4,5 @@ STEPS+=arch/x86_64/kernel/paging/paging.o
 STEPS+=arch/x86_64/kernel/memory/copying.o
 STEPS+=arch/x86_64/kernel/interrupts/interrupts.o arch/x86_64/kernel/interrupts/interruptHandlers.o
 STEPS+=arch/x86_64/kernel/exceptions/exceptionHandlers.o
-STEPS+=arch/x86_64/kernel/apic/apic.o
+STEPS+=arch/x86_64/kernel/apic/apic.o arch/x86_64/kernel/apic/apicTimer.o
 STEPS+=arch/x86_64/kernel/smp/smp.o
