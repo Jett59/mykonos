@@ -28,4 +28,9 @@ unsigned timerTicksPer(unsigned nanos, hpet::Hpet &hpet) {
   uint32_t ticksPassed = 0xffffffff - localApic.getTimerCurrentCount();
   return ticksPassed * 16;
 }
+void setUpTimer(unsigned tickFrequency) {
+  apic::localApic.writeTimerLvt(true, false, APIC_TIMER_INTERRUPT);
+  apic::localApic.writeTimerDivideRegister(APIC_DIVIDE_16);
+  apic::localApic.writeTimerInitialCountRegister(tickFrequency);
+}
 } // namespace apic

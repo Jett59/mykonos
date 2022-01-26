@@ -54,6 +54,8 @@ extern ConstructorOrDestructor __fini_array_start[0], __fini_array_end[0];
 extern uint8_t smpTrampolineStart, smpTrampolineEnd;
 }
 
+static volatile unsigned localApicTickSetting = 0;
+
 extern "C" [[noreturn]] void kstart() {
   // Global constructors must be called
   // We use init_array method, for simplicity
@@ -137,10 +139,14 @@ extern "C" [[noreturn]] void kstart() {
       }
     }
     unsigned ticksPer10ms = apic::timerTicksPer(10000000, hpet);
+    localApicTickSetting = ticksPer10ms;
     kout::printf("APIC timer runs at %dHz\n", ticksPer10ms * 100);
     // Mask all internal interrupts so we can start getting timer IRQs
     apic::localApic.maskAllInternal();
     cpu::enableLocalIrqs();
+    // Set up the APIC timer
+    apic::setUpTimer(localApicTickSetting);
+    hpet.wait(1000000000);
     kpanic("It all worked");
   } else {
     // The tests failed! Abort
@@ -154,6 +160,12 @@ extern "C" [[noreturn]] void kstartApCpu(uint8_t cpuNumber) {
   // Mask all internal interrupts so we can start getting timer IRQs
   apic::localApic.maskAllInternal();
   cpu::enableLocalIrqs();
+  // Wait for the BSP to figure out the APIC setting
+  while (localApicTickSetting == 0) {
+    cpu::relax();
+  }
+  // Set up the APIC timer
+  apic::setUpTimer(localApicTickSetting);
   // TODO: Do something with cpuNumber
   (void)cpuNumber; // Suppress warnings
   cpu::hault();
