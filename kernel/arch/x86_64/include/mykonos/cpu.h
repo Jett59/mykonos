@@ -37,13 +37,15 @@ static inline void setFlags(uint64_t flags) {
                    : "memory", "cc");
 }
 static inline bool localIrqState() { return (getFlags() & (1 << 9)) != 0; }
-static inline void enableLocalIrqs() { setFlags(getFlags() | (1 << 9)); }
-static inline void disableLocalIrqs() { setFlags(getFlags() & ~(1 << 9)); }
+static inline void enableLocalIrqs() { __asm__ volatile("sti" : : : "memory"); }
+static inline void disableLocalIrqs() {
+  __asm__ volatile("cli" : : : "memory");
+}
 
 static inline void mfence() { __asm__ volatile("mfence" : : : "memory"); }
 static inline void relax() { __asm__ volatile("pause"); }
 [[noreturn]] static inline void hault() {
-  __asm__ volatile("cli");
+  disableLocalIrqs();
   for (;;) {
     __asm__ volatile("hlt");
   }
