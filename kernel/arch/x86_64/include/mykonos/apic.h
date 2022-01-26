@@ -39,6 +39,11 @@ struct IoApicDescriptor {
 #define LOCAL_APIC_ERROR_REGISTER 0x280
 #define LOCAL_APIC_ID_REGISTER 0x20
 #define LOCAL_APIC_TIMER_LVT_REGISTER 0x320
+#define LOCAL_APIC_THERMAL_LVT_REGISTER 0x330
+#define LOCAL_APIC_PERFORMANCE_LVT_REGISTER 0x340
+#define LOCAL_APIC_LINT0_LVT_REGISTER 0x350
+#define LOCAL_APIC_LINT1_LVT_REGISTER 0x360
+#define LOCAL_APIC_ERROR_LVT_REGISTER 0x370
 #define LOCAL_APIC_TIMER_INITIAL_COUNT_REGISTER 0x380
 #define LOCAL_APIC_TIMER_CURRENT_COUNT_REGISTER 0x390
 #define LOCAL_APIC_TIMER_DIVIDE_REGISTER 0x3e0
@@ -101,6 +106,8 @@ public:
     writeRegister(LOCAL_APIC_TIMER_DIVIDE_REGISTER, divideFlag);
   }
 
+  void maskAllInternal();
+
 private:
   uint32_t *registers = nullptr;
 
@@ -118,6 +125,10 @@ private:
                                       ((uint32_t)mask << 16) |
                                       ((uint32_t)levelTriggered << 15) |
                                       ((uint32_t)messageType << 8) | vector);
+  }
+
+  void maskLvtRegister(size_t registerOffset) {
+    writeRegister(registerOffset, readRegister(registerOffset) | (1 << 16));
   }
 };
 

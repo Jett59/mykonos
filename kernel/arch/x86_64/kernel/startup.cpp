@@ -138,6 +138,9 @@ extern "C" [[noreturn]] void kstart() {
     }
     unsigned ticksPer10ms = apic::timerTicksPer(10000000, hpet);
     kout::printf("APIC timer runs at %dHz\n", ticksPer10ms * 100);
+    // Mask all internal interrupts so we can start getting timer IRQs
+    apic::localApic.maskAllInternal();
+    cpu::enableLocalIrqs();
     kpanic("It all worked");
   } else {
     // The tests failed! Abort
@@ -148,6 +151,9 @@ extern "C" [[noreturn]] void kstart() {
 extern "C" [[noreturn]] void kstartApCpu(uint8_t cpuNumber) {
   interrupts::install();
   apic::localApic.enable();
+  // Mask all internal interrupts so we can start getting timer IRQs
+  apic::localApic.maskAllInternal();
+  cpu::enableLocalIrqs();
   // TODO: Do something with cpuNumber
   (void)cpuNumber; // Suppress warnings
   cpu::hault();

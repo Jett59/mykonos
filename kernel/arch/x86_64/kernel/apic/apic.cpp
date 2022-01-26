@@ -53,4 +53,10 @@ void LocalApic::sendIpi(uint8_t vector, uint8_t messageType,
     cpu::relax();
   }
 }
+void LocalApic::maskAllInternal() {
+  maskLvtRegister(LOCAL_APIC_TIMER_LVT_REGISTER);
+  maskLvtRegister(LOCAL_APIC_THERMAL_LVT_REGISTER);
+  maskLvtRegister(LOCAL_APIC_PERFORMANCE_LVT_REGISTER);
+  maskLvtRegister(LOCAL_APIC_ERROR_LVT_REGISTER);
+}
 } // namespace apic
