@@ -66,7 +66,7 @@ noErrorCodeExceptionHandler 18 /*#MC: Machine check*/
 noErrorCodeExceptionHandler 19 /*#XF: SSE exception*/
 reservedExceptions 1
 errorCodeExceptionHandler 21 /*#CP: Control transfer exception*/
-reservedExceptions 7
+reservedExceptions 6
 noErrorCodeExceptionHandler 28 /*#HV: Hypervisor injection exception*/
 errorCodeExceptionHandler 29 /*#VC: VMM communication error*/
 errorCodeExceptionHandler 30 /*#SX: Security exception*/
