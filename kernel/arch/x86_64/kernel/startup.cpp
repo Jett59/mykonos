@@ -127,9 +127,7 @@ extern "C" [[noreturn]] void kstart() {
       for (unsigned i = 0; i < madt->localApicCount(); i++) {
         uint8_t apicId = madt->getLocalApic(i).apicId;
         if (apicId != myApicId) {
-          if (smp::startCpu(apicId, hpet)) {
-            kout::printf("Started CPU %d\n", i);
-          } else {
+          if (!smp::startCpu(apicId, hpet)) {
             kout::printf("CPU %d failed to start\n", i);
             kpanic("Error starting CPUs");
           }
@@ -157,6 +155,7 @@ extern "C" [[noreturn]] void kstart() {
 
 extern "C" [[noreturn]] void kstartApCpu(uint8_t cpuNumber) {
   interrupts::install();
+  kout::printf("Started CPU %d\n", cpuNumber);
   apic::localApic.enable();
   // Mask all internal interrupts so we can start getting timer IRQs
   apic::localApic.maskAllInternal();
