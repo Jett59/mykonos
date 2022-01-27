@@ -146,6 +146,8 @@ extern "C" [[noreturn]] void kstart() {
     cpu::enableLocalIrqs();
     // Set up the APIC timer
     apic::setUpTimer(localApicTickSetting);
+    // Wait a bit for some APIC timer interrupts
+    hpet.wait(250000000);
     kpanic("It all worked");
   } else {
     // The tests failed! Abort
