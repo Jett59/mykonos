@@ -31,6 +31,6 @@ unsigned timerTicksPer(unsigned nanos, hpet::Hpet &hpet) {
 void setUpTimer(unsigned tickFrequency) {
   apic::localApic.writeTimerLvt(true, false, APIC_TIMER_INTERRUPT);
   apic::localApic.writeTimerDivideRegister(APIC_DIVIDE_16);
-  apic::localApic.writeTimerInitialCountRegister(tickFrequency);
+  apic::localApic.writeTimerInitialCountRegister(tickFrequency / 16);
 }
 } // namespace apic
