@@ -134,4 +134,7 @@ void print(unsigned long value, unsigned long base, bool skipLocking) {
   }
   print(buffer, strlen(buffer), skipLocking);
 }
+
+void acquireConsoleLock() { consoleLock.acquire(); }
+void releaseConsoleLock() { consoleLock.release(); }
 } // namespace kout

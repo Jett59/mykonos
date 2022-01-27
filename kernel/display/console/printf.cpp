@@ -24,6 +24,7 @@ namespace kout {
 void printf(const char *format, ...) {
   va_list args;
   va_start(args, format);
+  acquireConsoleLock();
   while (*format != 0) {
     if (*format == '%') {
       format++;
@@ -32,61 +33,62 @@ void printf(const char *format, ...) {
         break;
       }
       case '%': {
-        print("%", 1);
+        print("%", 1, true);
         break;
       }
       case 'c': {
         char c = (char)va_arg(args, int);
-        print(&c, 1);
+        print(&c, 1, true);
         break;
       }
       case 'd': {
         int n = va_arg(args, int);
-        print(n);
+        print(n, 10, true);
         break;
       }
       case 'l': {
         long l = va_arg(args, long);
-        print(l);
+        print(l, 10, true);
         break;
       }
       case 'o': {
         long l = va_arg(args, long);
-        print(l, 8);
+        print(l, 8, true);
         break;
       }
       case 'p': {
         void *ptr = va_arg(args, void *);
-        print("0x");
-        print((unsigned long)ptr, 16);
+        print("0x", strlen("0x"), true);
+        print((unsigned long)ptr, 16, true);
         break;
       }
       case 's': {
         const char *str = va_arg(args, const char *);
-        print(str);
+        print(str, strlen(str), true);
         break;
       }
       case 'x': {
         long l = va_arg(args, long);
-        print(l, 16);
+        print(l, 16, true);
         break;
       }
       default:
-        print("<unknown type specifier>");
+        print("<unknown type specifier>", strlen("<unknown type specifier>"), true);
       }
       format++;
     } else {
       const char *nextSpecifier = strchr(format, '%');
       int len;
-      if (nextSpecifier != 0) {
+      if (nextSpecifier != nullptr) {
         len = nextSpecifier - format;
       } else {
         len = strlen(format);
       }
-      print(format, len);
+      print(format, len, true);
       format += len;
     }
   }
+  releaseConsoleLock();
   va_end(args);
 }
 } // namespace kout
