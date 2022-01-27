@@ -23,7 +23,7 @@
 
 namespace apic {
 unsigned timerTicksPer(unsigned nanos, hpet::Hpet &hpet);
-void startTimer(unsigned tickFrequency);
+void setUpTimer(unsigned tickFrequency);
 } // namespace apic
 
 #endif
