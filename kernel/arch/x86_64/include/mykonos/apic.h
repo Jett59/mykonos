@@ -35,9 +35,11 @@ struct IoApicDescriptor {
   uint32_t gsiBase;
 };
 
-#define LOCAL_APIC_VERSION_REGISTER 0x30
-#define LOCAL_APIC_ERROR_REGISTER 0x280
 #define LOCAL_APIC_ID_REGISTER 0x20
+#define LOCAL_APIC_VERSION_REGISTER 0x30
+#define LOCAL_APIC_EOI_REGISTER 0xb0
+#define LOCAL_APIC_IN_SERVICE_REGISTERS 0x100
+#define LOCAL_APIC_ERROR_REGISTER 0x280
 #define LOCAL_APIC_TIMER_LVT_REGISTER 0x320
 #define LOCAL_APIC_THERMAL_LVT_REGISTER 0x330
 #define LOCAL_APIC_PERFORMANCE_LVT_REGISTER 0x340
@@ -107,6 +109,14 @@ public:
   }
 
   void maskAllInternal();
+
+  bool inService(uint8_t vector) {
+    return (readRegister(LOCAL_APIC_IN_SERVICE_REGISTERS +
+                         ((vector / 32) * 16)) &
+            (1 << (vector & 0x1f))) != 0;
+  }
+
+  void eoi() { writeRegister(LOCAL_APIC_EOI_REGISTER, 0); }
 
 private:
   uint32_t *registers = nullptr;

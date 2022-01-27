@@ -14,11 +14,16 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+#include <mykonos/apic.h>
+
 #include <stdint.h>
 
 extern "C" void handleInterrupt(uint8_t interruptNumber) {
   switch (interruptNumber) {
   default:
     break;
+  }
+  if (apic::localApic.inService(interruptNumber)) {
+    apic::localApic.eoi();
   }
 }
