@@ -20,9 +20,9 @@
 #include <mykonos/string.h>
 
 namespace kout {
-void print(const char *str, int len);
+void print(const char *str, int len, bool skipLocking=false);
 static inline void print(const char *str) { print(str, strlen(str)); }
-void print(unsigned long value, unsigned long base = 10);
+void print(unsigned long value, unsigned long base = 10, bool skipLocking=false);
 
 void printf(const char *format, ...);
 } // namespace kout
