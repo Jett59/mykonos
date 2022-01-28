@@ -73,7 +73,8 @@ void printf(const char *format, ...) {
         break;
       }
       default:
-        print("<unknown type specifier>", strlen("<unknown type specifier>"), true);
+        print("<unknown type specifier>", strlen("<unknown type specifier>"),
+              true);
       }
       format++;
     } else {
