@@ -166,7 +166,6 @@ extern "C" [[noreturn]] void kstartApCpu(uint8_t cpuNumber) {
   }
   // Set up the APIC timer
   apic::setUpTimer(localApicTickSetting);
-  // TODO: Do something with cpuNumber
-  (void)cpuNumber; // Suppress warnings
+  // Just hault for now
   cpu::hault();
 }
