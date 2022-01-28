@@ -23,6 +23,8 @@
 
 #include <mykonos/string.h>
 
+#include <mykonos/spinlock.h>
+
 namespace kout {
 static unsigned line, column;
 static unsigned lines, columns;
@@ -34,6 +36,8 @@ static char *screenBuffer;
 
 static unsigned displayWidth, displayHeight;
 static unsigned fontWidth, fontHeight;
+
+static lock::Spinlock consoleLock;
 
 void scrollDown() {
   unsigned x = 0;
@@ -66,7 +70,10 @@ void scrollDown() {
   lastLine[0] = 0;
 }
 
-void print(const char *str, int len) {
+void print(const char *str, int len, bool skipLocking) {
+  if (!skipLocking) {
+    consoleLock.acquire();
+  }
   if (columns == 0) {
     displayWidth = display::getWidth();
     displayHeight = display::getHeight();
@@ -104,8 +111,11 @@ void print(const char *str, int len) {
     x += fontWidth;
     column++;
   }
+  if (!skipLocking) {
+    consoleLock.release();
+  }
 }
-void print(unsigned long value, unsigned long base) {
+void print(unsigned long value, unsigned long base, bool skipLocking) {
   char buffer[sizeof(unsigned long) * 8 + 1];
   unsigned i = 0;
   do {
@@ -122,6 +132,9 @@ void print(unsigned long value, unsigned long base) {
     buffer[i] = buffer[end - i];
     buffer[end - i] = temp;
   }
-  print(buffer);
+  print(buffer, strlen(buffer), skipLocking);
 }
+
+void acquireConsoleLock() { consoleLock.acquire(); }
+void releaseConsoleLock() { consoleLock.release(); }
 } // namespace kout
