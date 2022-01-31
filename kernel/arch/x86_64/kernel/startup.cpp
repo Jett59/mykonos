@@ -175,7 +175,9 @@ extern "C" [[noreturn]] void kstartApCpu(uint8_t cpuNumber) {
                  cpuNumber);
     return true;
   };
-    processors::runOn(cpuNumber - 1, callback::Lambda<decltype(otherCpuCode), bool>(otherCpuCode));
+  processors::runOn(
+      cpuNumber - 1,
+      callback::Lambda<decltype(otherCpuCode), bool>(otherCpuCode));
   // Wait for the BSP to figure out the APIC setting
   while (localApicTickSetting == 0) {
     cpu::relax();

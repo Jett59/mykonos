@@ -39,7 +39,7 @@ void runOn(unsigned cpuNumber, callback::Callback<bool> &&callback) {
     apic::localApic.sendIpi(PROCESSOR_CALLBACK_INTERRUPT, APIC_FIXED_IPI, false,
                             true, true, apic::localApicIds[cpuNumber]);
     // Wait for it to be handled
-    while (!callback.hasRun()) {
+    while (!mailboxes[cpuNumber]->hasRun()) {
       cpu::relax();
     }
     // Clean up
