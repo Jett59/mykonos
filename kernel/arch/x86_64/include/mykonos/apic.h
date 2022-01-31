@@ -142,6 +142,8 @@ private:
   }
 };
 
+extern uint8_t localApicIds[MAX_LOCAL_APICS];
+
 extern LocalApic localApic;
 } // namespace apic
 

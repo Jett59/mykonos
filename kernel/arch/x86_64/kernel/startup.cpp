@@ -45,6 +45,8 @@
 
 #include <mykonos/apicTimer.h>
 
+#include <mykonos/processors.h>
+
 typedef void (*ConstructorOrDestructor)();
 
 extern "C" {
@@ -133,6 +135,7 @@ extern "C" [[noreturn]] void kstart() {
           }
         } else {
           kout::printf("I am CPU %d\n", i);
+          apic::localApicIds[0] = apicId;
         }
       }
     }
@@ -158,12 +161,23 @@ extern "C" [[noreturn]] void kstart() {
 extern "C" [[noreturn]] void kstartApCpu(uint8_t cpuNumber) {
   // Store the CPU number for later use
   cpu::setCpuNumber(cpuNumber);
+  apic::localApic.enable();
+  // Store our APIC id for later use
+  apic::localApicIds[cpuNumber] = apic::localApic.getApicId();
   interrupts::install();
   kout::printf("Started CPU %d\n", cpuNumber);
-  apic::localApic.enable();
   // Mask all internal interrupts so we can start getting timer IRQs
   apic::localApic.maskAllInternal();
   cpu::enableLocalIrqs();
+  // Run some code on another CPU for the fun of it
+  auto otherCpuCode = [=]() -> bool {
+    kout::printf("I am CPU %d called from CPU %d\n", cpu::getCpuNumber(),
+                 cpuNumber);
+    return true;
+  };
+  processors::runOn(
+      cpuNumber - 1,
+      callback::Lambda<decltype(otherCpuCode), bool>(otherCpuCode));
   // Wait for the BSP to figure out the APIC setting
   while (localApicTickSetting == 0) {
     cpu::relax();

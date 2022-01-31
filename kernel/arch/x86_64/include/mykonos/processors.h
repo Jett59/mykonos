@@ -14,21 +14,21 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
-#include <mykonos/apic.h>
-#include <mykonos/processors.h>
+#ifndef _MYKONOS_PROCESSORS_H
+#define _MYKONOS_PROCESSORS_H
 
-#include <stdint.h>
+#define PROCESSOR_CALLBACK_INTERRUPT 0xfe
 
-extern "C" void handleInterrupt(uint8_t interruptNumber) {
-  switch (interruptNumber) {
-  case PROCESSOR_CALLBACK_INTERRUPT: {
-    processors::receiveCall();
-    break;
-  }
-  default:
-    break;
-  }
-  if (apic::localApic.inService(interruptNumber)) {
-    apic::localApic.eoi();
-  }
-}
+#include <mykonos/callback.h>
+
+namespace processors {
+// Run the specified callback on CPU cpuNumber. The function returns when the
+// callback returns
+void runOn(unsigned cpuNumber, callback::Callback<bool> &&callback);
+
+// Internal function. Called when the CPU receives a request to execute a
+// callback
+void receiveCall();
+} // namespace processors
+
+#endif
