@@ -21,9 +21,9 @@
 #include <mykonos/cpu.h>
 
 namespace processors {
-callback::Callback<void> *mailboxes[MAX_LOCAL_APICS];
+callback::Callback<bool> *mailboxes[MAX_LOCAL_APICS];
 
-void runOn(unsigned cpuNumber, callback::Callback<void> &&callback) {
+void runOn(unsigned cpuNumber, callback::Callback<bool> &&callback) {
   if (cpuNumber < MAX_LOCAL_APICS) {
     // Wait for all previous requests to complete
     while (true) {
@@ -44,6 +44,12 @@ void runOn(unsigned cpuNumber, callback::Callback<void> &&callback) {
     }
     // Clean up
     mailboxes[cpuNumber] = nullptr;
+  }
+}
+void receiveCall() {
+  unsigned cpuNumber = cpu::getCpuNumber();
+  if (mailboxes[cpuNumber] != nullptr) {
+    (*mailboxes[cpuNumber])();
   }
 }
 } // namespace processors

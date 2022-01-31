@@ -18,6 +18,7 @@
 #define _MYKONOS_CALLBACK_H
 
 namespace callback {
+// Note: Don't use with void return type.
 template <typename Result, typename... ParameterTypes> class Callback {
 private:
   bool run = false;
