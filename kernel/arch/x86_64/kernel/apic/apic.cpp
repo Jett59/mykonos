@@ -23,6 +23,8 @@
 #define LOCAL_APIC_SPURIOUS_INTERRUPT_REGISTER_ENABLE (1 << 8)
 
 namespace apic {
+uint8_t localApicIds[MAX_LOCAL_APICS];
+
 LocalApic localApic;
 
 void LocalApic::init(void *physicalAddress) {
