@@ -136,6 +136,8 @@ extern "C" [[noreturn]] void kstart() {
         }
       }
     }
+    // Store our CPU number (0 for BSP)
+    cpu::setCpuNumber(0);
     unsigned ticksPer10ms = apic::timerTicksPer(10000000, hpet);
     localApicTickSetting = ticksPer10ms;
     kout::printf("APIC timer runs at %dHz\n", ticksPer10ms * 100);
@@ -154,6 +156,8 @@ extern "C" [[noreturn]] void kstart() {
 }
 
 extern "C" [[noreturn]] void kstartApCpu(uint8_t cpuNumber) {
+  // Store the CPU number for later use
+  cpu::setCpuNumber(cpuNumber);
   interrupts::install();
   kout::printf("Started CPU %d\n", cpuNumber);
   apic::localApic.enable();

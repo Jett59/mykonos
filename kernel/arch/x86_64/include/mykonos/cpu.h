@@ -20,6 +20,31 @@
 #include <stdint.h>
 
 namespace cpu {
+static inline uint64_t rdmsr(uint32_t address) {
+  uint32_t msrLow, msrHigh;
+  __asm__ volatile("rdmsr"
+                   : "=a"(msrLow), "=d"(msrHigh)
+                   : "c"(address)
+                   : "memory");
+  return msrLow | ((uint64_t)msrHigh << 32);
+}
+static inline void wrmsr(uint64_t value, uint32_t address) {
+  __asm__ volatile("wrmsr"
+                   :
+                   : "a"((uint32_t)value), "d"((uint32_t)(value >> 32)),
+                     "c"(address)
+                   : "memory");
+}
+
+static inline unsigned getCpuNumber() {
+  unsigned cpuNumber;
+  __asm__ volatile("rdtscp" : "=c"(cpuNumber) : : "rdx", "rax", "memory");
+  return cpuNumber;
+}
+static inline void setCpuNumber(unsigned cpuNumber) {
+  wrmsr(cpuNumber, 0xc0000103); // rdtscp processor id
+}
+
 static inline uint64_t getFlags() {
   uint64_t result;
   __asm__ volatile("pushfq;"
