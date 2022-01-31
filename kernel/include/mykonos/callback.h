@@ -29,6 +29,7 @@ public:
     run = true;
     return res;
   }
+  bool hasRun() { return run; }
 };
 
 template <typename LambdaType, typename Result, typename... ParameterTypes>

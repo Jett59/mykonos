@@ -6,3 +6,4 @@ STEPS+=arch/x86_64/kernel/interrupts/interrupts.o arch/x86_64/kernel/interrupts/
 STEPS+=arch/x86_64/kernel/exceptions/exceptionHandlers.o
 STEPS+=arch/x86_64/kernel/apic/apic.o arch/x86_64/kernel/apic/apicTimer.o
 STEPS+=arch/x86_64/kernel/smp/smp.o
+STEPS+=arch/x86_64/kernel/processors/processors.o
