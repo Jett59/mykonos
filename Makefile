@@ -20,7 +20,7 @@ export AS:=$(ARCH)-elf-gcc
 export LD:=$(ARCH)-elf-gcc
 
 export CPPFLAGS:=
-export CXXFLAGS:=-std=gnu++17 -nostdlib -O2 -g -ffunction-sections -fdata-sections -Wall -Wextra
+export CXXFLAGS:=-std=gnu++20 -nostdlib -O2 -g -ffunction-sections -fdata-sections -Wall -Wextra
 export ASFLAGS:=
 
 export LDFLAGS:=-nostdlib -lgcc -Wl,--gc-sections
