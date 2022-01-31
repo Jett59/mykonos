@@ -20,6 +20,12 @@
 #include <stdint.h>
 
 namespace cpu {
+static inline unsigned getCpuNumber() {
+  unsigned cpuNumber;
+  __asm__ volatile("rdtscp" : "=c"(cpuNumber) : : "rdx", "rax", "memory");
+  return cpuNumber;
+}
+
 static inline uint64_t getFlags() {
   uint64_t result;
   __asm__ volatile("pushfq;"
