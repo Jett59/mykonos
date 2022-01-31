@@ -31,13 +31,16 @@ public:
   }
 };
 
-template <auto l, typename Result, typename... ParameterTypes>
+template <typename LambdaType, typename Result, typename... ParameterTypes>
 class Lambda : public Callback<Result, ParameterTypes...> {
 private:
-  static constexpr auto lambda = l;
+  LambdaType lambda;
 
 public:
-  virtual Result invoke(ParameterTypes... args) { return l(args...); }
+  Lambda<LambdaType, Result, ParameterTypes...>(LambdaType lambda)
+      : lambda(lambda) {}
+
+  virtual Result invoke(ParameterTypes... args) { return lambda(args...); }
 };
 } // namespace callback
 
