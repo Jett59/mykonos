@@ -15,11 +15,16 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 #include <mykonos/apic.h>
+#include <mykonos/processors.h>
 
 #include <stdint.h>
 
 extern "C" void handleInterrupt(uint8_t interruptNumber) {
   switch (interruptNumber) {
+  case PROCESSOR_CALLBACK_INTERRUPT: {
+    processors::receiveCall();
+    break;
+  }
   default:
     break;
   }
