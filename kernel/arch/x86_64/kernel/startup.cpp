@@ -22,6 +22,8 @@
 #include <mykonos/frameBuffer.h>
 #include <mykonos/kout.h>
 
+#include <mykonos/cpuidCheck.h>
+
 #include <mykonos/test.h>
 
 #include <mykonos/interrupts.h>
@@ -72,6 +74,9 @@ extern "C" [[noreturn]] void kstart() {
   interrupts::init();
   interrupts::install();
   kout::print("Initialized the console\n\n");
+  if (!cpuid::checkCpuidFlags()) {
+    kpanic("Your CPU is not good enough");
+  }
   if (test::runTests(kout::print)) {
     // Continue
     if (!memeq(acpi::rsdp.signature, "RSD PTR ", 8)) {
