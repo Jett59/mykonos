@@ -125,7 +125,7 @@ extern "C" void handleCpuException(uint64_t exceptionNumber, uint64_t errorCode,
     break;
   }
   default:
-    kout::printf("Unimplemented exception number\n");
+    kout::print("Unimplemented exception number\n");
     break;
   }
   kpanic("Non recoverable exception caught\n");
