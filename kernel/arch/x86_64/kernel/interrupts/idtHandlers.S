@@ -73,7 +73,7 @@ errorCodeExceptionHandler 30 /*#SX: Security exception*/
 reservedExceptions 1
 
 currentInterruptNumber = 32
-.rept 255 - 32 /*Number of real (non-exception) interrupts*/
+.rept 256 - 32 /*Number of real (non-exception) interrupts*/
 .section .text.interruptHandlers, "ax"
 1:
 pushq $currentInterruptNumber

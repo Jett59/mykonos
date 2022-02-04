@@ -32,9 +32,7 @@ static_assert(sizeof(InterruptStackFrame) == 40,
 
 extern "C" void handleCpuException(uint64_t exceptionNumber, uint64_t errorCode,
                                    InterruptStackFrame *interruptStackFrame) {
-  kout::print("Exception at address 0x");
-  kout::print((unsigned long)interruptStackFrame->rip, 16);
-  kout::print(":\n");
+  kout::printf("Exception at address %p:\n", interruptStackFrame->rip);
   switch (exceptionNumber) {
   case CPU_DE: {
     kout::print("Division exception\n");
@@ -77,9 +75,7 @@ extern "C" void handleCpuException(uint64_t exceptionNumber, uint64_t errorCode,
     break;
   }
   case CPU_NP: {
-    kout::print("Segment not present: ");
-    kout::print(errorCode);
-    kout::print("\n");
+    kout::print("Segment not present: %d\n", errorCode);
     break;
   }
   case CPU_SS: {
@@ -87,19 +83,13 @@ extern "C" void handleCpuException(uint64_t exceptionNumber, uint64_t errorCode,
     break;
   }
   case CPU_GP: {
-    kout::print("General protection fault (0x");
-    kout::print(errorCode, 16);
-    kout::print(")\n");
+    kout::printf("General protection fault (0x%d)\n", errorCode);
     break;
   }
   case CPU_PF: {
-    kout::print("Page fault (");
-    kout::print(errorCode, 2);
-    kout::print(") on address ");
-    void *cr2Address;
-    __asm__ volatile("movq %%cr2, %0" : "=a"(cr2Address));
-    kout::print((unsigned long)cr2Address, 16);
-    kout::print("\n");
+    void *cr2;
+    __asm__ volatile("movq %%cr2, %0" : "=a"(cr2));
+    kout::printf("Page fault (%x) on address %p\n", errorCode, cr2);
     break;
   }
   case CPU_MF: {
