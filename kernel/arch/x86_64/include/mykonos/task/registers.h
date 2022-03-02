@@ -13,19 +13,18 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
-    */
-#ifndef _MYKONOS_TASK_CONTROL_BLOCK_H
-#define _MYKONOS_TASK_CONTROL_BLOCK_H
+*/
+#ifndef _MYKONOS_TASK_REGISTERS_H
+#define _MYKONOS_TASK_REGISTERS_H
 
-#include <mykonos/task/registers.h>
+#include <stdint.h>
 
 namespace task {
-struct ControlBlock {
-  Registers registers;
-  unsigned timeSlice;
-  unsigned priority;
-  ControlBlock *next;
-};
-} // namespace task
+    struct Registers {
+      uint64_t rax, rcx, rdx, rbx, rsp, rbp, rsi, rdi, r8, r9, r10, r11, r12,
+          r13, r14, r15;
+      void *cr3;
+    };
+    }  // namespace task
 
 #endif
