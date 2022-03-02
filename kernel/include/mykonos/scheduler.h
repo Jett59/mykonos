@@ -14,23 +14,17 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
-#ifndef _MYKONOS_PROCESSORS_H
-#define _MYKONOS_PROCESSORS_H
+#ifndef _MYKONOS_SCHEDULER_H
+#define _MYKONOS_SCHEDULER_H
 
-#define PROCESSOR_CALLBACK_INTERRUPT 0xfe
+#include <mykonos/task/controlBlock.h>
 
-#include <mykonos/callback.h>
+namespace scheduler {
+void addTask(task::ControlBlock *task);
+void tick();
+void yield();
 
-#define MAX_CPUS 64
-
-namespace processors {
-// Run the specified callback on CPU cpuNumber. The function returns when the
-// callback returns
-void runOn(unsigned cpuNumber, callback::Callback<bool> &&callback);
-
-// Internal function. Called when the CPU receives a request to execute a
-// callback
-void receiveCall();
-} // namespace processors
+void setInitialTask(task::ControlBlock *task);
+} // namespace scheduler
 
 #endif

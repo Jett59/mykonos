@@ -17,10 +17,11 @@
 #ifndef _MYKONOS_TASK_CONTROL_BLOCK_H
 #define _MYKONOS_TASK_CONTROL_BLOCK_H
 
+#include <mykonos/task/registers.h>
+
 namespace task {
 struct ControlBlock {
-  void *entryPoint;
-  void *stackPointer;
+  Registers registers;
   unsigned timeSlice;
   unsigned priority;
   ControlBlock *next;

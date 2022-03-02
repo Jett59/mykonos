@@ -49,6 +49,11 @@
 
 #include <mykonos/processors.h>
 
+#include <mykonos/scheduler.h>
+#include <mykonos/thread.h>
+
+[[noreturn]] void kRun();
+
 typedef void (*ConstructorOrDestructor)();
 
 extern "C" {
@@ -154,9 +159,7 @@ extern "C" [[noreturn]] void kstart() {
     cpu::enableLocalIrqs();
     // Set up the APIC timer
     apic::setUpTimer(localApicTickSetting);
-    // Wait a bit for some APIC timer interrupts
-    hpet.wait(250000000);
-    kpanic("It all worked");
+    kRun();
   } else {
     // The tests failed! Abort
     kpanic("The tests failed!");
@@ -189,6 +192,23 @@ extern "C" [[noreturn]] void kstartApCpu(uint8_t cpuNumber) {
   }
   // Set up the APIC timer
   apic::setUpTimer(localApicTickSetting);
+  kRun();
+}
+
+[[noreturn]] void kRun() {
+  scheduler::setInitialTask(new task::ControlBlock());
+  auto otherThreadFunction = [](void *) {
+    kout::print("Other thread got CPU time\n");
+    while (true) {
+      scheduler::yield();
+      kout::print("Other thread got CPU time after yield\n");
+    }
+  };
+  thread::create(otherThreadFunction, nullptr);
+  kout::print("Main thread yielding\n");
+  scheduler::yield();
+  kout::print("Main thread got CPU time after yield\n");
+  scheduler::yield();
   // Just hault for now
   cpu::hault();
 }
