@@ -17,8 +17,12 @@
 #ifndef _MYKONOS_SCHEDULER_H
 #define _MYKONOS_SCHEDULER_H
 
+#include <mykonos/task/controlBlock.h>
+
 namespace scheduler {
+void addTask(unsigned cpuNumber, task::ControlBlock *task);
+void tick();
 void yield();
-}
+} // namespace scheduler
 
 #endif
