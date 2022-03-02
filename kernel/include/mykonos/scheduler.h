@@ -25,6 +25,6 @@ void tick();
 void yield();
 
 void setInitialTask(task::ControlBlock *task);
-}  // namespace scheduler
+} // namespace scheduler
 
 #endif
