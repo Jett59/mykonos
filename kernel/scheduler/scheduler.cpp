@@ -51,8 +51,8 @@ public:
 };
 static Scheduler schedulers[MAX_CPUS];
 
-void addTask(unsigned cpuNumber, task::ControlBlock *task) {
-  schedulers[cpuNumber].addTask(task);
+void addTask(task::ControlBlock *task) {
+  schedulers[cpu::getCpuNumber()].addTask(task);
 }
 void tick() { schedulers[cpu::getCpuNumber()].tick(); }
 void yield() { schedulers[cpu::getCpuNumber()].yield(); }

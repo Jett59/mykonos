@@ -14,15 +14,11 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
-#ifndef _MYKONOS_SCHEDULER_H
-#define _MYKONOS_SCHEDULER_H
+#ifndef _MYKONOS_THREAD_H
+#define _MYKONOS_THREAD_H
 
-#include <mykonos/task/controlBlock.h>
-
-namespace scheduler {
-void addTask(task::ControlBlock *task);
-void tick();
-void yield();
-} // namespace scheduler
+namespace thread {
+void create(void (*entrypoint)(void *context), void *context);
+}
 
 #endif

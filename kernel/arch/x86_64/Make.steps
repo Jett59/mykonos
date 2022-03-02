@@ -7,4 +7,4 @@ STEPS+=arch/x86_64/kernel/exceptions/exceptionHandlers.o
 STEPS+=arch/x86_64/kernel/apic/apic.o arch/x86_64/kernel/apic/apicTimer.o
 STEPS+=arch/x86_64/kernel/smp/smp.o
 STEPS+=arch/x86_64/kernel/processors/processors.o
-STEPS+=arch/x86_64/kernel/scheduler/registers.o
+STEPS+=arch/x86_64/kernel/scheduler/registers.o arch/x86_64/kernel/scheduler/threadCreator.o

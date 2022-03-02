@@ -14,15 +14,17 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
-#ifndef _MYKONOS_SCHEDULER_H
-#define _MYKONOS_SCHEDULER_H
+#include <mykonos/thread.h>
 
 #include <mykonos/task/controlBlock.h>
+#include <mykonos/scheduler.h>
 
-namespace scheduler {
-void addTask(task::ControlBlock *task);
-void tick();
-void yield();
-} // namespace scheduler
-
-#endif
+namespace thread {
+    void create(void(*entrypoint)(void *context), void *context) {
+      task::ControlBlock *task = new task::ControlBlock();
+      task->registers.rip = (void *)entrypoint;
+      task->registers.rdi = (uint64_t)context;
+      task->registers.rflags = 1 << 9; // Interrupt enable bit
+      scheduler::addTask(task);
+    }
+}
