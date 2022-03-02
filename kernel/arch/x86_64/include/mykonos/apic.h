@@ -17,7 +17,9 @@
 #ifndef _MYKONOS_APIC_H
 #define _MYKONOS_APIC_H
 
-#define MAX_LOCAL_APICS 64
+#include <mykonos/processors.h>
+
+#define MAX_LOCAL_APICS MAX_CPUS
 #define MAX_IO_APICS 24
 
 #include <stddef.h>
