@@ -16,15 +16,20 @@
 */
 #include <mykonos/thread.h>
 
-#include <mykonos/task/controlBlock.h>
 #include <mykonos/scheduler.h>
+#include <mykonos/stacks.h>
+#include <mykonos/task/controlBlock.h>
 
 namespace thread {
-    void create(void(*entrypoint)(void *context), void *context) {
-      task::ControlBlock *task = new task::ControlBlock();
-      task->registers.rip = (void *)entrypoint;
-      task->registers.rdi = (uint64_t)context;
-      task->registers.rflags = 1 << 9; // Interrupt enable bit
-      scheduler::addTask(task);
-    }
+void create(void (*entrypoint)(void *context), void *context) {
+  task::ControlBlock *task = new task::ControlBlock();
+  task->registers.rip = (void *)entrypoint;
+  task->registers.rdi = (uint64_t)context;
+  task->registers.rflags = 1 << 9; // Interrupt enable bit
+  task->registers.rsp = (uint64_t)stacks::allocateStack();
+  void *cr3;
+  __asm__("movq %%cr3, %0" : "=r"(cr3));
+  task->registers.cr3 = cr3;
+  scheduler::addTask(task);
 }
+} // namespace thread

@@ -23,6 +23,8 @@ namespace scheduler {
 void addTask(task::ControlBlock *task);
 void tick();
 void yield();
-} // namespace scheduler
+
+void setInitialTask(task::ControlBlock *task);
+}  // namespace scheduler
 
 #endif

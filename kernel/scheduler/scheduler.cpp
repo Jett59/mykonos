@@ -15,6 +15,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 #include <mykonos/cpu.h>
+#include <mykonos/kpanic.h>
 #include <mykonos/processors.h>
 #include <mykonos/scheduler.h>
 #include <mykonos/task/controlBlock.h>
@@ -48,6 +49,14 @@ public:
     currentTask = to;
     swapRegisters(&from->registers, &to->registers);
   }
+
+  void setInitialTask(task::ControlBlock *task) {
+    if (currentTask == nullptr) {
+      currentTask = task;
+    } else {
+      kpanic("Cannot set initial task twice");
+    }
+  }
 };
 static Scheduler schedulers[MAX_CPUS];
 
@@ -56,4 +65,8 @@ void addTask(task::ControlBlock *task) {
 }
 void tick() { schedulers[cpu::getCpuNumber()].tick(); }
 void yield() { schedulers[cpu::getCpuNumber()].yield(); }
+
+void setInitialTask(task::ControlBlock *task) {
+  schedulers[cpu::getCpuNumber()].setInitialTask(task);
+}
 } // namespace scheduler
