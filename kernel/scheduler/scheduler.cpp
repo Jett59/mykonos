@@ -20,6 +20,7 @@
 #include <mykonos/scheduler.h>
 #include <mykonos/task/controlBlock.h>
 #include <mykonos/task/taskQueue.h>
+#include <mykonos/spinlock.h>
 
 #define INITIAL_TIME_SLICE 5
 
@@ -75,7 +76,7 @@ static Scheduler &getLeastBusy() {
   Scheduler *bestScheduler = &schedulers[0];
   unsigned bestTaskCount = bestScheduler->taskCount();
   for (unsigned i = 1; i < cpuCount; i++) {
-    if (schedulers[i].taskCount() > bestTaskCount) {
+    if (schedulers[i].taskCount() < bestTaskCount) {
       bestScheduler = &schedulers[i];
       bestTaskCount = bestScheduler->taskCount();
     }
