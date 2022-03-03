@@ -44,10 +44,19 @@ public:
   void yield() {
     task::ControlBlock *from = currentTask;
     task::ControlBlock *to = tasks.pop();
-    tasks.push(from);
-    to->timeSlice = INITIAL_TIME_SLICE;
-    currentTask = to;
-    swapRegisters(&from->registers, &to->registers);
+    if (to != nullptr) {
+      tasks.push(from);
+      to->timeSlice = INITIAL_TIME_SLICE;
+      currentTask = to;
+      swapRegisters(&from->registers, &to->registers);
+    }
+  }
+  unsigned taskCount() {
+    if (currentTask == nullptr) {
+      return 0;
+    } else {
+      return tasks.getSize() + 1;
+    }
   }
 
   void setInitialTask(task::ControlBlock *task) {
@@ -62,9 +71,19 @@ static Scheduler schedulers[MAX_CPUS];
 
 static unsigned cpuCount = 0;
 
-void addTask(task::ControlBlock *task) {
-  schedulers[cpu::getCpuNumber()].addTask(task);
+static Scheduler &getLeastBusy() {
+  Scheduler *bestScheduler = &schedulers[0];
+  unsigned bestTaskCount = bestScheduler->taskCount();
+  for (unsigned i = 1; i < cpuCount; i++) {
+    if (schedulers[i].taskCount() > bestTaskCount) {
+      bestScheduler = &schedulers[i];
+      bestTaskCount = bestScheduler->taskCount();
+    }
+  }
+  return *bestScheduler;
 }
+
+void addTask(task::ControlBlock *task) { getLeastBusy().addTask(task); }
 void tick() { schedulers[cpu::getCpuNumber()].tick(); }
 void yield() { schedulers[cpu::getCpuNumber()].yield(); }
 

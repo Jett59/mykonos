@@ -52,7 +52,12 @@ public:
     lock.release();
     return result;
   }
-  unsigned getSize() { return size; }
+  unsigned getSize() {
+    lock.acquire();
+    unsigned result = size;
+    lock.release();
+    return result;
+  }
 
 private:
   lock::Spinlock lock;
