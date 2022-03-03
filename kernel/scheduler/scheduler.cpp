@@ -18,9 +18,9 @@
 #include <mykonos/kpanic.h>
 #include <mykonos/processors.h>
 #include <mykonos/scheduler.h>
+#include <mykonos/spinlock.h>
 #include <mykonos/task/controlBlock.h>
 #include <mykonos/task/taskQueue.h>
-#include <mykonos/spinlock.h>
 
 #define INITIAL_TIME_SLICE 5
 

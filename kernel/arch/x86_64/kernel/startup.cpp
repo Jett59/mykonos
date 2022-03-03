@@ -202,13 +202,15 @@ extern "C" [[noreturn]] void kstartApCpu(uint8_t cpuNumber) {
     kout::printf("Other thread got CPU time on CPU %d\n", cpu::getCpuNumber());
     while (true) {
       scheduler::yield();
-      kout::printf("Other thread got CPU time after yield on CPU %d\n", cpu::getCpuNumber());
+      kout::printf("Other thread got CPU time after yield on CPU %d\n",
+                   cpu::getCpuNumber());
     }
   };
   thread::create(otherThreadFunction, nullptr);
   kout::printf("Main thread yielding on CPU %d\n", cpu::getCpuNumber());
   scheduler::yield();
-  kout::printf("Main thread got CPU time after yield on CPU %d\n", cpu::getCpuNumber());
+  kout::printf("Main thread got CPU time after yield on CPU %d\n",
+               cpu::getCpuNumber());
   scheduler::yield();
   // Just hault for now
   cpu::hault();
