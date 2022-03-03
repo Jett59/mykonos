@@ -21,10 +21,11 @@
 
 namespace scheduler {
 void addTask(task::ControlBlock *task);
-void tick();
 void yield();
 
+void init(unsigned numCpus);
 void setInitialTask(task::ControlBlock *task);
+void tick();
 } // namespace scheduler
 
 #endif

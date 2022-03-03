@@ -125,6 +125,7 @@ extern "C" [[noreturn]] void kstart() {
       kout::print("Disabling legacy PIC\n");
       pic::disablePic();
     }
+    scheduler::init(madt->localApicCount());
     if (madt->localApicCount() > 1) {
       // Copy smp trampoline to low memory
       void *smpTrampolineDestination =
@@ -198,16 +199,18 @@ extern "C" [[noreturn]] void kstartApCpu(uint8_t cpuNumber) {
 [[noreturn]] void kRun() {
   scheduler::setInitialTask(new task::ControlBlock());
   auto otherThreadFunction = [](void *) {
-    kout::print("Other thread got CPU time\n");
+    kout::printf("Other thread got CPU time on CPU %d\n", cpu::getCpuNumber());
     while (true) {
       scheduler::yield();
-      kout::print("Other thread got CPU time after yield\n");
+      kout::printf("Other thread got CPU time after yield on CPU %d\n",
+                   cpu::getCpuNumber());
     }
   };
   thread::create(otherThreadFunction, nullptr);
-  kout::print("Main thread yielding\n");
+  kout::printf("Main thread yielding on CPU %d\n", cpu::getCpuNumber());
   scheduler::yield();
-  kout::print("Main thread got CPU time after yield\n");
+  kout::printf("Main thread got CPU time after yield on CPU %d\n",
+               cpu::getCpuNumber());
   scheduler::yield();
   // Just hault for now
   cpu::hault();
