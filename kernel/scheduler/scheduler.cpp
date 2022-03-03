@@ -60,12 +60,15 @@ public:
 };
 static Scheduler schedulers[MAX_CPUS];
 
+static unsigned cpuCount = 0;
+
 void addTask(task::ControlBlock *task) {
   schedulers[cpu::getCpuNumber()].addTask(task);
 }
 void tick() { schedulers[cpu::getCpuNumber()].tick(); }
 void yield() { schedulers[cpu::getCpuNumber()].yield(); }
 
+void init(unsigned numCpus) { cpuCount = numCpus; }
 void setInitialTask(task::ControlBlock *task) {
   schedulers[cpu::getCpuNumber()].setInitialTask(task);
 }

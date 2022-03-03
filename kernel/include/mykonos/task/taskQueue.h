@@ -35,6 +35,7 @@ public:
       tail->next = value;
       tail = value;
     }
+    size++;
     lock.release();
   }
   ControlBlock *pop() {
@@ -46,15 +47,18 @@ public:
       } else {
         head = head->next;
       }
+      size--;
     }
     lock.release();
     return result;
   }
+  unsigned getSize() { return size; }
 
 private:
   lock::Spinlock lock;
   ControlBlock *head = nullptr;
   ControlBlock *tail = nullptr;
+  unsigned size;
 };
 } // namespace task
 
