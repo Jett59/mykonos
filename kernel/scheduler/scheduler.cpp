@@ -37,12 +37,13 @@ private:
   task::ControlBlock *currentTask;
   lock::Spinlock addTaskLock;
 
- public:
+public:
   void addTask(task::ControlBlock *task) {
     addTaskLock.acquire();
     if (currentTask->priority < task->priority) {
       tasks.push_front(task);
       if (cpuNumber == cpu::getCpuNumber()) {
+        addTaskLock.release();
         yield();
       } else {
         auto codeToRun = [this]() -> bool {
@@ -50,13 +51,14 @@ private:
           yield();
           return true;
         };
+        addTaskLock.release();
         processors::runOn(
             cpuNumber, callback::Lambda<decltype(codeToRun), bool>(codeToRun));
       }
     } else {
       tasks.push(task);
+      addTaskLock.release();
     }
-    addTaskLock.release();
   }
   void tick() {
     if (--currentTask->timeSlice == 0) {
