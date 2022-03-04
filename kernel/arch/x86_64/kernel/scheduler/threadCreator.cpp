@@ -21,8 +21,10 @@
 #include <mykonos/task/controlBlock.h>
 
 namespace thread {
-void create(void (*entrypoint)(void *context), void *context) {
+void create(void (*entrypoint)(void *context), void *context,
+            unsigned priority) {
   task::ControlBlock *task = new task::ControlBlock();
+  task->priority = priority;
   task->registers.rip = (void *)entrypoint;
   task->registers.rdi = (uint64_t)context;
   task->registers.rflags = 1 << 9; // Interrupt enable bit
