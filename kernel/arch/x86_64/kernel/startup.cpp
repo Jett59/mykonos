@@ -54,6 +54,8 @@
 
 [[noreturn]] void kRun();
 
+static unsigned numCpus = 0;
+
 typedef void (*ConstructorOrDestructor)();
 
 extern "C" {
@@ -125,8 +127,9 @@ extern "C" [[noreturn]] void kstart() {
       kout::print("Disabling legacy PIC\n");
       pic::disablePic();
     }
-    scheduler::init(madt->localApicCount());
-    if (madt->localApicCount() > 1) {
+    numCpus = madt->localApicCount();
+    scheduler::init(numCpus);
+    if (numCpus > 1) {
       // Copy smp trampoline to low memory
       void *smpTrampolineDestination =
           memory::mapAddress((void *)0x8000, 0x1000, false);
@@ -137,7 +140,7 @@ extern "C" [[noreturn]] void kstart() {
       smp::allocateStacks(madt->localApicCount());
       kout::print("Beginning SMP initialization\n");
       uint8_t myApicId = apic::localApic.getApicId();
-      for (unsigned i = 0; i < madt->localApicCount(); i++) {
+      for (unsigned i = 0; i < numCpus; i++) {
         uint8_t apicId = madt->getLocalApic(i).apicId;
         if (apicId != myApicId) {
           if (!smp::startCpu(apicId, hpet)) {
@@ -197,8 +200,16 @@ extern "C" [[noreturn]] void kstartApCpu(uint8_t cpuNumber) {
   kRun();
 }
 
+static volatile unsigned numCpusWithInitialTasks = 0;
+
 [[noreturn]] void kRun() {
-  scheduler::setInitialTask(new task::ControlBlock());
+  task::ControlBlock *initialTask = new task::ControlBlock();
+  initialTask->priority = PRIORITY_NORMAL;
+  scheduler::setInitialTask(initialTask);
+  numCpusWithInitialTasks++;
+  while (numCpusWithInitialTasks < numCpus) {
+    cpu::relax();
+  }
   auto otherThreadFunction = [](void *) {
     kout::printf("Other thread got CPU time on CPU %d\n", cpu::getCpuNumber());
     while (true) {

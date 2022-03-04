@@ -38,6 +38,16 @@ public:
     size++;
     lock.release();
   }
+  void push_front(ControlBlock *value) {
+    lock.acquire();
+    if (head == nullptr) {
+      head = tail = value;
+    }else {
+      value->next = head;
+      head = value;
+    }
+    lock.release();
+  }
   ControlBlock *pop() {
     lock.acquire();
     ControlBlock *result = head;

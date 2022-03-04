@@ -32,11 +32,29 @@ void swapRegisters(task::Registers *from, task::Registers *to);
 namespace scheduler {
 class Scheduler {
 private:
+  unsigned cpuNumber;
   task::Queue tasks;
   task::ControlBlock *currentTask;
 
 public:
-  void addTask(task::ControlBlock *task) { tasks.push(task); }
+  void addTask(task::ControlBlock *task) {
+    if (currentTask->priority < task->priority) {
+      tasks.push_front(task);
+      if (cpuNumber == cpu::getCpuNumber()) {
+        yield();
+      } else {
+        auto codeToRun = [this]() -> bool {
+          processors::letCallerReturn();
+          yield();
+          return true;
+        };
+        processors::runOn(
+            cpuNumber, callback::Lambda<decltype(codeToRun), bool>(codeToRun));
+      }
+    } else {
+      tasks.push(task);
+    }
+  }
   void tick() {
     if (--currentTask->timeSlice == 0) {
       yield();
@@ -67,6 +85,8 @@ public:
       kpanic("Cannot set initial task twice");
     }
   }
+
+  void setCpuNumber(unsigned cpuNumber) { this->cpuNumber = cpuNumber; }
 };
 static Scheduler schedulers[MAX_CPUS];
 
@@ -88,7 +108,12 @@ void addTask(task::ControlBlock *task) { getLeastBusy().addTask(task); }
 void tick() { schedulers[cpu::getCpuNumber()].tick(); }
 void yield() { schedulers[cpu::getCpuNumber()].yield(); }
 
-void init(unsigned numCpus) { cpuCount = numCpus; }
+void init(unsigned numCpus) {
+  cpuCount = numCpus;
+  for (unsigned i = 0; i < numCpus; i++) {
+    schedulers[i].setCpuNumber(i);
+  }
+}
 void setInitialTask(task::ControlBlock *task) {
   schedulers[cpu::getCpuNumber()].setInitialTask(task);
 }
