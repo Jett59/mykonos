@@ -44,8 +44,11 @@ void BlockMap::merge() {
     }();
   }
 }
-void BlockMap::addBlock(Block block) {
+void BlockMap::addBlock(Block block, bool acquireLock) {
   if (block.capacity() > 0) {
+    if (acquireLock) {
+      lock.acquire();
+    }
     if (numBlocks < BLOCKMAP_SIZE) {
       blocks[numBlocks++] = block;
     } else {
@@ -54,19 +57,27 @@ void BlockMap::addBlock(Block block) {
         blocks[numBlocks++] = block;
       }
     }
+    if (acquireLock) {
+      lock.release();
+    }
   }
 }
 void *BlockMap::allocate(size_t amount) {
+  lock.acquire();
+  void *result = nullptr;
   for (unsigned i = 0; i < numBlocks; i++) {
     if (blocks[i].capacity() >= amount) {
-      return blocks[i].reserve(amount);
+      result = blocks[i].reserve(amount);
+      break;
     }
   }
-  return nullptr; // Not enough room in the block map
+  lock.release();
+  return result;
 }
 void BlockMap::reserve(Block blockToRemove) {
   size_t blockToRemoveStart = (size_t)blockToRemove.getStart();
   size_t blockToRemoveEnd = (size_t)blockToRemove.getEnd();
+  lock.acquire();
   merge();
   for (unsigned i = 0; i < numBlocks; i++) {
     Block &currentBlock = blocks[i];
@@ -87,10 +98,11 @@ void BlockMap::reserve(Block blockToRemove) {
         currentBlock.end = blockToRemove.start;
       } else { // blockToRemove is entirely inside currentBlock
         currentBlock = Block();
-        addBlock(Block((void *)currentBlockStart, (void *)blockToRemoveStart));
-        addBlock(Block((void *)blockToRemoveEnd, (void *)currentBlockEnd));
+        addBlock(Block((void *)currentBlockStart, (void *)blockToRemoveStart), false);
+        addBlock(Block((void *)blockToRemoveEnd, (void *)currentBlockEnd), false);
       }
     }
   }
+  lock.release();
 }
 } // namespace memory

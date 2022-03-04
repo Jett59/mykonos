@@ -17,11 +17,11 @@
 #ifndef _MYKONOS_MEMORY_BLOCK_H
 #define _MYKONOS_MEMORY_BLOCK_H
 
+#include <mykonos/spinlock.h>
 #include <stddef.h>
 #include <stdint.h>
 
 namespace memory {
-class BlockBuffer;
 class BlockMap;
 class Block {
 private:
@@ -47,22 +47,29 @@ public:
   }
   void addToEnd(size_t amount) { end = (void *)((uint8_t *)end + amount); }
   friend class BlockMap;
-  friend class BlockBuffer;
 };
 #define BLOCKMAP_SIZE 256
 class BlockMap {
 private:
   Block blocks[BLOCKMAP_SIZE];
   unsigned numBlocks = 0;
+  lock::Spinlock lock;
   void merge();
+  void addBlock(Block block, bool acquireLock);
 
-public:
-  void addBlock(Block block);
+ public:
+  void addBlock(Block block) { addBlock(block, true); }
   void *allocate(size_t amount);
   void returnMemory(void *ptr, size_t amount) {
     addBlock(Block(ptr, (void *)((uint8_t *)ptr + amount)));
   }
   void reserve(Block block);
+
+  void clear() {
+    lock.acquire();
+    numBlocks = 0;
+    lock.release();
+  }
 };
 } // namespace memory
 
