@@ -20,7 +20,8 @@
 #include <mykonos/scheduler.h>
 
 namespace thread {
-void create(void (*entrypoint)(void *context), void *context, unsigned priority=PRIORITY_NORMAL);
+void create(void (*entrypoint)(void *context), void *context,
+            unsigned priority = PRIORITY_NORMAL);
 }
 
 #endif

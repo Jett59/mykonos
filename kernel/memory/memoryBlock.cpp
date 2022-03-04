@@ -98,8 +98,10 @@ void BlockMap::reserve(Block blockToRemove) {
         currentBlock.end = blockToRemove.start;
       } else { // blockToRemove is entirely inside currentBlock
         currentBlock = Block();
-        addBlock(Block((void *)currentBlockStart, (void *)blockToRemoveStart), false);
-        addBlock(Block((void *)blockToRemoveEnd, (void *)currentBlockEnd), false);
+        addBlock(Block((void *)currentBlockStart, (void *)blockToRemoveStart),
+                 false);
+        addBlock(Block((void *)blockToRemoveEnd, (void *)currentBlockEnd),
+                 false);
       }
     }
   }

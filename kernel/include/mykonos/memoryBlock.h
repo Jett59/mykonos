@@ -57,7 +57,7 @@ private:
   void merge();
   void addBlock(Block block, bool acquireLock);
 
- public:
+public:
   void addBlock(Block block) { addBlock(block, true); }
   void *allocate(size_t amount);
   void returnMemory(void *ptr, size_t amount) {

@@ -42,7 +42,7 @@ public:
     lock.acquire();
     if (head == nullptr) {
       head = tail = value;
-    }else {
+    } else {
       value->next = head;
       head = value;
     }
