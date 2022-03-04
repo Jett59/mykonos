@@ -182,6 +182,7 @@ extern "C" [[noreturn]] void kstartApCpu(uint8_t cpuNumber) {
   auto otherCpuCode = [=]() -> bool {
     kout::printf("I am CPU %d called from CPU %d\n", cpu::getCpuNumber(),
                  cpuNumber);
+    processors::letCallerReturn();
     return true;
   };
   processors::runOn(

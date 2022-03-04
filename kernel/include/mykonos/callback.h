@@ -21,16 +21,10 @@ namespace callback {
 // Note: Don't use with void return type.
 template <typename Result, typename... ParameterTypes> class Callback {
 private:
-  bool run = false;
   virtual Result invoke(ParameterTypes...);
 
 public:
-  Result operator()(ParameterTypes... args) {
-    Result res = invoke(args...);
-    run = true;
-    return res;
-  }
-  bool hasRun() { return run; }
+  Result operator()(ParameterTypes... args) { return invoke(args...); }
 };
 
 template <typename LambdaType, typename Result, typename... ParameterTypes>
