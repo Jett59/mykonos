@@ -35,9 +35,11 @@ private:
   unsigned cpuNumber;
   task::Queue tasks;
   task::ControlBlock *currentTask;
+  lock::Spinlock addTaskLock;
 
-public:
+ public:
   void addTask(task::ControlBlock *task) {
+    addTaskLock.acquire();
     if (currentTask->priority < task->priority) {
       tasks.push_front(task);
       if (cpuNumber == cpu::getCpuNumber()) {
@@ -54,6 +56,7 @@ public:
     } else {
       tasks.push(task);
     }
+    addTaskLock.release();
   }
   void tick() {
     if (--currentTask->timeSlice == 0) {

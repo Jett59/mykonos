@@ -218,7 +218,7 @@ static volatile unsigned numCpusWithInitialTasks = 0;
                    cpu::getCpuNumber());
     }
   };
-  thread::create(otherThreadFunction, nullptr);
+  thread::create(otherThreadFunction, nullptr, PRIORITY_HIGH);
   kout::printf("Main thread yielding on CPU %d\n", cpu::getCpuNumber());
   scheduler::yield();
   kout::printf("Main thread got CPU time after yield on CPU %d\n",
