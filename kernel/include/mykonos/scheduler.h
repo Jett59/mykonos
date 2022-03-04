@@ -19,6 +19,12 @@
 
 #include <mykonos/task/controlBlock.h>
 
+#define PRIORITY_BACKGROUND 0
+#define PRIORITY_LOW 1
+#define PRIORITY_NORMAL 2
+#define PRIORITY_HIGH 3
+#define PRIORITY_HIGHEST 4
+
 namespace scheduler {
 void addTask(task::ControlBlock *task);
 void yield();
