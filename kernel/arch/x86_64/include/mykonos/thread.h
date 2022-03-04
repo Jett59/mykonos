@@ -17,8 +17,11 @@
 #ifndef _MYKONOS_THREAD_H
 #define _MYKONOS_THREAD_H
 
+#include <mykonos/scheduler.h>
+
 namespace thread {
-void create(void (*entrypoint)(void *context), void *context);
+void create(void (*entrypoint)(void *context), void *context,
+            unsigned priority = PRIORITY_NORMAL);
 }
 
 #endif
