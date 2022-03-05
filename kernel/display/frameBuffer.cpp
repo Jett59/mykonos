@@ -35,6 +35,39 @@ void writePixel(unsigned x, unsigned y, Pixel pixel) {
     pixelPointer[0] = pixel.b;
   }
 }
+void writeBitmap(unsigned initialX, unsigned initialY, unsigned width,
+                 unsigned height, void *bitmap, Pixel foreground,
+                 Pixel background) {
+  unsigned bytesPerLine = (width + 7) / 8;
+  if (initialX + width > getWidth()) {
+    width = getWidth() - initialX;
+  }
+  if (initialY + height > getHeight()) {
+    height = getHeight() - initialY;
+  }
+  unsigned bytesPerPixel = frameBuffer.depth / 8;
+  for (unsigned y = 0; y < height; y++) {
+    uint8_t *bitmapLine = (uint8_t *)bitmap + y * bytesPerLine;
+    uint8_t pixelBuffer[bytesPerPixel * width] = {0};
+    for (unsigned x = 0; x < width; x++) {
+      uint8_t *pixelPointer = pixelBuffer + x * bytesPerPixel;
+      uint8_t bitmapByte = bitmapLine[x / 8];
+      if ((bitmapByte & (1 << (7 - x % 8))) == 0) {
+        pixelPointer[2] = background.r;
+        pixelPointer[1] = background.g;
+        pixelPointer[0] = background.b;
+      } else {
+        pixelPointer[2] = foreground.r;
+        pixelPointer[1] = foreground.g;
+        pixelPointer[0] = foreground.b;
+      }
+    }
+    uint8_t *displayLine =
+        frameBuffer.pointer +
+        ((y + initialY) * frameBuffer.pitch + initialX * bytesPerPixel);
+    memcpy((void *)displayLine, (void *)pixelBuffer, sizeof(pixelBuffer));
+  }
+}
 unsigned getWidth() { return frameBuffer.width; }
 unsigned getHeight() { return frameBuffer.height; }
 } // namespace display
