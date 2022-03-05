@@ -46,9 +46,10 @@ void writeBitmap(unsigned initialX, unsigned initialY, unsigned width,
     height = getHeight() - initialY;
   }
   unsigned bytesPerPixel = frameBuffer.depth / 8;
+  uint8_t pixelBuffer[bytesPerPixel * width];
+  memset((void *)pixelBuffer, 0, sizeof(pixelBuffer));
   for (unsigned y = 0; y < height; y++) {
     uint8_t *bitmapLine = (uint8_t *)bitmap + y * bytesPerLine;
-    uint8_t pixelBuffer[bytesPerPixel * width] = {0};
     for (unsigned x = 0; x < width; x++) {
       uint8_t *pixelPointer = pixelBuffer + x * bytesPerPixel;
       uint8_t bitmapByte = bitmapLine[x / 8];
