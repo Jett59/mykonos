@@ -41,21 +41,8 @@ namespace font {
 void render(char c, unsigned x, unsigned y, display::Pixel foreground,
             display::Pixel background) {
   uint8_t *glyph = fontFile.data + (c * fontFile.glyphSize);
-  for (unsigned glyphY = 0; glyphY < fontFile.height; glyphY++) {
-    for (unsigned glyphX = 0; glyphX < fontFile.width; glyphX++) {
-      uint8_t currentByte = glyph[glyphX / 8];
-      uint8_t currentBit = glyphX % 8;
-      unsigned displayX =
-          fontFile.width - glyphX + x; // We are currently going backwards
-      unsigned displayY = y + glyphY;
-      if ((currentByte & (1 << currentBit)) != 0) {
-        display::writePixel(displayX, displayY, foreground);
-      } else {
-        display::writePixel(displayX, displayY, background);
-      }
-    }
-    glyph += fontFile.glyphSize / fontFile.height;
-  }
+  display::writeBitmap(x, y, fontFile.width, fontFile.height, glyph, foreground,
+                       background);
 }
 unsigned getWidth() { return fontFile.width; }
 unsigned getHeight() { return fontFile.height; }

@@ -24,6 +24,8 @@ struct Pixel {
   uint8_t r, g, b;
 };
 void writePixel(unsigned x, unsigned y, Pixel pixel);
+void writeBitmap(unsigned x, unsigned y, unsigned width, unsigned height,
+                 void *bitmap, Pixel foreground, Pixel background);
 
 void writeCharacter(unsigned x, unsigned y, char c);
 
