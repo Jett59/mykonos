@@ -48,7 +48,7 @@ void runOn(unsigned cpuNumber, callback::Callback<bool> &&callback) {
       cpu::relax();
     }
     // Clean up
-    mailboxes[cpuNumber].callback = nullptr;
+    mailbox.callback = nullptr;
   }
 }
 void letCallerReturn() {

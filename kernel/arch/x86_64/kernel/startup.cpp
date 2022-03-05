@@ -225,5 +225,7 @@ static volatile unsigned numCpusWithInitialTasks = 0;
                cpu::getCpuNumber());
   scheduler::yield();
   // Just hault for now
-  cpu::hault();
+  while (true) {
+    __asm__("hlt");
+  }
 }

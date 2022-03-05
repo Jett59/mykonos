@@ -66,6 +66,8 @@ public:
     }
   }
   void yield() {
+    bool enableLocalIrqs = cpu::localIrqState();
+    cpu::disableLocalIrqs();
     task::ControlBlock *from = currentTask;
     task::ControlBlock *to = tasks.pop();
     if (to != nullptr) {
@@ -73,6 +75,9 @@ public:
       to->timeSlice = INITIAL_TIME_SLICE;
       currentTask = to;
       swapRegisters(&from->registers, &to->registers);
+    }
+    if (enableLocalIrqs) {
+      cpu::enableLocalIrqs();
     }
   }
   unsigned taskCount() {
