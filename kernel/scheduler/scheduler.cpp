@@ -46,9 +46,9 @@ public:
         addTaskLock.release();
         yield();
       } else {
-        auto codeToRun = [this]() -> bool {
+        auto codeToRun = []() -> bool {
           processors::letCallerReturn();
-          yield();
+          scheduler::yield();
           return true;
         };
         addTaskLock.release();
