@@ -16,6 +16,7 @@
     */
 #include <mykonos/kmalloc.h>
 
+#include <mykonos/kpanic.h>
 #include <mykonos/pageConstants.h>
 #include <mykonos/paging.h>
 #include <mykonos/physicalMemory.h>
@@ -36,20 +37,30 @@ void *allocateMemory(size_t size) {
     return nullptr;
   }
   for (size_t i = 0; i < size; i += PAGE_SIZE) {
-    paging::mapPage(ADD_TO_POINTER(ptr, i),
-                    (void *)(memory::allocateFrame() * PAGE_SIZE),
-                    paging::PageTableFlags::WRITABLE, true, true);
+    size_t frame = memory::allocateFrame();
+    if (frame != 0) {
+      paging::mapPage(ADD_TO_POINTER(ptr, i), (void *)(frame * PAGE_SIZE),
+                      paging::PageTableFlags::WRITABLE, true, true);
+    } else {
+      kpanic("Out of memory");
+    }
   }
   return ptr;
 }
 void *kmalloc(size_t size) {
   void *ptr = allocateMemory(size);
+  if (ptr == nullptr) {
+    return nullptr;
+  }
   KmallocHeader *headerPtr = (KmallocHeader *)ptr;
   *headerPtr = {.size = size};
   ptr = (void *)(headerPtr + 1);
   return ptr;
 }
 void kfree(void *ptr) {
+  if (ptr == nullptr) {
+    kpanic("Attempt to free null");
+  }
   KmallocHeader *headerPtr = (KmallocHeader *)ptr - 1;
   size_t size = headerPtr->size;
   ptr = (void *)headerPtr;
@@ -71,12 +82,16 @@ void *mapAddress(void *physicalAddress, size_t size, bool cacheable) {
   return ADD_TO_POINTER(ptr, pageOffset);
 }
 void unmapMemory(void *address, size_t size) {
-  void *endAddress = (void *)PAGE_ALIGN_UP((size_t)address + size);
-  address = (void *)PAGE_ALIGN_DOWN((size_t)address);
-  size = (size_t)endAddress - (size_t)address;
-  virtualMemory.returnMemory(address, size);
-  for (size_t i = 0; i < size; i += PAGE_SIZE) {
-    paging::unmapPage(ADD_TO_POINTER(address, i));
+  if (address != nullptr) {
+    void *endAddress = (void *)PAGE_ALIGN_UP((size_t)address + size);
+    address = (void *)PAGE_ALIGN_DOWN((size_t)address);
+    size = (size_t)endAddress - (size_t)address;
+    virtualMemory.returnMemory(address, size);
+    for (size_t i = 0; i < size; i += PAGE_SIZE) {
+      paging::unmapPage(ADD_TO_POINTER(address, i));
+    }
+  } else {
+    kpanic("Attempt to unmap null");
   }
 }
 } // namespace memory
