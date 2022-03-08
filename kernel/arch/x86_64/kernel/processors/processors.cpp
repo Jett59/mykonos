@@ -19,9 +19,11 @@
 #include <mykonos/apic.h>
 #include <mykonos/callback.h>
 #include <mykonos/cpu.h>
+#include <mykonos/spinlock.h>
 
 namespace processors {
 struct MailboxEntry {
+  lock::Spinlock lock;
   callback::Callback<bool> *callback;
   bool callerCanReturn;
 };
@@ -30,16 +32,11 @@ static MailboxEntry mailboxes[MAX_CPUS];
 void runOn(unsigned cpuNumber, callback::Callback<bool> &&callback) {
   if (cpuNumber < MAX_CPUS) {
     MailboxEntry &mailbox = mailboxes[cpuNumber];
-    // Wait for all previous requests to complete
-    while (true) {
-      while (mailbox.callback != nullptr) {
-        cpu::relax();
-      }
-      if (__sync_bool_compare_and_swap(&mailbox.callback, nullptr, &callback)) {
-        break;
-      }
-    }
+    mailbox.lock.acquire();
+    mailbox.callback = &callback;
     mailbox.callerCanReturn = false;
+    // Make sure those modifications are done
+    cpu::mfence();
     // Tell the CPU to start executing the request
     apic::localApic.sendIpi(PROCESSOR_CALLBACK_INTERRUPT, APIC_FIXED_IPI, false,
                             true, true, apic::localApicIds[cpuNumber]);
@@ -49,13 +46,12 @@ void runOn(unsigned cpuNumber, callback::Callback<bool> &&callback) {
     }
     // Clean up
     mailbox.callback = nullptr;
+    mailbox.lock.release();
   }
 }
 void letCallerReturn() {
   MailboxEntry &mailbox = mailboxes[cpu::getCpuNumber()];
-  if (mailbox.callback != nullptr) {
-    mailbox.callerCanReturn = true;
-  }
+  mailbox.callerCanReturn = true;
 }
 void receiveCall() {
   unsigned cpuNumber = cpu::getCpuNumber();
