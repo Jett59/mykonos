@@ -91,6 +91,7 @@ public:
   }
 
   void clearErrors() { writeRegister(LOCAL_APIC_ERROR_REGISTER, 0); }
+  uint32_t readErrors() { return readRegister(LOCAL_APIC_ERROR_REGISTER); }
 
   void sendIpi(uint8_t vector, uint8_t messageType, bool logicalDestination,
                bool assert, bool levelTriggered, uint8_t destinationApicId);
