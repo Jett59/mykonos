@@ -201,12 +201,13 @@ extern "C" [[noreturn]] void kstartApCpu(uint8_t cpuNumber) {
 }
 
 static volatile unsigned numCpusWithInitialTasks = 0;
+static volatile unsigned numCpusDone = 0;
 
 [[noreturn]] void kRun() {
   task::ControlBlock *initialTask = new task::ControlBlock();
   initialTask->priority = PRIORITY_NORMAL;
   scheduler::setInitialTask(initialTask);
-  numCpusWithInitialTasks++;
+  __atomic_add_fetch(&numCpusWithInitialTasks, 1, __ATOMIC_SEQ_CST);
   while (numCpusWithInitialTasks < numCpus) {
     cpu::relax();
   }
@@ -224,6 +225,11 @@ static volatile unsigned numCpusWithInitialTasks = 0;
   kout::printf("Main thread got CPU time after yield on CPU %d\n",
                cpu::getCpuNumber());
   scheduler::yield();
+  __atomic_add_fetch(&numCpusDone, 1, __ATOMIC_SEQ_CST);
+  while (numCpusDone < numCpus) {
+    cpu::relax();
+  }
+  kout::print("All CPUS done\n");
   // Just hault for now
   while (true) {
     __asm__("hlt");
