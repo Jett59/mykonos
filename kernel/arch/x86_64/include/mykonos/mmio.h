@@ -21,6 +21,7 @@
 
 #include <mykonos/cpu.h>
 
+// These functions are the only correct way of writing to Memory-Mapped I/O.
 namespace mmio {
 template <typename T> static inline void write(volatile T *ptr, T value) {
   cpu::mfence();
