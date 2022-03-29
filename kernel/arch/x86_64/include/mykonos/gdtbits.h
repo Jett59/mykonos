@@ -21,10 +21,13 @@
 #define GDT_WRITABLE (1 << 41)
 #define GDT_CONFORMING (1 << 42)
 #define GDT_EXECUTABLE (1 << 43)
+// System = TSS or LDT
 #define GDT_NOT_SYSTEM (1 << 44)
 #define GDT_PRIVILEGE(X) ((X & 3) << 45)
 #define GDT_PRESENT (1 << 47)
+// Long mode code segment
 #define GDT_LONG (1 << 53)
+// Protected mode code segment
 #define GDT_SIZE (1 << 54)
 
 #endif

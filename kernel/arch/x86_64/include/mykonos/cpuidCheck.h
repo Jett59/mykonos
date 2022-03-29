@@ -18,7 +18,8 @@
 #define _MYKONOS_CPUID_CHECK_H
 
 namespace cpuid {
+// Check if the current CPU supports all of the required features
 bool checkCpuidFlags();
-}
+} // namespace cpuid
 
 #endif

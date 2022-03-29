@@ -19,6 +19,7 @@
 
 namespace callback {
 // Note: Don't use with void return type.
+// Pass by value won't work due to c++ inheritance.
 template <typename Result, typename... ParameterTypes> class Callback {
 private:
   virtual Result invoke(ParameterTypes...);
@@ -27,6 +28,9 @@ public:
   Result operator()(ParameterTypes... args) { return invoke(args...); }
 };
 
+// Use like this:
+// auto codeToRun = [](ParameterTypes) -> Result {...};
+// Lambda<decltype(codeToRun), Result, ParameterTypes...>(codeToRun)
 template <typename LambdaType, typename Result, typename... ParameterTypes>
 class Lambda : public Callback<Result, ParameterTypes...> {
 private:

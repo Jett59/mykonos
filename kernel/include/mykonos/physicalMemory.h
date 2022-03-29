@@ -18,7 +18,6 @@
 #define _MYKONOS_PHYSICAL_MEMORY_H
 
 #include <mykonos/memoryBlock.h>
-
 #include <mykonos/pageConstants.h>
 
 #include <stddef.h>

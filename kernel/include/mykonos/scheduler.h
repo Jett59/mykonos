@@ -26,7 +26,7 @@
 #define PRIORITY_HIGHEST 4
 
 namespace scheduler {
-// Release the locks first
+// You should release any spinlocks first.
 void yield();
 
 // You usually don't want to do this. Consider thread::create instead.
