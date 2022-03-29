@@ -98,11 +98,11 @@ public:
   void clearErrors() { writeRegister(LOCAL_APIC_ERROR_REGISTER, 0); }
   uint32_t readErrors() { return readRegister(LOCAL_APIC_ERROR_REGISTER); }
 
-// Send an IPI to another CPU. messageType is one of the codes above.
+  // Send an IPI to another CPU. messageType is one of the codes above.
   void sendIpi(uint8_t vector, uint8_t messageType, bool logicalDestination,
                bool assert, bool levelTriggered, uint8_t destinationApicId);
 
-// APIC timer control
+  // APIC timer control
   void writeTimerLvt(bool periodic, bool mask, uint8_t vector) {
     writeLvtRegister(LOCAL_APIC_TIMER_LVT_REGISTER, periodic, mask, false,
                      LOCAL_APIC_FIXED_MESSAGE, vector);
@@ -117,7 +117,7 @@ public:
     writeRegister(LOCAL_APIC_TIMER_DIVIDE_REGISTER, divideFlag);
   }
 
-// Mask all internal APIC interrupts
+  // Mask all internal APIC interrupts
   void maskAllInternal();
 
   bool inService(uint8_t vector) {
@@ -126,7 +126,7 @@ public:
             (1 << (vector & 0x1f))) != 0;
   }
 
-// Signal End Of Interrupt
+  // Signal End Of Interrupt
   void eoi() { writeRegister(LOCAL_APIC_EOI_REGISTER, 0); }
 
 private:

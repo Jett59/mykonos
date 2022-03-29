@@ -23,7 +23,7 @@ namespace font {
 void render(char c, unsigned x, unsigned y, display::Pixel foreground,
             display::Pixel background);
 
-            // Font dimensions
+// Font dimensions
 unsigned getWidth();
 unsigned getHeight();
 } // namespace font
