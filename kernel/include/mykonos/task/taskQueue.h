@@ -35,7 +35,7 @@ public:
       tail->next = value;
       tail = value;
     }
-    size++;
+    __atomic_fetch_add(&size, 1, __ATOMIC_SEQ_CST);
     lock.release();
   }
   void push_front(ControlBlock *value) {
@@ -46,6 +46,7 @@ public:
       value->next = head;
       head = value;
     }
+    __atomic_fetch_add(&size, 1, __ATOMIC_SEQ_CST);
     lock.release();
   }
   ControlBlock *pop() {
@@ -57,17 +58,12 @@ public:
       } else {
         head = head->next;
       }
-      size--;
+      __atomic_fetch_sub(&size, 1, __ATOMIC_SEQ_CST);
     }
     lock.release();
     return result;
   }
-  unsigned getSize() {
-    lock.acquire();
-    unsigned result = size;
-    lock.release();
-    return result;
-  }
+  unsigned getSize() { return __atomic_load_n(&size, __ATOMIC_SEQ_CST); }
 
 private:
   lock::Spinlock lock;
