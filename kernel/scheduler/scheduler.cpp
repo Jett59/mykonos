@@ -104,9 +104,12 @@ static Scheduler schedulers[MAX_CPUS];
 static unsigned cpuCount = 0;
 
 static Scheduler &getLeastBusy() {
-  Scheduler *bestScheduler = &schedulers[0];
+  Scheduler *bestScheduler = &schedulers[cpu::getCpuNumber()];
   unsigned bestTaskCount = bestScheduler->taskCount();
-  for (unsigned i = 1; i < cpuCount; i++) {
+  for (unsigned i = 0; i < cpuCount; i++) {
+    if (bestTaskCount == 0) {
+      break;
+    }
     if (schedulers[i].taskCount() < bestTaskCount) {
       bestScheduler = &schedulers[i];
       bestTaskCount = bestScheduler->taskCount();
