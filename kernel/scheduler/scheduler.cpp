@@ -26,6 +26,7 @@
 
 extern "C" {
 // Assembly function
+// Save current registers into *from and load the ones in *to into the CPU
 void swapRegisters(task::Registers *from, task::Registers *to);
 }
 

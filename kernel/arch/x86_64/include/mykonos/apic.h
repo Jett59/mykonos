@@ -29,6 +29,7 @@
 #include <mykonos/mmio.h>
 
 namespace apic {
+// APIC description structures
 struct LocalApicDescriptor {
   uint8_t apicId;
 };
@@ -37,6 +38,7 @@ struct IoApicDescriptor {
   uint32_t gsiBase;
 };
 
+// Local APIC register offsets
 #define LOCAL_APIC_ID_REGISTER 0x20
 #define LOCAL_APIC_VERSION_REGISTER 0x30
 #define LOCAL_APIC_EOI_REGISTER 0xb0
@@ -57,6 +59,8 @@ struct IoApicDescriptor {
 
 #define LOCAL_APIC_SPURIOUS_INTERRUPT_VECTOR 0xff
 
+// APIC IPI codes
+// Pass these to sendIpi
 #define APIC_FIXED_IPI 0
 #define APIC_LOWEST_PRIORITY_IPI 1
 #define APIC_SMI_IPI 2
@@ -68,6 +72,7 @@ struct IoApicDescriptor {
 
 #define LOCAL_APIC_FIXED_MESSAGE 0x0
 
+// APIC timer divide codes
 #define APIC_DIVIDE_1 0xb
 #define APIC_DIVIDE_2 0x0
 #define APIC_DIVIDE_4 0x1
@@ -79,8 +84,8 @@ struct IoApicDescriptor {
 
 class LocalApic {
 public:
+  // APIC initialization
   void init(void *physicalAddress);
-
   void enable();
 
   uint32_t getVersion() {
@@ -93,14 +98,15 @@ public:
   void clearErrors() { writeRegister(LOCAL_APIC_ERROR_REGISTER, 0); }
   uint32_t readErrors() { return readRegister(LOCAL_APIC_ERROR_REGISTER); }
 
+  // Send an IPI to another CPU. messageType is one of the codes above.
   void sendIpi(uint8_t vector, uint8_t messageType, bool logicalDestination,
                bool assert, bool levelTriggered, uint8_t destinationApicId);
 
+  // APIC timer control
   void writeTimerLvt(bool periodic, bool mask, uint8_t vector) {
     writeLvtRegister(LOCAL_APIC_TIMER_LVT_REGISTER, periodic, mask, false,
                      LOCAL_APIC_FIXED_MESSAGE, vector);
   }
-
   void writeTimerInitialCountRegister(uint32_t initialCount) {
     writeRegister(LOCAL_APIC_TIMER_INITIAL_COUNT_REGISTER, initialCount);
   }
@@ -111,6 +117,7 @@ public:
     writeRegister(LOCAL_APIC_TIMER_DIVIDE_REGISTER, divideFlag);
   }
 
+  // Mask all internal APIC interrupts
   void maskAllInternal();
 
   bool inService(uint8_t vector) {
@@ -119,6 +126,7 @@ public:
             (1 << (vector & 0x1f))) != 0;
   }
 
+  // Signal End Of Interrupt
   void eoi() { writeRegister(LOCAL_APIC_EOI_REGISTER, 0); }
 
 private:

@@ -20,6 +20,7 @@
 #include <stdint.h>
 
 namespace io {
+// These map to the in and out instructions.
 static inline void writePort8(uint8_t value, uint16_t port) {
   __asm__ volatile("outb %0, %1" : : "a"(value), "nd"(port) : "memory");
 }

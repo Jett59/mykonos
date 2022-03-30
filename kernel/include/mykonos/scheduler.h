@@ -26,11 +26,17 @@
 #define PRIORITY_HIGHEST 4
 
 namespace scheduler {
-void addTask(task::ControlBlock *task);
+// You should release any spinlocks first.
 void yield();
 
+// You usually don't want to do this. Consider thread::create instead.
+void addTask(task::ControlBlock *task);
+
+// Call on startup to initialize the scheduler
 void init(unsigned numCpus);
+// Call on each CPU with a freshly allocated task::ControlBlock
 void setInitialTask(task::ControlBlock *task);
+// Call every 10ms for time slicing
 void tick();
 } // namespace scheduler
 

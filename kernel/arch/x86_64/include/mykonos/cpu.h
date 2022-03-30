@@ -20,6 +20,8 @@
 #include <stdint.h>
 
 namespace cpu {
+// Most of these functions map to processor instructions. Check the official
+// documentation for details of each one.
 static inline uint64_t rdmsr(uint32_t address) {
   uint32_t msrLow, msrHigh;
   __asm__ volatile("rdmsr"
@@ -36,15 +38,18 @@ static inline void wrmsr(uint64_t value, uint32_t address) {
                    : "memory");
 }
 
+// Get the CPU number from the TSC auxiliary data
 static inline unsigned getCpuNumber() {
   unsigned cpuNumber;
   __asm__ volatile("rdtscp" : "=c"(cpuNumber) : : "rdx", "rax", "memory");
   return cpuNumber;
 }
+// Used to initialize the TSC auxiliary data with the CPU number
 static inline void setCpuNumber(unsigned cpuNumber) {
   wrmsr(cpuNumber, 0xc0000103); // rdtscp processor id
 }
 
+// Read the rflags register using pushfq
 static inline uint64_t getFlags() {
   uint64_t result;
   __asm__ volatile("pushfq;"
@@ -54,6 +59,7 @@ static inline uint64_t getFlags() {
                    : "memory");
   return result;
 }
+// Set rflags using popfq
 static inline void setFlags(uint64_t flags) {
   __asm__ volatile("pushq %0;"
                    "popfq"
@@ -61,7 +67,9 @@ static inline void setFlags(uint64_t flags) {
                    : "g"(flags)
                    : "memory", "cc");
 }
+// Get the value of the interrupt flag
 static inline bool localIrqState() { return (getFlags() & (1 << 9)) != 0; }
+// cli and sti instructions
 static inline void enableLocalIrqs() { __asm__ volatile("sti" : : : "memory"); }
 static inline void disableLocalIrqs() {
   __asm__ volatile("cli" : : : "memory");
@@ -69,9 +77,11 @@ static inline void disableLocalIrqs() {
 
 static inline void mfence() { __asm__ volatile("mfence" : : : "memory"); }
 static inline void relax() { __asm__ volatile("pause"); }
+
+// Hault forever ignoring IRQs
 [[noreturn]] static inline void hault() {
   disableLocalIrqs();
-  for (;;) {
+  while (true) {
     __asm__ volatile("hlt");
   }
 }

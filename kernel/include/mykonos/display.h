@@ -26,13 +26,12 @@ struct Pixel {
 void writePixel(unsigned x, unsigned y, Pixel pixel);
 void writeBitmap(unsigned x, unsigned y, unsigned width, unsigned height,
                  void *bitmap, Pixel foreground, Pixel background);
-
 void writeCharacter(unsigned x, unsigned y, char c);
-
 void writeString(unsigned x, unsigned y, const char *string);
 
 void removeCharacter(unsigned x, unsigned y);
 
+// Screen dimensions
 unsigned getWidth();
 unsigned getHeight();
 } // namespace display

@@ -18,7 +18,10 @@
 #define _MYKONOS_INTERRUPTS_H
 
 namespace interrupts {
+// Initialization routines
+// Initialize the interrupt tables
 void init();
+// Install the interrupt table pointer in the current CPU
 void install();
 } // namespace interrupts
 

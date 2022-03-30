@@ -68,6 +68,7 @@ struct __attribute__((packed)) MadtTable {
 };
 static_assert(sizeof(MadtTable) == sizeof(TableHeader) + 8,
               "MadtTable has not been packed");
+// Has legacy PIC (officially PCAT_COMPAT)
 #define MADT_FLAGS_PIC (1 << 0)
 struct MadtEntry {
   uint8_t type;
