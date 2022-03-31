@@ -37,12 +37,14 @@
 .text
 .globl swapRegisters
 swapRegisters:
-/*Save*/
+/*Save old registers*/
+
 /*get rip and rflags*/
 popq RIP_OFFSET(%rdi)
 pushfq
 popq RFLAGS_OFFSET(%rdi)
 
+/*Save the GPRs*/
 movq %rax, RAX_OFFSET(%rdi)
 movq %rcx, RCX_OFFSET(%rdi)
 movq %rdx, RDX_OFFSET(%rdi)
@@ -59,34 +61,40 @@ movq %r12, R12_OFFSET(%rdi)
 movq %r13, R13_OFFSET(%rdi)
 movq %r14, R14_OFFSET(%rdi)
 movq %r15, R15_OFFSET(%rdi)
+/*Save cr3*/
 movq %cr3, %rax
 movq %rax, CR3_OFFSET(%rdi)
-/*Load*/
-movq CR3_OFFSET(%rsi), %rdx
+/*Load new registers*/
+movq %rsi, %rdi
+jmp restoreRegisters
+
+.globl restoreRegisters
+restoreRegisters:
+movq CR3_OFFSET(%rdi), %rdx
 cmp %rax, %rdx
 je 1f
 movq %rdx, %cr3
 1:
-movq RAX_OFFSET(%rsi), %rax
-movq RCX_OFFSET(%rsi), %rcx
-movq RDX_OFFSET(%rsi), %rdx
-movq RBX_OFFSET(%rsi), %rbx
-movq RSP_OFFSET(%rsi), %rsp
-movq RBP_OFFSET(%rsi), %rbp
-/*Don't movq RSI_OFFSET(%rsi), %rsi to not lose our pointer*/
-movq RDI_OFFSET(%rsi), %rdi
-movq R8_OFFSET(%rsi), %r8
-movq R9_OFFSET(%rsi), %r9
-movq R10_OFFSET(%rsi), %r10
-movq R11_OFFSET(%rsi), %r11
-movq R12_OFFSET(%rsi), %r12
-movq R13_OFFSET(%rsi), %r13
-movq R14_OFFSET(%rsi), %r14
-movq R15_OFFSET(%rsi), %r15
+movq RAX_OFFSET(%rdi), %rax
+movq RCX_OFFSET(%rdi), %rcx
+movq RDX_OFFSET(%rdi), %rdx
+movq RBX_OFFSET(%rdi), %rbx
+movq RSP_OFFSET(%rdi), %rsp
+movq RBP_OFFSET(%rdi), %rbp
+movq RSI_OFFSET(%rdi), %rsi
+/*Don't movq RDI_OFFSET(%rdi), %rdi to not lose our pointer*/
+movq R8_OFFSET(%rdi), %r8
+movq R9_OFFSET(%rdi), %r9
+movq R10_OFFSET(%rdi), %r10
+movq R11_OFFSET(%rdi), %r11
+movq R12_OFFSET(%rdi), %r12
+movq R13_OFFSET(%rdi), %r13
+movq R14_OFFSET(%rdi), %r14
+movq R15_OFFSET(%rdi), %r15
 /*Get rip and rflags*/
-pushq RIP_OFFSET(%rsi)
-pushq RFLAGS_OFFSET(%rsi)
-/*Reload %rsi and return*/
-movq RSI_OFFSET(%rsi), %rsi
+pushq RIP_OFFSET(%rdi)
+pushq RFLAGS_OFFSET(%rdi)
+/*Reload %rdi and return*/
+movq RDI_OFFSET(%rdi), %rdi
 popfq
 retq
