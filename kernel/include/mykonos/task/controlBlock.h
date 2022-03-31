@@ -22,9 +22,10 @@
 namespace task {
 struct ControlBlock {
   Registers registers;
+  void *originalStackPointer = nullptr;
   unsigned timeSlice;
   unsigned priority;
-  ControlBlock *next;
+  ControlBlock *next = nullptr;
 };
 } // namespace task
 
