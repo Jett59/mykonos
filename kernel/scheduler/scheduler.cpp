@@ -87,9 +87,19 @@ public:
       cpu::enableLocalIrqs();
     }
   }
+
+  task::ControlBlock *getCurrentTask() { return currentTask; }
+
+  task::ControlBlock *block() {
+    task::ControlBlock *result =
+        __atomic_load_n(&currentTask, __ATOMIC_SEQ_CST);
+    __atomic_store_n(&currentTask, nullptr, __ATOMIC_SEQ_CST);
+    return result;
+  }
+
   unsigned taskCount() {
     if (currentTask == nullptr) {
-      return 0;
+      return tasks.getSize();
     } else {
       return tasks.getSize() + 1;
     }
@@ -127,6 +137,10 @@ static Scheduler &getLeastBusy() {
 void addTask(task::ControlBlock *task) { getLeastBusy().addTask(task); }
 void tick() { schedulers[cpu::getCpuNumber()].tick(); }
 void yield() { schedulers[cpu::getCpuNumber()].yield(); }
+task::ControlBlock *currentTask() {
+  return schedulers[cpu::getCpuNumber()].getCurrentTask();
+}
+task::ControlBlock *block() { return schedulers[cpu::getCpuNumber()].block(); }
 
 void init(unsigned numCpus) {
   cpuCount = numCpus;

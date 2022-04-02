@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2022  Jett Thompson
+    Copyright (C) 2022 Jett Thompson
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -14,15 +14,11 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
-#ifndef _MYKONOS_THREAD_H
-#define _MYKONOS_THREAD_H
 
-#include <mykonos/scheduler.h>
-
-namespace thread {
-void create(void (*entrypoint)(void *context), void *context,
-            unsigned priority = PRIORITY_NORMAL);
-[[noreturn]] void destroy();
-} // namespace thread
-
-#endif
+.text
+.globl switchStack
+switchStack:
+xorq %rbp, %rbp
+movq %rdi, %rsp
+movq %rdx, %rdi
+jmp *%rsi

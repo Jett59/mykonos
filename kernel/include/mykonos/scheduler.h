@@ -29,6 +29,11 @@ namespace scheduler {
 // You should release any spinlocks first.
 void yield();
 
+task::ControlBlock *currentTask();
+
+// Returns the current task and removes it from the scheduler. Don't lose it!
+task::ControlBlock *block();
+
 // You usually don't want to do this. Consider thread::create instead.
 void addTask(task::ControlBlock *task);
 
