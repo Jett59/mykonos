@@ -29,14 +29,14 @@ static inline void *allocateStack() {
 }
 // stackPointer is a pointer returned by allocateStack().
 static inline void freeStack(void *stackPointer) {
-  memory::freeMemory((void *)((uint8_t *)stackPointer + DEFAULT_STACK_SIZE),
+  memory::freeMemory((void *)((uint8_t *)stackPointer - DEFAULT_STACK_SIZE),
                      DEFAULT_STACK_SIZE);
 }
 
 // Run the callback on another stack. Will never return.
 extern "C" [[noreturn]] void switchStack(void *newStack,
-                              [[noreturn]] void (*callback)(void *),
-                              void *context);
-}  // namespace stacks
+                                         [[noreturn]] void (*callback)(void *),
+                                         void *context);
+} // namespace stacks
 
 #endif
