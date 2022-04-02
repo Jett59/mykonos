@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2022  Jett Thompson
+    Copyright (C) 2022 Jett Thompson
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -13,20 +13,12 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
-    */
-#ifndef _MYKONOS_TASK_CONTROL_BLOCK_H
-#define _MYKONOS_TASK_CONTROL_BLOCK_H
+*/
 
-#include <mykonos/task/registers.h>
-
-namespace task {
-struct ControlBlock {
-  Registers registers;
-  void *originalStackPointer = nullptr;
-  unsigned timeSlice;
-  unsigned priority;
-  ControlBlock *next = nullptr;
-};
-} // namespace task
-
-#endif
+.text
+.globl switchStack
+switchStack:
+xorq %rbp, %rbp
+movq %rdi, %rsp
+movq %rdx, %rdi
+jmp *%rsi

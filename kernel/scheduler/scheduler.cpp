@@ -25,9 +25,11 @@
 #define INITIAL_TIME_SLICE 5
 
 extern "C" {
-// Assembly function
-// Save current registers into *from and load the ones in *to into the CPU
+// Assembly functions
+// Save current registers into *from and load the ones in *to into the CPU.
 void swapRegisters(task::Registers *from, task::Registers *to);
+// Just load *regs into the CPU.
+void restoreRegisters(task::Registers *regs);
 }
 
 namespace scheduler {
@@ -41,7 +43,7 @@ private:
 public:
   void addTask(task::ControlBlock *task) {
     addTaskLock.acquire();
-    if (currentTask->priority < task->priority) {
+    if (currentTask == nullptr || currentTask->priority < task->priority) {
       tasks.push_front(task);
       if (cpuNumber == cpu::getCpuNumber()) {
         addTaskLock.release();
@@ -62,7 +64,7 @@ public:
     }
   }
   void tick() {
-    if (--currentTask->timeSlice == 0) {
+    if (currentTask != nullptr && --currentTask->timeSlice == 0) {
       yield();
     }
   }
@@ -72,18 +74,32 @@ public:
     task::ControlBlock *from = currentTask;
     task::ControlBlock *to = tasks.pop();
     if (to != nullptr) {
-      tasks.push(from);
       to->timeSlice = INITIAL_TIME_SLICE;
       currentTask = to;
-      swapRegisters(&from->registers, &to->registers);
+      if (from != nullptr) {
+        tasks.push(from);
+        swapRegisters(&from->registers, &to->registers);
+      } else {
+        restoreRegisters(&to->registers);
+      }
     }
     if (enableLocalIrqs) {
       cpu::enableLocalIrqs();
     }
   }
+
+  task::ControlBlock *getCurrentTask() { return currentTask; }
+
+  task::ControlBlock *block() {
+    task::ControlBlock *result =
+        __atomic_load_n(&currentTask, __ATOMIC_SEQ_CST);
+    __atomic_store_n(&currentTask, nullptr, __ATOMIC_SEQ_CST);
+    return result;
+  }
+
   unsigned taskCount() {
     if (currentTask == nullptr) {
-      return 0;
+      return tasks.getSize();
     } else {
       return tasks.getSize() + 1;
     }
@@ -121,6 +137,10 @@ static Scheduler &getLeastBusy() {
 void addTask(task::ControlBlock *task) { getLeastBusy().addTask(task); }
 void tick() { schedulers[cpu::getCpuNumber()].tick(); }
 void yield() { schedulers[cpu::getCpuNumber()].yield(); }
+task::ControlBlock *currentTask() {
+  return schedulers[cpu::getCpuNumber()].getCurrentTask();
+}
+task::ControlBlock *block() { return schedulers[cpu::getCpuNumber()].block(); }
 
 void init(unsigned numCpus) {
   cpuCount = numCpus;

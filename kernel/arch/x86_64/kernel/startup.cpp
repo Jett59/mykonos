@@ -213,11 +213,10 @@ static volatile unsigned numCpusDone = 0;
   }
   auto otherThreadFunction = [](void *) {
     kout::printf("Other thread got CPU time on CPU %d\n", cpu::getCpuNumber());
-    while (true) {
-      scheduler::yield();
-      kout::printf("Other thread got CPU time after yield on CPU %d\n",
-                   cpu::getCpuNumber());
-    }
+    scheduler::yield();
+    kout::printf("Other thread got CPU time after yield on CPU %d\n",
+                 cpu::getCpuNumber());
+    thread::destroy();
   };
   thread::create(otherThreadFunction, nullptr, PRIORITY_HIGH);
   kout::printf("Main thread yielding on CPU %d\n", cpu::getCpuNumber());

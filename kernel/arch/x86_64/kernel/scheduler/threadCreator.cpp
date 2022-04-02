@@ -23,12 +23,14 @@
 namespace thread {
 void create(void (*entrypoint)(void *context), void *context,
             unsigned priority) {
+  void *stack = stacks::allocateStack();
   task::ControlBlock *task = new task::ControlBlock();
+  task->originalStackPointer = stack;
   task->priority = priority;
   task->registers.rip = (void *)entrypoint;
   task->registers.rdi = (uint64_t)context;
   task->registers.rflags = 1 << 9; // Interrupt enable bit
-  task->registers.rsp = (uint64_t)stacks::allocateStack();
+  task->registers.rsp = (uint64_t)stack;
   void *cr3;
   __asm__("movq %%cr3, %0" : "=r"(cr3));
   task->registers.cr3 = cr3;
