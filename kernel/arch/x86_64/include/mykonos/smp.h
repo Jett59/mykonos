@@ -25,6 +25,9 @@ bool startCpu(uint8_t apicId, hpet::Hpet &hpet);
 // To allocate the stacks for all of the other CPUS. Call this before the first
 // call of startCpu.
 void allocateStacks(unsigned numLocalApics);
+
+// Get the stack pointer allocated with allocateStacks for the given cpuNumber
+void *getInitialStackPointer(unsigned cpuNumber);
 } // namespace smp
 
 #endif

@@ -206,6 +206,8 @@ static volatile unsigned numCpusDone = 0;
 [[noreturn]] void kRun() {
   task::ControlBlock *initialTask = new task::ControlBlock();
   initialTask->priority = PRIORITY_NORMAL;
+  initialTask->originalStackPointer =
+      smp::getInitialStackPointer(cpu::getCpuNumber());
   scheduler::setInitialTask(initialTask);
   __atomic_add_fetch(&numCpusWithInitialTasks, 1, __ATOMIC_SEQ_CST);
   while (numCpusWithInitialTasks < numCpus) {
@@ -229,8 +231,5 @@ static volatile unsigned numCpusDone = 0;
     cpu::relax();
   }
   kout::print("All CPUS done\n");
-  // Just hault for now
-  while (true) {
-    __asm__("hlt");
-  }
+  thread::destroy();
 }
