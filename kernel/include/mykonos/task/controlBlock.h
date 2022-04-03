@@ -20,9 +20,12 @@
 #include <mykonos/task/registers.h>
 
 namespace task {
+enum class State { RUNNING, RUNNABLE, BLOCKING };
+
 struct ControlBlock {
   Registers registers;
   void *originalStackPointer = nullptr;
+  State state;
   unsigned timeSlice;
   unsigned priority;
   ControlBlock *next = nullptr;
