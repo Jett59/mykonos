@@ -82,6 +82,8 @@ public:
       } else {
         restoreRegisters(&to->registers);
       }
+    }else if (currentTask == nullptr) {
+      cpu::haultWithIrqs();
     }
     if (enableLocalIrqs) {
       cpu::enableLocalIrqs();
