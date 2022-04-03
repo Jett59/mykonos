@@ -44,7 +44,8 @@ public:
   void addTask(task::ControlBlock *task) {
     task->state = task::State::RUNNABLE;
     addTaskLock.acquire();
-    if (currentTask == nullptr || currentTask->priority < task->priority) {
+    if (currentTask == nullptr || currentTask->state != task::State::RUNNING ||
+        currentTask->priority < task->priority) {
       tasks.push_front(task);
       if (cpuNumber == cpu::getCpuNumber()) {
         addTaskLock.release();
