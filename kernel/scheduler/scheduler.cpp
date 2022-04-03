@@ -65,7 +65,8 @@ public:
     }
   }
   void tick() {
-    if (currentTask != nullptr && --currentTask->timeSlice == 0) {
+    if (currentTask != nullptr && currentTask->state == task::State::RUNNING &&
+        --currentTask->timeSlice == 0) {
       yield();
     }
   }
