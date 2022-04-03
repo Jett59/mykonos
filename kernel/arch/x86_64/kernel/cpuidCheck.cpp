@@ -19,8 +19,6 @@
 #include <cpuid.h>
 #include <mykonos/kout.h>
 
-#define CPUID_0000_0001_ECX_MONITOR (1 << 3)
-
 #define CPUID_8000_0001_EDX_RDTSCP (1 << 27)
 
 namespace cpuid {
