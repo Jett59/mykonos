@@ -89,7 +89,7 @@ public:
       }
     } else if (currentTask == nullptr) {
       cpu::haultWithIrqs();
-    }else if (currentTask->state != task::State::RUNNING) {
+    } else if (currentTask->state != task::State::RUNNING) {
       cpu::enableLocalIrqs();
       cpu::waitForChanges(&currentTask->state, task::State::BLOCKING);
       cpu::disableLocalIrqs();
