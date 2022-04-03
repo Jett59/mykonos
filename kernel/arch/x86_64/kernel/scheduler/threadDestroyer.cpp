@@ -31,7 +31,9 @@ static void *emergencyStacks[MAX_CPUS];
   }
   auto destructionCode = [](void *currentTaskPointer) {
     task::ControlBlock *currentTask = (task::ControlBlock *)currentTaskPointer;
-    stacks::freeStack(currentTask->originalStackPointer);
+    if (currentTask->originalStackPointer != nullptr) {
+      stacks::freeStack(currentTask->originalStackPointer);
+    }
     delete currentTask;
     scheduler::yield();
   };

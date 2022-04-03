@@ -65,4 +65,7 @@ void allocateStacks(unsigned numLocalApics) {
     initialStackPointers[i] = stacks::allocateStack();
   }
 }
+void *getInitialStackPointer(unsigned cpuNumber) {
+  return initialStackPointers[cpuNumber];
+}
 } // namespace smp

@@ -76,6 +76,7 @@ static inline void disableLocalIrqs() {
 }
 
 static inline void mfence() { __asm__ volatile("mfence" : : : "memory"); }
+// Pause instruction
 static inline void relax() { __asm__ volatile("pause"); }
 
 // Hault forever ignoring IRQs
@@ -83,6 +84,13 @@ static inline void relax() { __asm__ volatile("pause"); }
   disableLocalIrqs();
   while (true) {
     __asm__ volatile("hlt");
+  }
+}
+// Hault forever with IRQs enabled
+[[noreturn]] static inline void haultWithIrqs() {
+  enableLocalIrqs();
+  while (true) {
+    __asm__("hlt");
   }
 }
 } // namespace cpu
