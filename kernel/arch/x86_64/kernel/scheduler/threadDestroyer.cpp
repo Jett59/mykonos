@@ -24,7 +24,7 @@ namespace thread {
 static void *emergencyStacks[MAX_CPUS];
 [[noreturn]] void destroy() {
   cpu::disableLocalIrqs();
-  auto currentTask = scheduler::block();
+  auto currentTask = scheduler::removeSelf();
   unsigned cpuNumber = cpu::getCpuNumber();
   if (emergencyStacks[cpuNumber] == nullptr) {
     emergencyStacks[cpuNumber] = stacks::allocateStack();

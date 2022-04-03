@@ -42,8 +42,10 @@ private:
 
 public:
   void addTask(task::ControlBlock *task) {
+    task->state = task::State::RUNNABLE;
     addTaskLock.acquire();
-    if (currentTask == nullptr || currentTask->priority < task->priority) {
+    if (currentTask == nullptr || currentTask->state != task::State::RUNNING ||
+        currentTask->priority < task->priority) {
       tasks.push_front(task);
       if (cpuNumber == cpu::getCpuNumber()) {
         addTaskLock.release();
@@ -64,7 +66,8 @@ public:
     }
   }
   void tick() {
-    if (currentTask != nullptr && --currentTask->timeSlice == 0) {
+    if (currentTask != nullptr && currentTask->state == task::State::RUNNING &&
+        --currentTask->timeSlice == 0) {
       yield();
     }
   }
@@ -74,16 +77,24 @@ public:
     task::ControlBlock *from = currentTask;
     task::ControlBlock *to = tasks.pop();
     if (to != nullptr) {
+      to->state = task::State::RUNNING;
       to->timeSlice = INITIAL_TIME_SLICE;
       currentTask = to;
       if (from != nullptr) {
-        tasks.push(from);
+        if (from->state == task::State::RUNNING) {
+          from->state = task::State::RUNNABLE;
+          tasks.push(from);
+        }
         swapRegisters(&from->registers, &to->registers);
       } else {
         restoreRegisters(&to->registers);
       }
     } else if (currentTask == nullptr) {
       cpu::haultWithIrqs();
+    } else if (currentTask->state != task::State::RUNNING) {
+      cpu::enableLocalIrqs();
+      cpu::waitForChanges(&currentTask->state, task::State::BLOCKING);
+      cpu::disableLocalIrqs();
     }
     if (enableLocalIrqs) {
       cpu::enableLocalIrqs();
@@ -92,15 +103,18 @@ public:
 
   task::ControlBlock *getCurrentTask() { return currentTask; }
 
-  task::ControlBlock *block() {
-    task::ControlBlock *result =
-        __atomic_load_n(&currentTask, __ATOMIC_SEQ_CST);
-    __atomic_store_n(&currentTask, nullptr, __ATOMIC_SEQ_CST);
+  task::ControlBlock *removeCurrent() {
+    task::ControlBlock *result = currentTask;
+    currentTask = nullptr;
     return result;
+  }
+  task::ControlBlock *block() {
+    currentTask->state = task::State::BLOCKING;
+    return currentTask;
   }
 
   unsigned taskCount() {
-    if (currentTask == nullptr) {
+    if (currentTask == nullptr || currentTask->state != task::State::RUNNING) {
       return tasks.getSize();
     } else {
       return tasks.getSize() + 1;
@@ -141,6 +155,9 @@ void tick() { schedulers[cpu::getCpuNumber()].tick(); }
 void yield() { schedulers[cpu::getCpuNumber()].yield(); }
 task::ControlBlock *currentTask() {
   return schedulers[cpu::getCpuNumber()].getCurrentTask();
+}
+task::ControlBlock *removeSelf() {
+  return schedulers[cpu::getCpuNumber()].removeCurrent();
 }
 task::ControlBlock *block() { return schedulers[cpu::getCpuNumber()].block(); }
 
