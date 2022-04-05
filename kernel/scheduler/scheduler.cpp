@@ -25,11 +25,16 @@
 #define INITIAL_TIME_SLICE 5
 
 extern "C" {
-// Assembly functions
 // Save current registers into *from and load the ones in *to into the CPU.
+// Calls unlockTask() after saving the current state and lockTask() before
+// restoring the new state
 void swapRegisters(task::Registers *from, task::Registers *to);
 // Just load *regs into the CPU.
+// Calls lockTask() immediately
 void restoreRegisters(task::Registers *regs);
+
+void unlockTask(task::ControlBlock *task) { task->runLock.release(); }
+void lockTask(task::ControlBlock *task) { task->runLock.acquire(); }
 }
 
 namespace scheduler {
@@ -123,6 +128,11 @@ public:
 
   void setInitialTask(task::ControlBlock *task) {
     if (currentTask == nullptr) {
+      bool enableLocalIrqs = cpu::localIrqState();
+      task->runLock.acquire();
+      if (enableLocalIrqs) {
+        cpu::enableLocalIrqs();
+      }
       currentTask = task;
     } else {
       kpanic("Cannot set initial task twice");

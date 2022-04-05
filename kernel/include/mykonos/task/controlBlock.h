@@ -17,6 +17,7 @@
 #ifndef _MYKONOS_TASK_CONTROL_BLOCK_H
 #define _MYKONOS_TASK_CONTROL_BLOCK_H
 
+#include <mykonos/spinlock.h>
 #include <mykonos/task/registers.h>
 
 namespace task {
@@ -25,6 +26,7 @@ enum class State { RUNNING, RUNNABLE, BLOCKING };
 struct ControlBlock {
   Registers registers;
   void *originalStackPointer = nullptr;
+  lock::Spinlock runLock;
   State state;
   unsigned timeSlice;
   unsigned priority;

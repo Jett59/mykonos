@@ -38,7 +38,6 @@
 .globl swapRegisters
 swapRegisters:
 /*Save old registers*/
-
 /*get rip and rflags*/
 popq RIP_OFFSET(%rdi)
 pushfq
@@ -64,12 +63,22 @@ movq %r15, R15_OFFSET(%rdi)
 /*Save cr3*/
 movq %cr3, %rax
 movq %rax, CR3_OFFSET(%rdi)
+/*Unlock the task*/
+/*Save to into %rbx*/
+movq %rsi, %rbx
+/*%rdi already contains the old task*/
+call unlockTask
 /*Load new registers*/
-movq %rsi, %rdi
+movq %rbx, %rdi
 jmp restoreRegisters
 
 .globl restoreRegisters
 restoreRegisters:
+/*Lock the task*/
+movq %rdi, %rbx
+call lockTask
+movq %rbx, %rdi
+
 movq CR3_OFFSET(%rdi), %rdx
 cmp %rax, %rdx
 je 1f
