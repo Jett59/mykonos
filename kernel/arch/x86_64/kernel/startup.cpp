@@ -213,19 +213,20 @@ static volatile unsigned numCpusDone = 0;
   while (numCpusWithInitialTasks < numCpus) {
     cpu::relax();
   }
-  auto otherThreadFunction = [](void *) {
+  volatile bool otherThreadDone = false;
+  auto otherThreadFunction = [](void *otherThreadDonePtr) {
     kout::printf("Other thread got CPU time on CPU %d\n", cpu::getCpuNumber());
     scheduler::yield();
     kout::printf("Other thread got CPU time after yield on CPU %d\n",
                  cpu::getCpuNumber());
+    *((bool *)otherThreadDonePtr) = true;
     thread::destroy();
   };
-  thread::create(otherThreadFunction, nullptr, PRIORITY_HIGH);
+  thread::create(otherThreadFunction, (void *)&otherThreadDone, PRIORITY_HIGH);
   kout::printf("Main thread yielding on CPU %d\n", cpu::getCpuNumber());
-  scheduler::yield();
-  kout::printf("Main thread got CPU time after yield on CPU %d\n",
-               cpu::getCpuNumber());
-  scheduler::yield();
+  while (!otherThreadDone) {
+    cpu::relax();
+  }
   __atomic_add_fetch(&numCpusDone, 1, __ATOMIC_SEQ_CST);
   while (numCpusDone < numCpus) {
     cpu::relax();

@@ -15,12 +15,19 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 #include <mykonos/apic.h>
+#include <mykonos/apicTimer.h>
 #include <mykonos/processors.h>
+#include <mykonos/scheduler.h>
 
 #include <stdint.h>
 
 extern "C" void handleInterrupt(uint8_t interruptNumber) {
   switch (interruptNumber) {
+  case APIC_TIMER_INTERRUPT: {
+    apic::localApic.eoi();
+    scheduler::tick();
+    break;
+  }
   case PROCESSOR_CALLBACK_INTERRUPT: {
     apic::localApic.eoi();
     processors::receiveCall();
