@@ -30,14 +30,17 @@ namespace scheduler {
 void yield();
 
 task::ControlBlock *currentTask();
-
 // Returns the current task and removes it from the scheduler. Don't lose it!
 task::ControlBlock *removeSelf();
-
 // Set the current task state to 'blocking' and return it. Don't lose it!
 task::ControlBlock *block();
+// Block yield() on the current CPU.
+void lock();
+// Unblock yield() on the current CPU. Calls yield() if any yield() requests
+// were blocked.
+void unlock();
 
-// You usually don't want to do this. Consider thread::create instead.
+// Add the task to the scheduler. Used for blocking tasks mostly.
 void addTask(task::ControlBlock *task);
 
 // Call on startup to initialize the scheduler
