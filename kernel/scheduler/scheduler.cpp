@@ -44,6 +44,8 @@ private:
   task::Queue tasks;
   task::ControlBlock *currentTask;
   lock::Spinlock addTaskLock;
+  bool yieldLocked = false;
+  bool yieldPostponed = false;
 
 public:
   void addTask(task::ControlBlock *task) {
@@ -71,38 +73,55 @@ public:
     }
   }
   void tick() {
-    if (currentTask != nullptr && currentTask->state == task::State::RUNNING &&
+    if (!yieldLocked && currentTask != nullptr &&
+        currentTask->state == task::State::RUNNING &&
         --currentTask->timeSlice == 0) {
       yield();
     }
   }
   void yield() {
-    bool enableLocalIrqs = cpu::localIrqState();
-    cpu::disableLocalIrqs();
-    task::ControlBlock *from = currentTask;
-    task::ControlBlock *to = tasks.pop();
-    if (to != nullptr) {
-      to->state = task::State::RUNNING;
-      to->timeSlice = INITIAL_TIME_SLICE;
-      currentTask = to;
-      if (from != nullptr) {
-        if (from->state == task::State::RUNNING) {
-          from->state = task::State::RUNNABLE;
-          tasks.push(from);
-        }
-        swapRegisters(&from->registers, &to->registers);
-      } else {
-        restoreRegisters(&to->registers);
-      }
-    } else if (currentTask == nullptr) {
-      cpu::haultWithIrqs();
-    } else if (currentTask->state != task::State::RUNNING) {
-      cpu::enableLocalIrqs();
-      cpu::waitForChanges(&currentTask->state, task::State::BLOCKING);
+    if (!yieldLocked) {
+      bool enableLocalIrqs = cpu::localIrqState();
       cpu::disableLocalIrqs();
+      task::ControlBlock *from = currentTask;
+      task::ControlBlock *to = tasks.pop();
+      if (to != nullptr) {
+        to->state = task::State::RUNNING;
+        to->timeSlice = INITIAL_TIME_SLICE;
+        currentTask = to;
+        if (from != nullptr) {
+          if (from->state == task::State::RUNNING) {
+            from->state = task::State::RUNNABLE;
+            tasks.push(from);
+          }
+          swapRegisters(&from->registers, &to->registers);
+        } else {
+          restoreRegisters(&to->registers);
+        }
+      } else if (currentTask == nullptr) {
+        cpu::haultWithIrqs();
+      } else if (currentTask->state != task::State::RUNNING) {
+        cpu::enableLocalIrqs();
+        cpu::waitForChanges(&currentTask->state, task::State::BLOCKING);
+        cpu::disableLocalIrqs();
+      }
+      if (enableLocalIrqs) {
+        cpu::enableLocalIrqs();
+      }
+    } else {
+      yieldPostponed = true;
     }
-    if (enableLocalIrqs) {
-      cpu::enableLocalIrqs();
+  }
+
+  void lock() {
+    yieldLocked = true;
+    yieldPostponed = false;
+  }
+  void unlock() {
+    yieldLocked = false;
+    if (yieldPostponed) {
+      yieldPostponed = false;
+      yield();
     }
   }
 
@@ -170,6 +189,8 @@ task::ControlBlock *removeSelf() {
   return schedulers[cpu::getCpuNumber()].removeCurrent();
 }
 task::ControlBlock *block() { return schedulers[cpu::getCpuNumber()].block(); }
+void lock() { schedulers[cpu::getCpuNumber()].lock(); }
+void unlock() { schedulers[cpu::getCpuNumber()].unlock(); }
 
 void init(unsigned numCpus) {
   cpuCount = numCpus;
