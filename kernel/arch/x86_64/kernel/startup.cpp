@@ -52,6 +52,8 @@
 #include <mykonos/scheduler.h>
 #include <mykonos/thread.h>
 
+#include <mykonos/mutex.h>
+
 [[noreturn]] void kRun();
 
 static unsigned numCpus = 0;
@@ -203,6 +205,8 @@ extern "C" [[noreturn]] void kstartApCpu(uint8_t cpuNumber) {
 static volatile unsigned numCpusWithInitialTasks = 0;
 static volatile unsigned numCpusDone = 0;
 
+static lock::Mutex completedMutex;
+
 [[noreturn]] void kRun() {
   task::ControlBlock *initialTask = new task::ControlBlock();
   initialTask->priority = PRIORITY_NORMAL;
@@ -231,6 +235,8 @@ static volatile unsigned numCpusDone = 0;
   while (numCpusDone < numCpus) {
     cpu::relax();
   }
+  completedMutex.acquire();
   kout::print("All CPUS done\n");
+  completedMutex.release();
   thread::destroy();
 }
