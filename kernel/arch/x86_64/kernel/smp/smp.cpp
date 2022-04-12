@@ -14,10 +14,9 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     */
-#include <mykonos/smp.h>
-
 #include <mykonos/apic.h>
-
+#include <mykonos/processors.h>
+#include <mykonos/smp.h>
 #include <mykonos/stacks.h>
 
 extern "C" {
@@ -69,3 +68,7 @@ void *getInitialStackPointer(unsigned cpuNumber) {
   return initialStackPointers[cpuNumber];
 }
 } // namespace smp
+
+namespace processors {
+unsigned processorCount() { return runningCpus; }
+} // namespace processors

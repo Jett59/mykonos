@@ -24,6 +24,8 @@
 #define MAX_CPUS 64
 
 namespace processors {
+unsigned processorCount();
+
 // Run the specified callback on CPU cpuNumber. The function returns when the
 // callback calls letCallerReturn()
 void runOn(unsigned cpuNumber, callback::Callback<bool> &&callback);
