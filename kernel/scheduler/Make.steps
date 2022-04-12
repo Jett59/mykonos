@@ -1,2 +1,2 @@
-STEPS+=scheduler/scheduler.o
+STEPS+=scheduler/scheduler.o scheduler/mutex.o
 TEST_STEPS+=scheduler/taskQueue_test.o

@@ -19,6 +19,7 @@
 #include <mykonos/processors.h>
 #include <mykonos/scheduler.h>
 #include <mykonos/spinlock.h>
+#include <mykonos/stacks.h>
 #include <mykonos/task/controlBlock.h>
 #include <mykonos/task/taskQueue.h>
 
@@ -33,6 +34,7 @@ void swapRegisters(task::Registers *from, task::Registers *to);
 // Calls lockTask() immediately
 void restoreRegisters(task::Registers *regs);
 
+// Lock and unlock the task run lock
 void unlockTask(task::ControlBlock *task) { task->runLock.release(); }
 void lockTask(task::ControlBlock *task) { task->runLock.acquire(); }
 }
@@ -42,6 +44,7 @@ class Scheduler {
 private:
   unsigned cpuNumber;
   task::Queue tasks;
+  void *schedulerStack = nullptr;
   task::ControlBlock *currentTask;
   lock::Spinlock addTaskLock;
   bool yieldLocked = false;
@@ -101,9 +104,22 @@ public:
       } else if (currentTask == nullptr) {
         cpu::haultWithIrqs();
       } else if (currentTask->state != task::State::RUNNING) {
-        cpu::enableLocalIrqs();
-        cpu::waitForChanges(&currentTask->state, task::State::BLOCKING);
-        cpu::disableLocalIrqs();
+        auto currentTask = this->currentTask;
+        // Save the registers
+        swapRegisters(&currentTask->registers, &currentTask->registers);
+        // This will be run twice: once after swapRegisters() returns, and once
+        // when we are unblocked
+        if (currentTask->state != task::State::RUNNING) {
+          // swapRegisters() returned
+          auto haultCode = [](void *currentTaskPointer) {
+            auto currentTask = (task::ControlBlock *)currentTaskPointer;
+            currentTask->runLock.release();
+            cpu::haultWithIrqs();
+          };
+          switchToSchedulerStack(haultCode, (void *)removeCurrent());
+        } else {
+          // Unblocked!
+        }
       }
       if (enableLocalIrqs) {
         cpu::enableLocalIrqs();
@@ -135,6 +151,14 @@ public:
   task::ControlBlock *block() {
     currentTask->state = task::State::BLOCKING;
     return currentTask;
+  }
+
+  [[noreturn]] void switchToSchedulerStack(void (*callback)(void *),
+                                           void *context) {
+    if (schedulerStack == nullptr) {
+      schedulerStack = stacks::allocateStack();
+    }
+    stacks::switchStack(schedulerStack, callback, context);
   }
 
   unsigned taskCount() {
@@ -189,6 +213,10 @@ task::ControlBlock *removeSelf() {
   return schedulers[cpu::getCpuNumber()].removeCurrent();
 }
 task::ControlBlock *block() { return schedulers[cpu::getCpuNumber()].block(); }
+[[noreturn]] void switchToSchedulerStack(void (*callback)(void *),
+                                         void *context) {
+  schedulers[cpu::getCpuNumber()].switchToSchedulerStack(callback, context);
+}
 void lock() { schedulers[cpu::getCpuNumber()].lock(); }
 void unlock() { schedulers[cpu::getCpuNumber()].unlock(); }
 

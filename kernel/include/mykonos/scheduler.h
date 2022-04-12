@@ -40,8 +40,13 @@ void lock();
 // were blocked.
 void unlock();
 
-// Add the task to the scheduler. Used for blocking tasks mostly.
+// Add the task to the scheduler. Used for unblocking tasks mostly.
 void addTask(task::ControlBlock *task);
+
+// Switch to the per-CPU stack. Use when you want to stop running the current
+// task. Will never return.
+[[noreturn]] void switchToSchedulerStack(void (*callback)(void *),
+                                         void *context);
 
 // Call on startup to initialize the scheduler
 void init(unsigned numCpus);
