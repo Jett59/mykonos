@@ -35,7 +35,7 @@ void Mutex::release() {
   if (nextTask == nullptr) {
     lock = false;
     spinlock.release();
-  }else {
+  } else {
     spinlock.release();
     scheduler::addTask(nextTask);
   }
