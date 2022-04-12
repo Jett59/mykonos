@@ -21,14 +21,9 @@
 #include <mykonos/thread.h>
 
 namespace thread {
-static void *emergencyStacks[MAX_CPUS];
 [[noreturn]] void destroy() {
   cpu::disableLocalIrqs();
   auto currentTask = scheduler::removeSelf();
-  unsigned cpuNumber = cpu::getCpuNumber();
-  if (emergencyStacks[cpuNumber] == nullptr) {
-    emergencyStacks[cpuNumber] = stacks::allocateStack();
-  }
   auto destructionCode = [](void *currentTaskPointer) {
     task::ControlBlock *currentTask = (task::ControlBlock *)currentTaskPointer;
     if (currentTask->originalStackPointer != nullptr) {
@@ -37,7 +32,6 @@ static void *emergencyStacks[MAX_CPUS];
     delete currentTask;
     scheduler::yield();
   };
-  stacks::switchStack(emergencyStacks[cpuNumber], destructionCode,
-                      (void *)currentTask);
+  scheduler::switchToSchedulerStack(destructionCode, (void *)currentTask);
 }
 } // namespace thread

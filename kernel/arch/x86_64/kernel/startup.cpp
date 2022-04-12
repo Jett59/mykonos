@@ -236,7 +236,7 @@ static lock::Mutex completedMutex;
     cpu::relax();
   }
   completedMutex.acquire();
-  kout::print("All CPUS done\n");
+  kout::printf("All CPUS done %d\n", cpu::getCpuNumber());
   completedMutex.release();
   thread::destroy();
 }
