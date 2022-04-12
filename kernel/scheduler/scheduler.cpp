@@ -101,9 +101,18 @@ public:
       } else if (currentTask == nullptr) {
         cpu::haultWithIrqs();
       } else if (currentTask->state != task::State::RUNNING) {
-        cpu::enableLocalIrqs();
-        cpu::waitForChanges(&currentTask->state, task::State::BLOCKING);
-        cpu::disableLocalIrqs();
+        auto currentTask = this->currentTask;
+        // Save the registers
+        swapRegisters(&currentTask->registers, &currentTask->registers);
+        // This will be run twice: once after swapRegisters() returns, and once
+        // when we are unblocked
+        if (currentTask->state != task::State::RUNNING) {
+          // swapRegisters() returned
+          removeCurrent()->runLock.release();
+          cpu::haultWithIrqs();
+        }else {
+          // Unblocked!
+        }
       }
       if (enableLocalIrqs) {
         cpu::enableLocalIrqs();
