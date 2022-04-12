@@ -19,8 +19,6 @@
 #include <cpuid.h>
 #include <mykonos/kout.h>
 
-#define CPUID_0000_0001_ECX_MONITOR (1 << 3)
-
 #define CPUID_8000_0001_EDX_RDTSCP (1 << 27)
 
 namespace cpuid {
@@ -28,10 +26,6 @@ bool checkCpuidFlags() {
   unsigned eax = 0, ebx = 0, ecx = 0, edx = 0;
   // Standard features (fn0x0000_0001)
   __get_cpuid(0x00000001, &eax, &ebx, &ecx, &edx);
-  if ((ecx & CPUID_0000_0001_ECX_MONITOR) == 0) {
-    kout::print("Your CPU does not support monitor/mwait\n");
-    return false;
-  }
   // Extended features (fn0x8000_0001)
   __get_cpuid(0x80000001, &eax, &ebx, &ecx, &edx);
   if ((edx & CPUID_8000_0001_EDX_RDTSCP) == 0) {

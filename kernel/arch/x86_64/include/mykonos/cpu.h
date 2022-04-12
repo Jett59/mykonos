@@ -79,24 +79,6 @@ static inline void mfence() { __asm__ volatile("mfence" : : : "memory"); }
 // Pause instruction
 static inline void relax() { __asm__ volatile("pause"); }
 
-static inline void monitor(void *address) {
-  __asm__("monitor" : : "a"(address), "c"(0), "d"(0) : "memory");
-}
-static inline void mwait(unsigned cState) {
-  unsigned eax = ((cState - 1) & 0xf) << 4;
-  __asm__("mwait" : : "a"(eax), "c"(0) : "memory");
-}
-
-template <typename T>
-static inline void waitForChanges(volatile T *ptr, T oldValue) {
-  while (*ptr == oldValue) {
-    monitor((void *)ptr);
-    if (*ptr == oldValue) {
-      mwait(1);
-    }
-  }
-}
-
 // Hault forever ignoring IRQs
 [[noreturn]] static inline void hault() {
   disableLocalIrqs();
