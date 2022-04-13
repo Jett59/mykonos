@@ -15,9 +15,9 @@
 
 export ARCH?=x86_64
 
-export CXX:=$(ARCH)-elf-g++
-export AS:=$(ARCH)-elf-gcc
-export LD:=$(ARCH)-elf-gcc
+export CXX:=$(ARCH)-mykonos-g++
+export AS:=$(ARCH)-mykonos-gcc
+export LD:=$(ARCH)-mykonos-gcc
 
 export CPPFLAGS:=
 export CXXFLAGS:=-std=gnu++17 -nostdlib -O2 -g -ffunction-sections -fdata-sections -Wall -Wextra

@@ -30,6 +30,6 @@ checkExists () {
 
 set -e
 
-checkExists ${ARCH}-elf-g++
-checkExists ${ARCH}-elf-gcc
-checkExists ${ARCH}-elf-ld
+checkExists ${ARCH}-mykonos-g++
+checkExists ${ARCH}-mykonos-gcc
+checkExists ${ARCH}-mykonos-ld
