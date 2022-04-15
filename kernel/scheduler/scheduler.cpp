@@ -169,20 +169,11 @@ public:
     }
   }
 
-  void setInitialTask(task::ControlBlock *task) {
-    if (currentTask == nullptr) {
-      bool enableLocalIrqs = cpu::localIrqState();
-      task->runLock.acquire();
-      if (enableLocalIrqs) {
-        cpu::enableLocalIrqs();
-      }
-      currentTask = task;
-    } else {
-      kpanic("Cannot set initial task twice");
-    }
+  void init(unsigned cpuNumber, task::ControlBlock *task) {
+    this->cpuNumber = cpuNumber;
+    task->runLock.acquire();
+    currentTask = task;
   }
-
-  void setCpuNumber(unsigned cpuNumber) { this->cpuNumber = cpuNumber; }
 };
 static Scheduler schedulers[MAX_CPUS];
 
@@ -220,13 +211,8 @@ task::ControlBlock *block() { return schedulers[cpu::getCpuNumber()].block(); }
 void lock() { schedulers[cpu::getCpuNumber()].lock(); }
 void unlock() { schedulers[cpu::getCpuNumber()].unlock(); }
 
-void init(unsigned numCpus) {
-  cpuCount = numCpus;
-  for (unsigned i = 0; i < numCpus; i++) {
-    schedulers[i].setCpuNumber(i);
-  }
-}
-void setInitialTask(task::ControlBlock *task) {
-  schedulers[cpu::getCpuNumber()].setInitialTask(task);
+void init(unsigned cpuNumber, task::ControlBlock *task) {
+  schedulers[cpuNumber].init(cpuNumber, task);
+  cpuCount++;
 }
 } // namespace scheduler
