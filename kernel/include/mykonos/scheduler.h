@@ -48,10 +48,8 @@ void addTask(task::ControlBlock *task);
 [[noreturn]] void switchToSchedulerStack(void (*callback)(void *),
                                          void *context);
 
-// Call on startup to initialize the scheduler
-void init(unsigned numCpus);
-// Call on each CPU with a freshly allocated task::ControlBlock
-void setInitialTask(task::ControlBlock *task);
+// Call for each CPU with a freshly allocated task::ControlBlock
+void init(unsigned cpuNumber, task::ControlBlock *task);
 // Call every 10ms for time slicing
 void tick();
 } // namespace scheduler
