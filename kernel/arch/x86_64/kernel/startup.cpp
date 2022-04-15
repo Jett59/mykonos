@@ -79,6 +79,10 @@ extern "C" [[noreturn]] void kstart() {
   // Now that that's over
   multiboot::parseMbi();
   paging::initPageTables();
+  auto initialTask = new task::ControlBlock();
+  initialTask->priority = PRIORITY_NORMAL;
+  initialTask->originalStackPointer = nullptr;
+  scheduler::init(0, initialTask);
   display::initFrameBuffer();
   interrupts::init();
   interrupts::install();
@@ -130,7 +134,6 @@ extern "C" [[noreturn]] void kstart() {
       pic::disablePic();
     }
     numCpus = madt->localApicCount();
-    scheduler::init(numCpus);
     if (numCpus > 1) {
       // Copy smp trampoline to low memory
       void *smpTrampolineDestination =
@@ -145,6 +148,11 @@ extern "C" [[noreturn]] void kstart() {
       for (unsigned i = 0; i < numCpus; i++) {
         uint8_t apicId = madt->getLocalApic(i).apicId;
         if (apicId != myApicId) {
+          auto initialTask = new task::ControlBlock();
+          initialTask->priority = PRIORITY_NORMAL;
+          initialTask->originalStackPointer = smp::getInitialStackPointer(i);
+          // processorCount is the next CPU number
+          scheduler::init(processors::processorCount(), initialTask);
           if (!smp::startCpu(apicId, hpet)) {
             kout::printf("CPU %d failed to start\n", i);
             kpanic("Error starting CPUs");
@@ -208,11 +216,6 @@ static volatile unsigned numCpusDone = 0;
 static lock::Mutex completedMutex;
 
 [[noreturn]] void kRun() {
-  task::ControlBlock *initialTask = new task::ControlBlock();
-  initialTask->priority = PRIORITY_NORMAL;
-  initialTask->originalStackPointer =
-      smp::getInitialStackPointer(cpu::getCpuNumber());
-  scheduler::setInitialTask(initialTask);
   __atomic_add_fetch(&numCpusWithInitialTasks, 1, __ATOMIC_SEQ_CST);
   while (numCpusWithInitialTasks < numCpus) {
     cpu::relax();
