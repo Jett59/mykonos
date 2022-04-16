@@ -17,6 +17,7 @@
 #ifndef _MYKONOS_QUEUE_H
 #define _MYKONOS_QUEUE_H
 
+#include <mykonos/scheduler.h>
 #include <mykonos/spinlock.h>
 
 namespace util {
@@ -28,6 +29,7 @@ private:
 template <typename T> class Queue {
 private:
   lock::Spinlock lock;
+  task::Queue waitingTasks;
   QueueElement<T> *head = nullptr;
   QueueElement<T> *tail = nullptr;
 
@@ -39,13 +41,22 @@ public:
     if (tail != nullptr) {
       tail->next = newElement;
       tail = newElement;
+      lock.release();
     } else {
       tail = head = newElement;
+      auto wokenUpTask = waitingTasks.pop();
+      lock.release();
+      if (wokenUpTask != nullptr) {
+        scheduler::addTask(wokenUpTask);
+      }
     }
-    lock.release();
   }
   T pop() {
     lock.acquire();
+    if (head == nullptr) {
+      waitingTasks.push(scheduler::block());
+      scheduler::yield();
+    }
     auto headElement = head;
     if (head == tail) {
       head = tail = nullptr;
