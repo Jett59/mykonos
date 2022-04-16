@@ -21,11 +21,18 @@
 #include <mykonos/spinlock.h>
 
 namespace util {
+template <typename T> class Queue;
 template <typename T> class QueueElement {
 private:
   T value;
   QueueElement<T> *next;
+  friend class Queue;
 };
+/**
+ * @brief a blocking queue implementation
+ *
+ * @tparam T the type of element stored in the queue
+ */
 template <typename T> class Queue {
 private:
   lock::Spinlock lock;
@@ -55,7 +62,9 @@ public:
     lock.acquire();
     if (head == nullptr) {
       waitingTasks.push(scheduler::block());
+      lock.release();
       scheduler::yield();
+      lock.acquire();
     }
     auto headElement = head;
     if (head == tail) {
