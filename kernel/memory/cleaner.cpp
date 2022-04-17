@@ -14,15 +14,27 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
-#ifndef _MYKONOS_CLEANER_H
-#define _MYKONOS_CLEANER_H
-
-#include <mykonos/kmalloc.h>
+#include <mykonos/cleaner.h>
+#include <mykonos/queue.h>
+#include <mykonos/thread.h>
 
 namespace cleaner {
-void addObject(void *object, void (*handler)(void *) = memory::kfree);
+struct CleanerObject {
+  void *object;
+  void (*handler)(void *);
+};
+static util::Queue<CleanerObject> queue;
 
-void init();
+void addObject(void *object, void (*handler)(void *)) {
+  queue.push({object, handler});
+}
+
+static void cleanerThread(void *) {
+  while (true) {
+    auto object = queue.pop();
+    object.handler(object.object);
+  }
+}
+
+void init() { thread::create(cleanerThread, nullptr, PRIORITY_LOW); }
 } // namespace cleaner
-
-#endif
