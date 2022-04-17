@@ -1,4 +1,5 @@
 STEPS+=memory/memoryBlock.o memory/virtualMemory.o memory/kmalloc.o
 STEPS+=memory/string.o
+STEPS+=memory/cleaner.o
 
 TEST_STEPS+=memory/memoryBlock_test.o memory/kmalloc_test.o memory/copying_test.o

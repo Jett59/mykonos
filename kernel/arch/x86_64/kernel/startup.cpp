@@ -14,45 +14,31 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     */
-#include <mykonos/string.h>
-
-#include <mykonos/mbi.h>
-#include <mykonos/pageTableInit.h>
-
-#include <mykonos/frameBuffer.h>
-#include <mykonos/kout.h>
-
-#include <mykonos/cpuidCheck.h>
-
-#include <mykonos/test.h>
-
-#include <mykonos/interrupts.h>
-
-#include <mykonos/kpanic.h>
-
 #include <mykonos/acpi/hpet.h>
 #include <mykonos/acpi/madt.h>
 #include <mykonos/acpi/rsdp.h>
 #include <mykonos/acpi/rsdt.h>
 #include <mykonos/acpi/tables.h>
-
-#include <mykonos/hpet.h>
-
-#include <mykonos/kmalloc.h>
-
 #include <mykonos/apic.h>
-#include <mykonos/smp.h>
-
-#include <mykonos/pic.h>
-
 #include <mykonos/apicTimer.h>
-
-#include <mykonos/processors.h>
-
-#include <mykonos/scheduler.h>
-#include <mykonos/thread.h>
-
+#include <mykonos/cleaner.h>
+#include <mykonos/cpuidCheck.h>
+#include <mykonos/frameBuffer.h>
+#include <mykonos/hpet.h>
+#include <mykonos/interrupts.h>
+#include <mykonos/kmalloc.h>
+#include <mykonos/kout.h>
+#include <mykonos/kpanic.h>
+#include <mykonos/mbi.h>
 #include <mykonos/mutex.h>
+#include <mykonos/pageTableInit.h>
+#include <mykonos/pic.h>
+#include <mykonos/processors.h>
+#include <mykonos/scheduler.h>
+#include <mykonos/smp.h>
+#include <mykonos/string.h>
+#include <mykonos/test.h>
+#include <mykonos/thread.h>
 
 [[noreturn]] void kRun();
 
@@ -83,6 +69,7 @@ extern "C" [[noreturn]] void kstart() {
   initialTask->priority = PRIORITY_NORMAL;
   initialTask->originalStackPointer = nullptr;
   scheduler::init(0, initialTask);
+  cleaner::init();
   display::initFrameBuffer();
   interrupts::init();
   interrupts::install();

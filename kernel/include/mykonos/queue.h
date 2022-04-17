@@ -19,6 +19,7 @@
 
 #include <mykonos/scheduler.h>
 #include <mykonos/spinlock.h>
+#include <mykonos/task/taskQueue.h>
 
 namespace util {
 template <typename T> class Queue;
@@ -26,7 +27,7 @@ template <typename T> class QueueElement {
 private:
   T value;
   QueueElement<T> *next;
-  friend class Queue;
+  friend class Queue<T>;
 };
 /**
  * @brief a blocking queue implementation
