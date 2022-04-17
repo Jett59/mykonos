@@ -14,7 +14,9 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+#include <mykonos/cleaner.h>
 #include <mykonos/cpu.h>
+#include <mykonos/kpanic.h>
 #include <mykonos/processors.h>
 #include <mykonos/scheduler.h>
 #include <mykonos/stacks.h>
@@ -23,15 +25,20 @@
 namespace thread {
 [[noreturn]] void destroy() {
   cpu::disableLocalIrqs();
-  auto currentTask = scheduler::removeSelf();
+  auto currentTask = scheduler::block();
   auto destructionCode = [](void *currentTaskPointer) {
     task::ControlBlock *currentTask = (task::ControlBlock *)currentTaskPointer;
+    // Use the runLock to wait for the task to finish running
+    currentTask->runLock.acquire();
+    currentTask->runLock.release();
     if (currentTask->originalStackPointer != nullptr) {
       stacks::freeStack(currentTask->originalStackPointer);
     }
     delete currentTask;
-    scheduler::yield();
   };
-  scheduler::switchToSchedulerStack(destructionCode, (void *)currentTask);
+  cleaner::addObject((void *)currentTask, destructionCode);
+  scheduler::yield();
+  // Make the compiler happy about noreturn
+  kpanic("thread::destroy somehow returned!?\n");
 }
 } // namespace thread
