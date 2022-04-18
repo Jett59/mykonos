@@ -24,7 +24,7 @@
 
 namespace acpi {
 struct McfgEntry {
-  void *startAddress;
+  void *address;
   unsigned segmentGroup;
   unsigned firstBusNumber;
   unsigned lastBusNumber;

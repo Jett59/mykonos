@@ -25,7 +25,13 @@ McfgTableManager::McfgTableManager(TableHeader *header)
   this->numEntries = (header->length - 44) / 16;
   McfgTableEntry *tableEntries = (McfgTableEntry *)((size_t)header + 44);
   for (unsigned i = 0; i < numEntries; i++) {
-    kout::printf("Base address: %p\n", tableEntries->address);
+    auto &tableEntry = tableEntries[i];
+    void *mappedAddress = memory::mapAddress(
+        (void *)tableEntry.address,
+        (tableEntry.lastBusNumber - tableEntry.firstBusNumber) * 8192 * 4096,
+        false);
+    entries[i] = {mappedAddress, tableEntry.segmentGroup,
+                  tableEntry.firstBusNumber, tableEntry.lastBusNumber};
   }
   memory::unmapMemory(header, header->length);
 }
