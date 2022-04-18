@@ -19,8 +19,12 @@
 
 namespace drivers {
 void DeviceTree::appendAndLoad(DeviceTree *child) {
-  lastChild->next = child;
-  lastChild = child;
+  if (firstChild == nullptr) {
+    firstChild = lastChild = child;
+  } else {
+    lastChild->next = child;
+    lastChild = child;
+  }
   thread::create(
       [](void *childPointer) {
         ((DeviceTree *)childPointer)->load();
