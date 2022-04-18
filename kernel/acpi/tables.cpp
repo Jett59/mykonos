@@ -19,6 +19,7 @@
 
 #include <mykonos/acpi/hpet.h>
 #include <mykonos/acpi/madt.h>
+#include <mykonos/acpi/mcfg.h>
 #include <mykonos/acpi/rsdt.h>
 
 #include <mykonos/kmalloc.h>
@@ -42,11 +43,15 @@ TableManager *loadMadt(TableHeader *header) {
 TableManager *loadHpet(TableHeader *header) {
   return new HpetTableManager(header);
 }
+TableManager *loadMcfg(TableHeader *header) {
+  return new McfgTableManager(header);
+}
 
 static TableHandler tableHandlers[] = {{"RSDT", loadRsdt},
                                        {"XSDT", loadRsdt},
                                        {"APIC", loadMadt},
-                                       {"HPET", loadHpet}};
+                                       {"HPET", loadHpet},
+                                       {"MCFG", loadMcfg}};
 #define numTableHandlers (sizeof(tableHandlers) / sizeof(TableHandler))
 
 static bool doChecksum(TableHeader *header) {
