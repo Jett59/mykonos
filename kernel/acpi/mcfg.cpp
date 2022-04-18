@@ -33,6 +33,7 @@ McfgTableManager::McfgTableManager(TableHeader *header)
     entries[i] = {mappedAddress, tableEntry.segmentGroup,
                   tableEntry.firstBusNumber, tableEntry.lastBusNumber};
   }
+  kout::printf("Found %d MCFG entries\n", numEntries);
   memory::unmapMemory(header, header->length);
 }
 } // namespace acpi
