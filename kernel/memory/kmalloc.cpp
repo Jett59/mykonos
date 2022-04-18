@@ -15,11 +15,11 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     */
 #include <mykonos/kmalloc.h>
-
 #include <mykonos/kpanic.h>
 #include <mykonos/pageConstants.h>
 #include <mykonos/paging.h>
 #include <mykonos/physicalMemory.h>
+#include <mykonos/processors.h>
 #include <mykonos/virtualMemory.h>
 
 #include <stdint.h>
@@ -86,10 +86,26 @@ void unmapMemory(void *address, size_t size) {
     void *endAddress = (void *)PAGE_ALIGN_UP((size_t)address + size);
     address = (void *)PAGE_ALIGN_DOWN((size_t)address);
     size = (size_t)endAddress - (size_t)address;
-    virtualMemory.returnMemory(address, size);
     for (size_t i = 0; i < size; i += PAGE_SIZE) {
       paging::unmapPage(ADD_TO_POINTER(address, i));
     }
+    // TLB shootdown
+    unsigned processorCount = processors::processorCount();
+    for (unsigned i = 0; i < processorCount; i++) {
+      if (i != cpu::getCpuNumber()) {
+        auto tlbInvalidationCode = [=]() -> bool {
+          for (size_t offset = 0; offset < size; offset += 4096) {
+            paging::invalidateTlb(ADD_TO_POINTER(address, offset));
+          }
+          processors::letCallerReturn();
+          return true;
+        };
+        processors::runOn(i,
+                          callback::Lambda<decltype(tlbInvalidationCode), bool>(
+                              tlbInvalidationCode));
+      }
+    }
+    virtualMemory.returnMemory(address, size);
   } else {
     kpanic("Attempt to unmap null");
   }
