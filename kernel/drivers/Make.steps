@@ -1,1 +1,2 @@
+STEPS+=drivers/tree.o
 STEPS+=drivers/hpet/hpet.o

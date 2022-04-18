@@ -56,7 +56,9 @@ public:
   Iterator end() { return Iterator(nullptr); }
 
 protected:
-  void appendChild(DeviceTree *child);
+  void appendAndLoad(DeviceTree *child);
+
+  virtual void load() = 0;
 
 private:
   const DeviceType type;
