@@ -14,24 +14,23 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
-#ifndef _MYKONOS_DRIVERS_ACPI_TREE_H
-#define _MYKONOS_DRIVERS_ACPI_TREE_H
-
-#include <mykonos/acpi/rsdt.h>
-#include <mykonos/drivers/tree.h>
+#include <mykonos/drivers/acpiTree.h>
 
 namespace drivers {
-class AcpiDeviceTree : public DeviceTree {
-public:
-  AcpiDeviceTree(acpi::RsdtTableManager *tables)
-      : DeviceTree(DeviceType::ACPI), tables(tables) {}
-
-protected:
-  virtual void load();
-
-private:
-  acpi::RsdtTableManager *tables;
+struct TableDriver {
+  acpi::TableType type;
+  DeviceTree *(*get)(acpi::TableManager *);
 };
-} // namespace drivers
+static TableDriver tableDrivers[] = {};
 
-#endif
+void AcpiDeviceTree::load() {
+  for (size_t i = 0; i < tables->childCount(); i++) {
+    acpi::TableManager *table = (*tables)[i];
+    for (auto &tableDriver : tableDrivers) {
+        if (tableDriver.type == table->type) {
+          appendAndLoad(tableDriver.get(table));
+        }
+    }
+  }
+}
+} // namespace drivers
