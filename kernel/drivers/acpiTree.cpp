@@ -15,6 +15,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 #include <mykonos/drivers/acpiTree.h>
+#include <mykonos/drivers/pcieTree.h>
 #include <mykonos/kout.h>
 
 namespace drivers {
@@ -22,23 +23,28 @@ struct TableDriver {
   acpi::TableType type;
   DeviceTree *(*get)(acpi::TableManager *);
 };
-static TableDriver tableDrivers[] = {};
+DeviceTree *loadPcieDriver(acpi::TableManager *table) {
+  return new PcieDeviceTree((acpi::McfgTableManager *)table);
+}
+static TableDriver tableDrivers[] = {{acpi::TableType::MCFG, loadPcieDriver}};
 
 void AcpiDeviceTree::load() {
   kout::print("Scanning ACPI tables\n");
   unsigned unusedTableCount = 0;
   for (size_t i = 0; i < tables->childCount(); i++) {
     acpi::TableManager *table = (*tables)[i];
-    bool used = false;
-    for (auto &tableDriver : tableDrivers) {
-      if (tableDriver.type == table->type) {
-        used = true;
-        appendAndLoad(tableDriver.get(table));
-        break;
+    if (table != nullptr) {
+      bool used = false;
+      for (auto &tableDriver : tableDrivers) {
+        if (tableDriver.type == table->type) {
+          used = true;
+          appendAndLoad(tableDriver.get(table));
+          break;
+        }
       }
-    }
-    if (!used) {
-      unusedTableCount++;
+      if (!used) {
+        unusedTableCount++;
+      }
     }
   }
   kout::printf("%d unused ACPI tables\n", unusedTableCount);

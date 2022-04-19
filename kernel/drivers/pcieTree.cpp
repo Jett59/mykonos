@@ -16,7 +16,33 @@
 */
 #include <mykonos/drivers/pcie/pcie.h>
 #include <mykonos/drivers/pcieTree.h>
+#include <mykonos/kout.h>
+
+#define PCIE_DEVICE(BASE, BUS, DEVICE, FUNCTION)                               \
+  PcieDeviceAccess {                                                           \
+    (PcieDeviceHeader *)((size_t)(BASE) + ((BUS) << 20) + ((DEVICE) << 15) +   \
+                         ((FUNCTION) << 12))                                   \
+  }
 
 namespace drivers {
-    
+void PcieDeviceTree::load() {
+  kout::print("Scanning PCIE configuration\n");
+  unsigned unknownDeviceCount = 0;
+  for (size_t i = 0; i < mcfg->entryCount(); i++) {
+    auto mcfgEntry = mcfg->getEntry(i);
+    size_t busCount = mcfgEntry.lastBusNumber - mcfgEntry.firstBusNumber + 1;
+    for (size_t bus = 0; bus < busCount; bus++) {
+      for (size_t device = 0; device < 32; device++) {
+        auto access = PCIE_DEVICE(mcfgEntry.address, bus, device, 0);
+        if (access.getVendorId() != 0xffff) {
+          kout::printf("Vendor: %x, device: %x, class: %x, subclass: %x\n",
+                       access.getVendorId(), access.getDeviceId(),
+                       access.getClass(), access.getSubclass());
+          unknownDeviceCount++;
+        }
+      }
+    }
+  }
+  kout::printf("%d unknown PCIE devices\n", unknownDeviceCount);
 }
+} // namespace drivers
