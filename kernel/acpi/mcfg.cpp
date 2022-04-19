@@ -28,8 +28,7 @@ McfgTableManager::McfgTableManager(TableHeader *header)
     auto &tableEntry = tableEntries[i];
     void *mappedAddress = memory::mapAddress(
         (void *)tableEntry.address,
-        (tableEntry.lastBusNumber - tableEntry.firstBusNumber + 1) * 8192 *
-            4096,
+        (tableEntry.lastBusNumber - tableEntry.firstBusNumber + 1) * 1048576,
         false);
     entries[i] = {mappedAddress, tableEntry.segmentGroup,
                   tableEntry.firstBusNumber, tableEntry.lastBusNumber};

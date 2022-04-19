@@ -18,7 +18,7 @@
 #define _MYKONOS_DRIVERS_TREE_H
 
 namespace drivers {
-enum class DeviceType { ACPI };
+enum class DeviceType { ACPI, PCIE };
 
 void loadRootDevice();
 
