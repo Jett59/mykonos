@@ -25,6 +25,19 @@
   }
 
 namespace drivers {
+struct PcieDriver {
+  // Used if vendorId != 0xffff
+  uint16_t vendorId;
+  uint16_t deviceId;
+  // Used if vendorId == 0xffff
+  uint8_t classId;
+  uint8_t subclass;
+
+  DeviceTree *(*get)(PcieDeviceAccess);
+};
+
+static PcieDriver pcieDrivers[] = {};
+
 void PcieDeviceTree::load() {
   kout::print("Scanning PCIE configuration\n");
   unsigned unknownDeviceCount = 0;
@@ -40,7 +53,23 @@ void PcieDeviceTree::load() {
             kout::printf("Vendor: %x, device: %x, class: %x, subclass: %x\n",
                          access.getVendorId(), access.getDeviceId(),
                          access.getClass(), access.getSubclass());
-            unknownDeviceCount++;
+            bool matched = false;
+            for (auto &driver : pcieDrivers) {
+              if (driver.vendorId == 0xffff) {
+                matched = driver.vendorId == access.getVendorId() &&
+                          driver.deviceId == access.getDeviceId();
+              } else {
+                matched = driver.classId == access.getClass() &&
+                          driver.subclass == access.getSubclass();
+              }
+              if (matched) {
+                appendAndLoad(driver.get(access));
+                break;
+              }
+            }
+            if (!matched) {
+              unknownDeviceCount++;
+            }
           }
           if (function == 0 && (headerType & 0x80) == 0) {
             break;
