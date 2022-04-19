@@ -25,20 +25,20 @@ struct TableDriver {
 static TableDriver tableDrivers[] = {};
 
 void AcpiDeviceTree::load() {
-    kout::print("Scanning ACPI tables\n");
-    unsigned unusedTableCount = 0;
+  kout::print("Scanning ACPI tables\n");
+  unsigned unusedTableCount = 0;
   for (size_t i = 0; i < tables->childCount(); i++) {
     acpi::TableManager *table = (*tables)[i];
     bool used = false;
     for (auto &tableDriver : tableDrivers) {
       if (tableDriver.type == table->type) {
-          used = true;
+        used = true;
         appendAndLoad(tableDriver.get(table));
         break;
       }
     }
     if (!used) {
-        unusedTableCount++;
+      unusedTableCount++;
     }
   }
   kout::printf("%d unused ACPI tables\n", unusedTableCount);
