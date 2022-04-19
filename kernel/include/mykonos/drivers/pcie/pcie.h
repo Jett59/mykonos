@@ -34,6 +34,7 @@ struct PcieDeviceHeader {
   uint8_t latencyTimer;
   uint8_t headerType;
   uint8_t selfTest;
+  uint32_t bar0;
   uint32_t bar1;
   uint32_t bar2;
   uint32_t bar3;
