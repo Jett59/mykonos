@@ -20,6 +20,8 @@
 namespace drivers {
 enum class DeviceType { ACPI };
 
+void loadRootDevice();
+
 class DeviceTree {
 public:
   class Iterator {
@@ -71,7 +73,11 @@ private:
   DeviceTree *lastChild = nullptr;
 
   DeviceTree *next = nullptr;
+
+  friend void loadRootDevice();
 };
+
+void setRootDevice(DeviceTree *device);
 } // namespace drivers
 
 #endif

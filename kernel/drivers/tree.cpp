@@ -32,4 +32,9 @@ void DeviceTree::appendAndLoad(DeviceTree *child) {
       },
       (void *)child);
 }
+
+static DeviceTree *rootDevice;
+
+void setRootDevice(DeviceTree *device) { rootDevice = device; }
+void loadRootDevice() { rootDevice->load(); }
 } // namespace drivers
