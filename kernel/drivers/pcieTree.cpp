@@ -30,15 +30,21 @@ void PcieDeviceTree::load() {
   unsigned unknownDeviceCount = 0;
   for (size_t i = 0; i < mcfg->entryCount(); i++) {
     auto mcfgEntry = mcfg->getEntry(i);
-    size_t busCount = mcfgEntry.lastBusNumber - mcfgEntry.firstBusNumber + 1;
-    for (size_t bus = 0; bus < busCount; bus++) {
+    for (size_t bus = mcfgEntry.firstBusNumber; bus <= mcfgEntry.lastBusNumber;
+         bus++) {
       for (size_t device = 0; device < 32; device++) {
-        auto access = PCIE_DEVICE(mcfgEntry.address, bus, device, 0);
-        if (access.getVendorId() != 0xffff) {
-          kout::printf("Vendor: %x, device: %x, class: %x, subclass: %x\n",
-                       access.getVendorId(), access.getDeviceId(),
-                       access.getClass(), access.getSubclass());
-          unknownDeviceCount++;
+        for (size_t function = 0; function < 8; function++) {
+          auto access = PCIE_DEVICE(mcfgEntry.address, bus, device, function);
+          unsigned headerType = access.getHeaderType();
+          if ((headerType & 0x7f) == 0 && access.getVendorId() != 0xffff) {
+            kout::printf("Vendor: %x, device: %x, class: %x, subclass: %x\n",
+                         access.getVendorId(), access.getDeviceId(),
+                         access.getClass(), access.getSubclass());
+            unknownDeviceCount++;
+          }
+          if (function == 0 && (headerType & 0x80) == 0) {
+            break;
+          }
         }
       }
     }

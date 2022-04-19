@@ -58,6 +58,8 @@ public:
   uint8_t getSubclass() { return mmio::read(&devicePointer->subclass); }
   uint8_t getClass() { return mmio::read(&devicePointer->classId); }
 
+  uint8_t getHeaderType() { return mmio::read(&devicePointer->headerType); }
+
 private:
   const PcieDeviceHeader *devicePointer;
 };
