@@ -55,7 +55,7 @@ void PcieDeviceTree::load() {
                          access.getClass(), access.getSubclass());
             bool matched = false;
             for (auto &driver : pcieDrivers) {
-              if (driver.vendorId == 0xffff) {
+              if (driver.vendorId != 0xffff) {
                 matched = driver.vendorId == access.getVendorId() &&
                           driver.deviceId == access.getDeviceId();
               } else {
