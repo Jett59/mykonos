@@ -48,7 +48,11 @@ public:
   };
 
   DeviceTree(DeviceType type) : type(type) {}
-  virtual ~DeviceTree() {}
+  virtual ~DeviceTree() {
+    for (auto &child : *this) {
+      delete &child;
+    }
+  }
 
   DeviceType getType() { return type; }
 
