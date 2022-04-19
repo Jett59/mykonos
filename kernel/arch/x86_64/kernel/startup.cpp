@@ -23,6 +23,8 @@
 #include <mykonos/apicTimer.h>
 #include <mykonos/cleaner.h>
 #include <mykonos/cpuidCheck.h>
+#include <mykonos/drivers/acpiTree.h>
+#include <mykonos/drivers/tree.h>
 #include <mykonos/frameBuffer.h>
 #include <mykonos/hpet.h>
 #include <mykonos/interrupts.h>
@@ -160,6 +162,8 @@ extern "C" [[noreturn]] void kstart() {
     cpu::enableLocalIrqs();
     // Set up the APIC timer
     apic::setUpTimer(localApicTickSetting);
+    // Prepare the device tree
+    drivers::setRootDevice(new drivers::AcpiDeviceTree(rsdt));
     kRun();
   } else {
     // The tests failed! Abort
@@ -200,7 +204,7 @@ extern "C" [[noreturn]] void kstartApCpu(uint8_t cpuNumber) {
 static volatile unsigned numCpusWithInitialTasks = 0;
 static volatile unsigned numCpusDone = 0;
 
-static lock::Mutex completedMutex;
+static bool hardwareInitLock = 0;
 
 [[noreturn]] void kRun() {
   __atomic_add_fetch(&numCpusWithInitialTasks, 1, __ATOMIC_SEQ_CST);
@@ -225,8 +229,10 @@ static lock::Mutex completedMutex;
   while (numCpusDone < numCpus) {
     cpu::relax();
   }
-  completedMutex.acquire();
-  kout::printf("All CPUS done %d\n", cpu::getCpuNumber());
-  completedMutex.release();
+  // Race for the chance to begin hardware initialization
+  if (__sync_bool_compare_and_swap(&hardwareInitLock, 0, 1)) {
+    kout::print("Starting hardware initialization\n");
+    drivers::loadRootDevice();
+  }
   thread::destroy();
 }

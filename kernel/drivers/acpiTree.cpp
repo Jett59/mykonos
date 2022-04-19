@@ -14,27 +14,33 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
-#include <mykonos/drivers/tree.h>
-#include <mykonos/thread.h>
+#include <mykonos/drivers/acpiTree.h>
+#include <mykonos/kout.h>
 
 namespace drivers {
-void DeviceTree::appendAndLoad(DeviceTree *child) {
-  if (firstChild == nullptr) {
-    firstChild = lastChild = child;
-  } else {
-    lastChild->next = child;
-    lastChild = child;
+struct TableDriver {
+  acpi::TableType type;
+  DeviceTree *(*get)(acpi::TableManager *);
+};
+static TableDriver tableDrivers[] = {};
+
+void AcpiDeviceTree::load() {
+  kout::print("Scanning ACPI tables\n");
+  unsigned unusedTableCount = 0;
+  for (size_t i = 0; i < tables->childCount(); i++) {
+    acpi::TableManager *table = (*tables)[i];
+    bool used = false;
+    for (auto &tableDriver : tableDrivers) {
+      if (tableDriver.type == table->type) {
+        used = true;
+        appendAndLoad(tableDriver.get(table));
+        break;
+      }
+    }
+    if (!used) {
+      unusedTableCount++;
+    }
   }
-  thread::create(
-      [](void *childPointer) {
-        ((DeviceTree *)childPointer)->load();
-        thread::destroy();
-      },
-      (void *)child);
+  kout::printf("%d unused ACPI tables\n", unusedTableCount);
 }
-
-static DeviceTree *rootDevice;
-
-void setRootDevice(DeviceTree *device) { rootDevice = device; }
-void loadRootDevice() { rootDevice->load(); }
 } // namespace drivers

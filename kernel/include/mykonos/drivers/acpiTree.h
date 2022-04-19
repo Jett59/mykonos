@@ -14,27 +14,24 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+#ifndef _MYKONOS_DRIVERS_ACPI_TREE_H
+#define _MYKONOS_DRIVERS_ACPI_TREE_H
+
+#include <mykonos/acpi/rsdt.h>
 #include <mykonos/drivers/tree.h>
-#include <mykonos/thread.h>
 
 namespace drivers {
-void DeviceTree::appendAndLoad(DeviceTree *child) {
-  if (firstChild == nullptr) {
-    firstChild = lastChild = child;
-  } else {
-    lastChild->next = child;
-    lastChild = child;
-  }
-  thread::create(
-      [](void *childPointer) {
-        ((DeviceTree *)childPointer)->load();
-        thread::destroy();
-      },
-      (void *)child);
-}
+class AcpiDeviceTree : public DeviceTree {
+public:
+  AcpiDeviceTree(acpi::RsdtTableManager *tables)
+      : DeviceTree(DeviceType::ACPI), tables(tables) {}
 
-static DeviceTree *rootDevice;
+protected:
+  virtual void load();
 
-void setRootDevice(DeviceTree *device) { rootDevice = device; }
-void loadRootDevice() { rootDevice->load(); }
+private:
+  acpi::RsdtTableManager *tables;
+};
 } // namespace drivers
+
+#endif

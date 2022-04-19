@@ -1,2 +1,2 @@
-STEPS+=drivers/tree.o
+STEPS+=drivers/tree.o drivers/acpiTree.o
 STEPS+=drivers/hpet/hpet.o
