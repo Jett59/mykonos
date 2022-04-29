@@ -32,7 +32,7 @@ struct XhciRegisters {
 class XhciRegisterAccess {
 public:
   XhciRegisterAccess(XhciRegisters *registers) : registers(registers) {}
-  
+
   uint8_t getCapabilityLength() {
     return mmio::read(&registers->capabilityLength);
   }
