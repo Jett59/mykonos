@@ -17,8 +17,6 @@
 #ifndef _MYKONOS_DRIVERS_USB_XHCI_XHCI_DRIVER_H
 #define _MYKONOS_DRIVERS_USB_XHCI_XHCI_DRIVER_H
 
-#include <mykonos/
-
 #include <mykonos/drivers/tree.h>
 #include <mykonos/drivers/usb/xhci/xhciRegisters.h>
 
@@ -26,7 +24,8 @@ namespace drivers {
 namespace xhci {
 class XhciDriver : public DeviceTree {
 public:
-  XhciDriver(XhciRegisterAccess registers) : registers(registers) {}
+  XhciDriver(XhciRegisterAccess registers)
+      : DeviceTree(DeviceType::XHCI), registers(registers) {}
 
   void load();
 

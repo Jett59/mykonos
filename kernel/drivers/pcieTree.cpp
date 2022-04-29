@@ -16,6 +16,7 @@
 */
 #include <mykonos/drivers/pcie/pcie.h>
 #include <mykonos/drivers/pcieTree.h>
+#include <mykonos/drivers/usb/xhci/xhciDriver.h>
 #include <mykonos/kout.h>
 
 #define PCIE_DEVICE(BASE, BUS, DEVICE, FUNCTION)                               \
@@ -37,7 +38,13 @@ struct PcieDriver {
   DeviceTree *(*get)(PcieDeviceAccess);
 };
 
-static PcieDriver pcieDrivers[] = {};
+static DeviceTree *loadXhciDriver(PcieDeviceAccess access) {
+  return new xhci::XhciDriver(
+      xhci::XhciRegisterAccess((xhci::XhciRegisters *)access.mapBar(0)));
+}
+
+static PcieDriver pcieDrivers[] = {
+    {0xffff, 0xffff, 0x0c, 0x03, 0x30, loadXhciDriver}};
 
 void PcieDeviceTree::load() {
   kout::print("Scanning PCIE configuration\n");
