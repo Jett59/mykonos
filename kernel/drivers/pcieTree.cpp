@@ -16,6 +16,7 @@
 */
 #include <mykonos/drivers/pcie/pcie.h>
 #include <mykonos/drivers/pcieTree.h>
+#include <mykonos/drivers/usb/xhci/xhciDriver.h>
 #include <mykonos/kout.h>
 
 #define PCIE_DEVICE(BASE, BUS, DEVICE, FUNCTION)                               \
@@ -32,11 +33,18 @@ struct PcieDriver {
   // Used if vendorId == 0xffff
   uint8_t classId;
   uint8_t subclass;
+  uint8_t registerInterface; // Used if != 0xff
 
   DeviceTree *(*get)(PcieDeviceAccess);
 };
 
-static PcieDriver pcieDrivers[] = {};
+static DeviceTree *loadXhciDriver(PcieDeviceAccess access) {
+  return new xhci::XhciDriver(
+      xhci::XhciRegisterAccess((xhci::XhciRegisters *)access.mapBar(0)));
+}
+
+static PcieDriver pcieDrivers[] = {
+    {0xffff, 0xffff, 0x0c, 0x03, 0x30, loadXhciDriver}};
 
 void PcieDeviceTree::load() {
   kout::print("Scanning PCIE configuration\n");
@@ -59,8 +67,11 @@ void PcieDeviceTree::load() {
                 matched = driver.vendorId == access.getVendorId() &&
                           driver.deviceId == access.getDeviceId();
               } else {
-                matched = driver.classId == access.getClass() &&
-                          driver.subclass == access.getSubclass();
+                matched =
+                    driver.classId == access.getClass() &&
+                    driver.subclass == access.getSubclass() &&
+                    (driver.registerInterface == 0xff ||
+                     driver.registerInterface == access.getRegisterInterface());
               }
               if (matched) {
                 appendAndLoad(driver.get(access));

@@ -34,12 +34,7 @@ struct PcieDeviceHeader {
   uint8_t latencyTimer;
   uint8_t headerType;
   uint8_t selfTest;
-  uint32_t bar0;
-  uint32_t bar1;
-  uint32_t bar2;
-  uint32_t bar3;
-  uint32_t bar4;
-  uint32_t bar5;
+  uint32_t bars[6];
 };
 class PcieDeviceAccess {
 public:
@@ -61,8 +56,17 @@ public:
 
   uint8_t getHeaderType() { return mmio::read(&devicePointer->headerType); }
 
+  void *mapBar(unsigned number);
+
 private:
-  const PcieDeviceHeader *devicePointer;
+  uint32_t readBar(unsigned number) {
+    return mmio::read(&devicePointer->bars[number]);
+  }
+  void writeBar(unsigned number, uint32_t value) {
+    mmio::write(&devicePointer->bars[number], value);
+  }
+
+  PcieDeviceHeader *devicePointer;
 };
 } // namespace drivers
 

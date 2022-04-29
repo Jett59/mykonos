@@ -1,2 +1,4 @@
 STEPS+=drivers/tree.o drivers/acpiTree.o drivers/pcieTree.o
+STEPS+=drivers/pcie/pcieBars.o
+STEPS+=drivers/usb/xhci/xhciDriver.o
 STEPS+=drivers/hpet/hpet.o
