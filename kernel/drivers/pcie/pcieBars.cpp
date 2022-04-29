@@ -36,10 +36,10 @@ void *PcieDeviceAccess::mapBar(unsigned number) {
     kout::print("BAR not present in memory\n");
     return nullptr;
   }
-  bar &= 0xfffffff0;
   if (number < 5 && PCIE_BAR_TYPE(bar) == PCIE_BAR_64) {
     bar |= (uint64_t)readBar(number + 1) << 32;
   }
+  bar &= ~(uint64_t)0xf;
   // Setting the BAR to ffffffff lets us find the number of bits we can change
   // which tells us the size of the mapped region
   writeBar(number, 0xffffffff);
