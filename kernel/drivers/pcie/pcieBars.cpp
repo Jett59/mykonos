@@ -32,7 +32,7 @@ void *PcieDeviceAccess::mapBar(unsigned number) {
     return nullptr;
   }
   uint64_t bar = readBar(number);
-  if ((bar & PCIE_BAR_MEMORY) == 0) {
+  if ((bar & PCIE_BAR_MEMORY) != 0) {
     kout::print("BAR not present in memory\n");
     return nullptr;
   }
