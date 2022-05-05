@@ -51,11 +51,22 @@ public:
   Iterator end() const { return cString + length; }
 
   String subString(size_t begin, size_t end) const {
-    return String(cString + begin, begin - end);
+    if (begin > length || begin > end) {
+      return String(nullptr, 0);
+    } else {
+      if (end > length) {
+        end = length;
+      }
+      return String(cString + begin, end - begin);
+    }
   }
+  String subString(size_t begin) const { return subString(begin, length); }
 
   String findNext(char c) {
-    const char *match = strchr(cString, c);
+    if (length == 0) {
+      return String(nullptr, 0);
+    }
+    const char *match = strchr(cString + 1, c);
     if (match == nullptr) {
       return String(nullptr, 0);
     } else if (match >= end()) {

@@ -70,7 +70,7 @@ void scrollDown() {
   lastLine[0] = 0;
 }
 
-void print(const char *str, int len, bool skipLocking) {
+void print(String str, bool skipLocking) {
   if (!skipLocking) {
     consoleLock.acquire();
   }
@@ -88,7 +88,7 @@ void print(const char *str, int len, bool skipLocking) {
   }
   unsigned x = column * fontWidth;
   unsigned y = line * fontHeight;
-  for (int i = 0; i < len; i++) {
+  while (str.len() > 0) {
     if (column >= columns || *str == '\n') {
       column = x = 0;
       if (line < lines - 1) {
@@ -100,14 +100,14 @@ void print(const char *str, int len, bool skipLocking) {
         y = line * fontHeight;
       }
       if (*str == '\n') {
-        str++;
+        str = str.subString(1);
         continue;
       }
     }
     display::writeCharacter(x, y, *str);
     SCREEN_BUFFER_CHARACTER(column, line) = *str;
     SCREEN_BUFFER_CHARACTER(column + 1, line) = 0;
-    str++;
+    str = str.subString(1);
     x += fontWidth;
     column++;
   }
@@ -132,7 +132,7 @@ void print(unsigned long value, unsigned long base, bool skipLocking) {
     buffer[i] = buffer[end - i];
     buffer[end - i] = temp;
   }
-  print(buffer, strlen(buffer), skipLocking);
+  print(buffer, skipLocking);
 }
 
 void acquireConsoleLock() { consoleLock.acquire(); }

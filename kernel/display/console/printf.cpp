@@ -25,9 +25,9 @@ void printf(String format, ...) {
   va_list args;
   va_start(args, format);
   acquireConsoleLock();
-  while (*format != 0) {
+  while (format.len() > 0) {
     if (*format == '%') {
-      format = format.subString(1, format.len());
+      format = format.subString(1);
       switch (*format) {
       case 'n': {
         break;
@@ -75,12 +75,12 @@ void printf(String format, ...) {
       default:
         print("<unknown type specifier>", true);
       }
-      format = format.subString(1, format.len());
+      format = format.subString(1);
     } else {
       String nextSpecifier = format.findNext('%');
       size_t len;
       if (nextSpecifier != nullptr) {
-        len = nextSpecifier.len() - format.len();
+        len = format.len() - nextSpecifier.len();
       } else {
         len = format.len();
       }

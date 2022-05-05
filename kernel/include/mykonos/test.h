@@ -17,8 +17,10 @@
 #ifndef _MYKONOS_TEST_H
 #define _MYKONOS_TEST_H
 
+#include <mykonos/string.h>
+
 namespace test {
-typedef void (*Logger)(const char *);
+typedef void (*Logger)(String);
 typedef bool (*TestFunction)(Logger);
 
 bool runTests(Logger logger);
