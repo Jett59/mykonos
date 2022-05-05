@@ -21,8 +21,8 @@
 
 namespace kout {
 // Don't skip locking unless you are printf.
-void print(const char *str, int len, bool skipLocking = false);
-static inline void print(const char *str) { print(str, strlen(str)); }
+void print(String str, bool skipLocking = false);
+
 void print(unsigned long value, unsigned long base = 10,
            bool skipLocking = false);
 
@@ -30,7 +30,7 @@ void print(unsigned long value, unsigned long base = 10,
 void acquireConsoleLock();
 void releaseConsoleLock();
 
-void printf(const char *format, ...);
+void printf(String format, ...);
 } // namespace kout
 
 #endif

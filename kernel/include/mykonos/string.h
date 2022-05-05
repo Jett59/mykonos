@@ -54,9 +54,25 @@ public:
     return String(cString + begin, begin - end);
   }
 
+  String findNext(char c) {
+    const char *match = strchr(cString, c);
+    if (match == nullptr) {
+      return String(nullptr, 0);
+    } else if (match >= end()) {
+      return String(nullptr, 0);
+    } else {
+      return String(match, end() - match);
+    }
+  }
+
+  bool operator==(nullptr_t) { return cString == nullptr; }
+  bool operator!=(nullptr_t) { return cString != nullptr; }
+
 private:
   const char *cString;
   size_t length;
 };
+
+static inline String operator"" _s(const char *str) { return String(str); }
 
 #endif

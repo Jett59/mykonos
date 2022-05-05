@@ -37,5 +37,5 @@ extern "C" char *strchr(const char *str, int c) {
       return (char *)str + i;
     }
   }
-  return 0;
+  return nullptr;
 }
