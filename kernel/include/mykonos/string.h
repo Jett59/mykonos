@@ -40,7 +40,7 @@ public:
 
   size_t len() const { return length; }
 
-  char operator*() const { return *cString; }
+  char operator*() const { return (*this)[0]; }
   char operator[](size_t index) const {
     return index < length ? cString[index] : 0;
   }
@@ -78,6 +78,17 @@ public:
 
   bool operator==(nullptr_t) { return cString == nullptr; }
   bool operator!=(nullptr_t) { return cString != nullptr; }
+
+  bool operator==(const String &other) {
+    if (other.length != length) {
+      return false;
+    } else if (length == 0) {
+      return true;
+    } else {
+      return memeq((const void *)cString, (const void *)other.cString, length);
+    }
+  }
+  bool operator!=(const String &other) { return !(*this == other); }
 
 private:
   const char *cString;
