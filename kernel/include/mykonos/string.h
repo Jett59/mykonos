@@ -32,4 +32,31 @@ static inline bool memeq(const void *a, const void *b, size_t n) {
   return memcmp(a, b, n) == 0;
 }
 
+class String {
+public:
+  String(const char *cString) : cString(cString), length(strlen(cString)) {}
+  String(const char *cString, size_t length)
+      : cString(cString), length(length) {}
+
+  size_t len() const { return length; }
+
+  char operator*() const { return *cString; }
+  char operator[](size_t index) const {
+    return index < length ? cString[index] : 0;
+  }
+
+  using Iterator = const char *;
+
+  Iterator begin() const { return cString; }
+  Iterator end() const { return cString + length; }
+
+  String subString(size_t begin, size_t end) const {
+    return String(cString + begin, begin - end);
+  }
+
+private:
+  const char *cString;
+  size_t length;
+};
+
 #endif
