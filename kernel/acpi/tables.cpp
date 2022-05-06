@@ -64,10 +64,10 @@ static bool doChecksum(TableHeader *header) {
 }
 
 TableManager *loadTable(void *physicalAddress) {
-  kout::print("Loading ACPI table: ");
   TableHeader *header = (TableHeader *)memory::mapAddress(
       physicalAddress, sizeof(TableHeader), true);
-  kout::print(header->signature, 4);
+  kout::print("Loading ACPI table: ");
+  kout::print(String(header->signature, 4));
   kout::print("\n");
   size_t tableSize = header->length;
   if (tableSize < sizeof(TableHeader)) {

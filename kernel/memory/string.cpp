@@ -16,6 +16,16 @@
     */
 #include <mykonos/string.h>
 
+extern "C" void *memchr(const void *ptr, int c, size_t n) {
+  const unsigned char *str = (const unsigned char *)ptr;
+  for (size_t i = 0; i < n; i++) {
+    if (str[i] == c) {
+      return (void *)(str + i);
+    }
+  }
+  return nullptr;
+}
+
 extern "C" int strlen(const char *str) {
   int i;
   for (i = 0; *str != 0; i++) {
@@ -37,5 +47,5 @@ extern "C" char *strchr(const char *str, int c) {
       return (char *)str + i;
     }
   }
-  return 0;
+  return nullptr;
 }

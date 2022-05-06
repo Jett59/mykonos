@@ -21,24 +21,24 @@
 #include <mykonos/string.h>
 
 namespace kout {
-void printf(const char *format, ...) {
+void printf(String format, ...) {
   va_list args;
   va_start(args, format);
   acquireConsoleLock();
-  while (*format != 0) {
+  while (format.len() > 0) {
     if (*format == '%') {
-      format++;
+      format = format.subString(1);
       switch (*format) {
       case 'n': {
         break;
       }
       case '%': {
-        print("%", 1, true);
+        print("%", true);
         break;
       }
       case 'c': {
         char c = (char)va_arg(args, int);
-        print(&c, 1, true);
+        print(String(&c, 1), true);
         break;
       }
       case 'd': {
@@ -58,13 +58,13 @@ void printf(const char *format, ...) {
       }
       case 'p': {
         void *ptr = va_arg(args, void *);
-        print("0x", strlen("0x"), true);
+        print("0x", true);
         print((unsigned long)ptr, 16, true);
         break;
       }
       case 's': {
         const char *str = va_arg(args, const char *);
-        print(str, strlen(str), true);
+        print(str, true);
         break;
       }
       case 'x': {
@@ -73,20 +73,12 @@ void printf(const char *format, ...) {
         break;
       }
       default:
-        print("<unknown type specifier>", strlen("<unknown type specifier>"),
-              true);
+        print("<unknown type specifier>", true);
       }
-      format++;
+      format = format.subString(1);
     } else {
-      const char *nextSpecifier = strchr(format, '%');
-      int len;
-      if (nextSpecifier != nullptr) {
-        len = nextSpecifier - format;
-      } else {
-        len = strlen(format);
-      }
-      print(format, len, true);
-      format += len;
+      print(format.findBefore('%'), true);
+      format = format.findNext('%');
     }
   }
   releaseConsoleLock();
