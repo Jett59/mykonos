@@ -77,15 +77,8 @@ void printf(String format, ...) {
       }
       format = format.subString(1);
     } else {
-      String nextSpecifier = format.findNext('%');
-      size_t len;
-      if (nextSpecifier != nullptr) {
-        len = format.len() - nextSpecifier.len();
-      } else {
-        len = format.len();
-      }
-      print(format.subString(0, len), true);
-      format = format.subString(len, format.len());
+      print(format.findBefore('%'), true);
+      format = format.findNext('%');
     }
   }
   releaseConsoleLock();
