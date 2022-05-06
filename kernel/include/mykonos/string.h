@@ -23,6 +23,7 @@ extern "C" {
 void *memset(void *str, int c, size_t size);
 void *memcpy(void *dst, const void *src, size_t size);
 int memcmp(const void *a, const void *b, size_t n);
+void *memchr(const void *str, int c, size_t n);
 int strlen(const char *str);
 char *strcpy(char *dst, const char *src);
 char *strchr(const char *str, int c);
@@ -34,6 +35,7 @@ static inline bool memeq(const void *a, const void *b, size_t n) {
 
 class String {
 public:
+  String() : cString(nullptr), length(0) {}
   String(const char *cString) : cString(cString), length(strlen(cString)) {}
   String(const char *cString, size_t length)
       : cString(cString), length(length) {}
@@ -52,7 +54,7 @@ public:
 
   String subString(size_t begin, size_t end) const {
     if (begin > length || begin > end) {
-      return String(nullptr, 0);
+      return {};
     } else {
       if (end > length) {
         end = length;
@@ -62,24 +64,26 @@ public:
   }
   String subString(size_t begin) const { return subString(begin, length); }
 
-  String findNext(char c) {
+  String findBefore(char delimiter) const {
+    return subString(0, length - findNext(delimiter).length);
+  }
+
+  String findNext(char c) const {
     if (length == 0) {
-      return String(nullptr, 0);
+      return {};
     }
-    const char *match = strchr(cString + 1, c);
+    const char *match = (const char *)memchr(cString + 1, c, length);
     if (match == nullptr) {
-      return String(nullptr, 0);
-    } else if (match >= end()) {
-      return String(nullptr, 0);
+      return {};
     } else {
       return String(match, end() - match);
     }
   }
 
-  bool operator==(nullptr_t) { return cString == nullptr; }
-  bool operator!=(nullptr_t) { return cString != nullptr; }
+  bool operator==(nullptr_t) const { return cString == nullptr; }
+  bool operator!=(nullptr_t) const { return cString != nullptr; }
 
-  bool operator==(const String &other) {
+  bool operator==(const String &other) const {
     if (other.length != length) {
       return false;
     } else if (length == 0) {
@@ -88,7 +92,7 @@ public:
       return memeq((const void *)cString, (const void *)other.cString, length);
     }
   }
-  bool operator!=(const String &other) { return !(*this == other); }
+  bool operator!=(const String &other) const { return !(*this == other); }
 
 private:
   const char *cString;
