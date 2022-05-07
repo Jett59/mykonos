@@ -25,7 +25,9 @@ public:
   RangedIterator(T *begin, T *end, T *pointer)
       : begin(begin), end(end), pointer(pointer) {}
 
-  T &operator[](size_t index) const {
+  using DiffType = ptrdiff_t;
+
+  T &operator[](DiffType index) const {
     return pointer + index < end && pointer + index >= begin ? pointer[index]
                                                              : T{};
   }
@@ -40,7 +42,7 @@ public:
     pointer++;
     return *this;
   }
-  RangedIterator<T> operator+(size_t offset) const {
+  RangedIterator<T> operator+(DiffType offset) const {
     return {begin, end, pointer + offset};
   }
   RangedIterator<T> operator--(int) {
@@ -52,11 +54,11 @@ public:
     pointer--;
     return *this;
   }
-  RangedIterator<T> operator-(size_t offset) const {
+  RangedIterator<T> operator-(DiffType offset) const {
     return {begin, end, pointer - offset};
   }
 
-  size_t operator-(const RangedIterator<T> &other) const {
+  DiffType operator-(const RangedIterator<T> &other) const {
     if (other.begin == begin && other.end == end) {
       return pointer - other.pointer;
     } else {
