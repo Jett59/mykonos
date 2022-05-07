@@ -233,6 +233,7 @@ static bool hardwareInitLock = 0;
   if (__sync_bool_compare_and_swap(&hardwareInitLock, 0, 1)) {
     kout::print("Starting hardware initialization\n");
     drivers::loadRootDevice();
+    kout::print("Finished hardware initialization\n");
   }
   thread::destroy();
 }
