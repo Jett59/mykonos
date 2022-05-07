@@ -17,6 +17,7 @@
 #ifndef _MYKONOS_STRING_H
 #define _MYKONOS_STRING_H
 
+#include <mykonos/iterator.h>
 #include <stddef.h>
 
 extern "C" {
@@ -47,10 +48,10 @@ public:
     return index < length ? cString[index] : 0;
   }
 
-  using Iterator = const char *;
+  using Iterator = util::RangedIterator<const char>;
 
-  Iterator begin() const { return cString; }
-  Iterator end() const { return cString + length; }
+  Iterator begin() const { return {cString, cString + length, cString}; }
+  Iterator end() const { return {cString, cString + length, cString + length}; }
 
   String subString(size_t begin, size_t end) const {
     if (begin > length || begin > end) {
@@ -76,7 +77,7 @@ public:
     if (match == nullptr) {
       return {};
     } else {
-      return String(match, end() - match);
+      return String(match, cString + length - match);
     }
   }
 
