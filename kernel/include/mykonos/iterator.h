@@ -27,7 +27,7 @@ public:
 
   T &operator[](size_t index) const {
     return pointer + index < end && pointer + index >= begin ? pointer[index]
-                                                             : {};
+                                                             : T{};
   }
   T &operator*() { return (*this)[0]; }
 
