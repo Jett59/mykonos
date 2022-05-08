@@ -17,6 +17,8 @@
 #ifndef _MYKONOS_DRIVERS_TREE_H
 #define _MYKONOS_DRIVERS_TREE_H
 
+#include <mykonos/async/completion.h>
+
 namespace drivers {
 enum class DeviceType { ACPI, PCIE, XHCI };
 
@@ -68,11 +70,14 @@ protected:
 
 private:
   const DeviceType type;
+  async::Completion initializationCompletion;
 
   DeviceTree *firstChild = nullptr;
   DeviceTree *lastChild = nullptr;
 
   DeviceTree *next = nullptr;
+
+  void loadAndWait();
 
   friend void loadRootDevice();
 };

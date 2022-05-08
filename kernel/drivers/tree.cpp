@@ -27,14 +27,23 @@ void DeviceTree::appendAndLoad(DeviceTree *child) {
   }
   thread::create(
       [](void *childPointer) {
-        ((DeviceTree *)childPointer)->load();
+        auto child = (DeviceTree *)childPointer;
+        child->loadAndWait();
         thread::destroy();
       },
       (void *)child);
 }
 
+void DeviceTree::loadAndWait() {
+  load();
+  for (auto &child : *this) {
+    child.initializationCompletion.await();
+  }
+  initializationCompletion.signalComplete();
+}
+
 static DeviceTree *rootDevice;
 
 void setRootDevice(DeviceTree *device) { rootDevice = device; }
-void loadRootDevice() { rootDevice->load(); }
+void loadRootDevice() { rootDevice->loadAndWait(); }
 } // namespace drivers
