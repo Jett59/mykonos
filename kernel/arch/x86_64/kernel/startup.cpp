@@ -129,8 +129,10 @@ extern "C" [[noreturn]] void kstart() {
           memory::mapAddress((void *)0x8000, 0x1000, false);
       size_t smpTrampolineSize =
           (size_t)&smpTrampolineEnd - (size_t)&smpTrampolineStart;
+      uint8_t previousTrampolineContents[smpTrampolineSize];
+      memcpy(previousTrampolineContents, smpTrampolineDestination,
+             smpTrampolineSize);
       memcpy(smpTrampolineDestination, &smpTrampolineStart, smpTrampolineSize);
-      memory::unmapMemory(smpTrampolineDestination, 0x1000);
       smp::allocateStacks(madt->localApicCount());
       kout::print("Beginning SMP initialization\n");
       uint8_t myApicId = apic::localApic.getApicId();
@@ -151,6 +153,11 @@ extern "C" [[noreturn]] void kstart() {
           apic::localApicIds[0] = apicId;
         }
       }
+      memcpy(smpTrampolineDestination, previousTrampolineContents,
+             smpTrampolineSize);
+      // We can't unmap anything just now due to TLB shootdown
+      cleaner::addObject(smpTrampolineDestination,
+                         [](void *ptr) { memory::unmapMemory(ptr, 0x1000); });
     }
     // Store our CPU number (0 for BSP)
     cpu::setCpuNumber(0);
