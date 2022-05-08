@@ -155,7 +155,9 @@ extern "C" [[noreturn]] void kstart() {
       }
       memcpy(smpTrampolineDestination, previousTrampolineContents,
              smpTrampolineSize);
-      memory::unmapMemory(smpTrampolineDestination, 0x1000);
+      // We can't unmap anything just now due to TLB shootdown
+      cleaner::addObject(smpTrampolineDestination,
+                         [](void *ptr) { memory::unmapMemory(ptr, 0x1000); });
     }
     // Store our CPU number (0 for BSP)
     cpu::setCpuNumber(0);
