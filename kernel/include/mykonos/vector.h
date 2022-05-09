@@ -63,7 +63,7 @@ public:
 
   void push_back(T value) {
     size_t index = size;
-    if (index >= capacity - 1) {
+    if (index >= capacity) {
       resize(capacity * 2);
     }
     data[index] = move(value);
