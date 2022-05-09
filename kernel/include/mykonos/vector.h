@@ -22,9 +22,10 @@
 #include <stddef.h>
 
 namespace util {
+#define MINIMUM_VECTOR_SIZE 16
 template <typename T> class Vector {
 public:
-  Vector(size_t initialCapacity = 16)
+  Vector(size_t initialCapacity = MINIMUM_VECTOR_SIZE)
       : capacity(initialCapacity), data(new T[initialCapacity]) {}
 
   Vector(const Vector &) = delete;
@@ -72,8 +73,8 @@ public:
   T pop_back() {
     size_t index = --size;
     T result = move(data[index]);
-    if (size * 2 < capacity) {
-      resize(capacity / 2);
+    if (size * 2 <= capacity && size > MINIMUM_VECTOR_SIZE) {
+      resize(size);
     }
     return move(result);
   }
