@@ -22,7 +22,7 @@
 
 namespace util {
 template <typename T> class RangedIterator {
- public:
+public:
   RangedIterator(T *begin, T *end, T *pointer)
       : begin(begin), end(end), pointer(pointer) {}
 

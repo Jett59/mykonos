@@ -33,22 +33,21 @@ template <typename T> void move(T *dst, const T *src, size_t n) {
   }
 }
 
-template<typename T>
-class Accessor {
-    public:
-    Accessor(T *value = nullptr) : value(value) {}
+template <typename T> class Accessor {
+public:
+  Accessor(T *value = nullptr) : value(value) {}
 
-    operator T() { return value != nullptr ? *value : T{}; }
-    Accessor<T> &operator=(T newValue) {
-        if (value != nullptr) {
-          *value = newValue;
-        }
-        return *this;
+  operator T() { return value != nullptr ? *value : T{}; }
+  Accessor<T> &operator=(T newValue) {
+    if (value != nullptr) {
+      *value = newValue;
     }
+    return *this;
+  }
 
-    private:
-     T *value;
+private:
+  T *value;
 };
-}  // namespace util
+} // namespace util
 
 #endif
