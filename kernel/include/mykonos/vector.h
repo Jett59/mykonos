@@ -22,8 +22,9 @@
 
 namespace util {
 template <typename T> class Vector {
+public:
   Vector(size_t initialCapacity = 16)
-      : data(new T[initialCapacity]), capacity(initialCapacity) {}
+      : capacity(initialCapacity), data(new T[initialCapacity]) {}
 
   Vector(const Vector &) = delete;
   Vector &operator=(const Vector &) = delete;
@@ -52,7 +53,7 @@ template <typename T> class Vector {
     }
   }
 
-  T &operator[](size_t offset) const { return begin()[offset]; }
+  Accessor<T> operator[](size_t offset) const { return begin()[offset]; }
 
   using Iterator = RangedIterator<T>;
 

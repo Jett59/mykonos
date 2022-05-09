@@ -24,14 +24,30 @@ template <typename T> struct WithoutReference { using Type = T; };
 template <typename T> struct WithoutReference<T &> { using Type = T; };
 template <typename T> struct WithoutReference<T &&> { using Type = T; };
 
-template <typename T> WithoutReference<T> &&move(T &&value) {
-  return (WithoutReference<T> &&) value;
+template <typename T> typename WithoutReference<T>::Type &&move(T &&value) {
+  return (typename WithoutReference<T>::Type &&) value;
 }
 template <typename T> void move(T *dst, const T *src, size_t n) {
   for (size_t i = 0; i < n; i++) {
     dst[i] = move(src[i]);
   }
 }
-} // namespace util
+
+template<typename T>
+class Accessor {
+    public:
+    Accessor(T *value = nullptr) : value(value) {}
+
+    operator T() { return value != nullptr ? *value : T{}; }
+    Accessor<T> &operator=(T newValue) {
+        if (value != nullptr) {
+          *value = newValue;
+        }
+    }
+
+    private:
+     T *value;
+};
+}  // namespace util
 
 #endif

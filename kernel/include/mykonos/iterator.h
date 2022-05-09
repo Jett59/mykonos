@@ -17,19 +17,20 @@
 #ifndef _MYKONOS_ITERATOR_H
 #define _MYKONOS_ITERATOR_H
 
+#include <mykonos/util.h>
 #include <stddef.h>
 
 namespace util {
 template <typename T> class RangedIterator {
-public:
+ public:
   RangedIterator(T *begin, T *end, T *pointer)
       : begin(begin), end(end), pointer(pointer) {}
 
   using DiffType = ptrdiff_t;
 
-  T &operator[](DiffType index) const {
-    return pointer + index < end && pointer + index >= begin ? pointer[index]
-                                                             : T{};
+  Accessor<T> operator[](DiffType index) const {
+    return pointer + index < end && pointer + index >= begin ? pointer + index
+                                                             : nullptr;
   }
   T &operator*() { return (*this)[0]; }
 

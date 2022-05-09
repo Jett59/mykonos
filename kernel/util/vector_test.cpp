@@ -23,6 +23,32 @@ namespace util {
 namespace test {
 bool vectorTest(::test::Logger logger) {
   logger("VectorTest:\n");
+  Vector<int> vector;
+  vector.push_back(17);
+  vector.push_back(23);
+  if (vector.pop_back() != 23) {
+    logger("VectorTest: Failed on popping 23\n");
+    return false;
+  }
+  if (vector.pop_back() != 17) {
+    logger("VectorTest: Failed on popping 17\n");
+    return false;
+  }
+  vector.push_back(27);
+  vector.push_back(144);
+  vector.push_back(123);
+  if (vector[0] != 27) {
+    logger("VectorTest: Random access failed on 0\n");
+    return false;
+  }
+  if (vector[1] != 144) {
+    logger("VectorTest: Random access failed on 1\n");
+    return false;
+  }
+  if (vector[2] != 123) {
+    logger("VectorTest: Random access failed on 2\n");
+    return false;
+  }
   logger("VectorTest: Succeeded\n");
   return true;
 }
