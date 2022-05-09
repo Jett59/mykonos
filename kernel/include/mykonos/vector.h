@@ -15,6 +15,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 #ifndef _MYKONOS_VECTOR_H
+#define _MYKONOS_VECTOR_H
 
 #include <mykonos/iterator.h>
 #include <mykonos/util.h>
