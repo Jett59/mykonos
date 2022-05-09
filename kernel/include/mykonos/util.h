@@ -43,6 +43,7 @@ class Accessor {
         if (value != nullptr) {
           *value = newValue;
         }
+        return *this;
     }
 
     private:

@@ -49,6 +49,23 @@ bool vectorTest(::test::Logger logger) {
     logger("VectorTest: Random access failed on 2\n");
     return false;
   }
+  vector[1] = 1700;
+  if (vector[1] != 1700) {
+    logger("VectorTest: Random access assignment failed\n");
+    return false;
+  }
+  vector.pop_back();
+  vector.pop_back();
+  vector.pop_back();
+  for (int i = 0; i < 1000; i++) {
+    vector.push_back(i);
+  }
+  for (int i = 0; i < 1000; i++) {
+    if (vector[i] != i) {
+      logger("VectorTest: Random access failed during stress testing\n");
+      return false;
+    }
+  }
   logger("VectorTest: Succeeded\n");
   return true;
 }
