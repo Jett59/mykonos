@@ -43,7 +43,7 @@ OUTPUT:=arch/$(ARCH)/build/mykonos
 $(OUTPUT): $(STEPS)
 	mkdir -p $(shell dirname $(OUTPUT))
 	echo "$(LD) $@"
-	$(LD) $(LDFLAGS) $^ -o $@
+	$(LD) $(LDFLAGS) $(CXXFLAGS) $^ -o $@ -lgcc
 
 %.o: %.S
 	echo "$(AS) $@"

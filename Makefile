@@ -23,7 +23,7 @@ export CPPFLAGS:=
 export CXXFLAGS:=-std=gnu++17 -nostdlib -O2 -g -ffunction-sections -fdata-sections -Wall -Wextra
 export ASFLAGS:=
 
-export LDFLAGS:=-nostdlib -lgcc -Wl,--gc-sections
+export LDFLAGS:=-nostdlib -Wl,--gc-sections
 
 all: check-dependencies kernel
 
