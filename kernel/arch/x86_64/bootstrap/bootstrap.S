@@ -103,6 +103,7 @@ movl %eax, %ss
 /*Now set up the stack*/
 movabsq $initial_stack_top, %rsp
 /*We actually made it! Let's go to C++*/
+xorl %ebp, %ebp /*Call stack root*/
 pushq $0 /*Fake return address*/
 movabsq $kstart, %rax
 jmp * %rax
@@ -222,8 +223,11 @@ movw %dx, %ss
 movabsq $initialStackPointers, %rsi
 movq (%rsi, %rax,8), %rsp
 
+/*Set up a stack frame and go to c++*/
+xorl %ebp, %ebp
 movq %rax, %rdi
 movabsq $kstartApCpu, %rax
+pushq $0
 jmpq * %rax
 .globl smpTrampolineEnd
 smpTrampolineEnd:
