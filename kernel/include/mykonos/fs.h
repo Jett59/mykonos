@@ -41,7 +41,7 @@ public:
   // SIZE_MAX if child does not exist
   size_t findChild(String name);
 
-  // handle == nullptr if there was an error while openning
+  // == nullptr means the handle is closed
   bool operator==(nullptr_t) { return !open; }
   bool operator!=(nullptr_t) { return open; }
 
