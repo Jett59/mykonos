@@ -31,6 +31,7 @@ include acpi/Make.steps
 include drivers/Make.steps
 include scheduler/Make.steps
 include util/Make.steps
+include fs/Make.steps
 
 # Enable runtime tests if requested
 ifeq ($(TEST),ON)
