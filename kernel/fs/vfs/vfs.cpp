@@ -55,6 +55,18 @@ FileHandle::FileHandle(FileNode *node, bool writable)
   node->openCount++;
   node->lock.release();
 }
+
+FileType FileHandle::getType() {
+  if (open) {
+    node->lock.acquire();
+    FileType result = node->type;
+    node->lock.release();
+    return result;
+  } else {
+    return FileType::NONE;
+  }
+}
+
 void FileHandle::close() {
   if (open) {
     node->lock.acquire();
@@ -63,10 +75,14 @@ void FileHandle::close() {
     node = nullptr;
   }
 }
+
 String FileHandle::childName(size_t index) {
   if (open) {
     node->lock.acquire();
     if (node->type == FileType::DIRECTORY) {
+      if (!node->populated) {
+        node->fsProvider->populateDirectory(*node);
+      }
       if (index < node->children.getSize()) {
         String result = node->children[index]->name;
         node->lock.release();
@@ -81,6 +97,9 @@ FileHandle FileHandle::openChild(size_t index, bool writable) {
   if (open) {
     node->lock.acquire();
     if (node->type == FileType::DIRECTORY) {
+      if (!node->populated) {
+        node->fsProvider->populateDirectory(*node);
+      }
       if (index < node->children.getSize()) {
         auto result = FileHandle(node->children[index], writable);
         node->lock.release();
@@ -95,6 +114,9 @@ size_t FileHandle::findChild(String name) {
   if (open) {
     node->lock.acquire();
     if (node->type == FileType::DIRECTORY) {
+      if (!node->populated) {
+        node->fsProvider->populateDirectory(*node);
+      }
       for (size_t i = 0; i < node->children.getSize(); i++) {
         auto entry = node->children[i];
         if (entry->name == name) {
@@ -106,5 +128,30 @@ size_t FileHandle::findChild(String name) {
     node->lock.release();
   }
   return SIZE_MAX;
+}
+
+size_t FileHandle::read(size_t offset, size_t length, void *buffer) {
+  if (open) {
+    node->lock.acquire();
+    if (node->type == FileType::FILE) {
+      size_t result = node->fsProvider->read(*node, offset, length, buffer);
+      node->lock.release();
+      return result;
+    }
+    node->lock.release();
+  }
+  return 0;
+}
+size_t FileHandle::write(size_t offset, size_t length, void *buffer) {
+  if (open && writable) {
+    node->lock.acquire();
+    if (node->type == FileType::FILE) {
+      size_t result = node->fsProvider->write(*node, offset, length, buffer);
+      node->lock.release();
+      return result;
+    }
+    node->lock.release();
+  }
+  return 0;
 }
 } // namespace fs

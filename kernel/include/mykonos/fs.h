@@ -21,20 +21,22 @@
 #include <stddef.h>
 
 namespace fs {
-enum class FileType { FILE, DIRECTORY };
+enum class FileType { NONE, FILE, DIRECTORY };
 
 struct FileNode;
 
 class FileHandle {
 public:
   FileHandle(String path, bool writable);
-FileHandle();
+  FileHandle();
 
   FileType getType();
   void close();
   void remove();
+
   size_t read(size_t offset, size_t length, void *buffer);
   size_t write(size_t offset, size_t length, void *buffer);
+
   String childName(size_t index);
   FileHandle openChild(size_t index, bool writable);
   // SIZE_MAX if child does not exist
