@@ -28,7 +28,7 @@ FileHandle::FileHandle(String path, bool writable)
       path = path.subString(1);
     }
     String currentComponent = path.findBefore('/');
-    if (currentComponent == "") {
+    if (currentComponent.len() == 0) {
       break;
     }
     auto nextIndex = current.findChild(currentComponent);
