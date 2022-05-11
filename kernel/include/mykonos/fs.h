@@ -32,7 +32,6 @@ public:
 
   FileType getType();
   void close();
-  void remove();
 
   size_t read(size_t offset, size_t length, void *buffer);
   size_t write(size_t offset, size_t length, void *buffer);
