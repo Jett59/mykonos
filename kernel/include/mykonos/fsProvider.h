@@ -14,32 +14,39 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
-#ifndef _MYKONOS_FS_H
-#define _MYKONOS_FS_H
+#ifndef _MYKONOS_FS_PROVIDER_H
+#define _MYKONOS_FS_PROVIDER_H
 
+#include <mykonos/callback.h>
+#include <mykonos/fs.h>
+#include <mykonos/mutex.h>
 #include <mykonos/string.h>
+#include <mykonos/vector.h>
 #include <stddef.h>
 
 namespace fs {
-enum class FileType { FILE, DIRECTORY };
+class FsProvider;
 
-struct FileNode;
-
-class FileHandle {
+struct FileNode {
+  String name;
+  FileType type;
+  size_t openCount;
+  util::Vector<FileNode> children;
+  void *node; // Identifies the file (fs-specific)
+  lock::Mutex lock;
+  FsProvider *fsProvider;
+};
+class FsProvider {
 public:
-  FileHandle(String path);
-
-  FileType getType();
-  void close();
-  void remove();
-  size_t read(size_t offset, size_t length, void *buffer);
-  size_t write(size_t offset, size_t length, void *buffer);
-  String childName(size_t index);
-  FileHandle openChild(size_t index);
-  size_t findChild(String name);
-
- private:
-  FileNode *node;
+  virtual size_t read(FileNode &node, size_t offset, size_t length,
+                      void *buffer) {
+    return 0;
+  }
+  virtual size_t write(FileNode &node, size_t offset, size_t length,
+                       void *buffer) {
+    return 0;
+  }
+  virtual void populateDirectory(FileNode &directory) {}
 };
 } // namespace fs
 

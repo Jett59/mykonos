@@ -15,3 +15,8 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 #include <mykonos/fs.h>
+#include <mykonos/fsProvider.h>
+
+namespace fs {
+static FileNode root;
+} // namespace fs
