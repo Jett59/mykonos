@@ -27,7 +27,7 @@ struct FileNode;
 
 class FileHandle {
 public:
-  FileHandle(String path);
+  FileHandle(String path, bool writable);
 
   FileType getType();
   void close();
@@ -36,10 +36,19 @@ public:
   size_t write(size_t offset, size_t length, void *buffer);
   String childName(size_t index);
   FileHandle openChild(size_t index);
+  // SIZE_MAX if child does not exist
   size_t findChild(String name);
 
- private:
+  // handle == nullptr if there was an error while openning
+  bool operator==(nullptr_t) { return !open; }
+  bool operator!=(nullptr_t) { return open; }
+
+private:
   FileNode *node;
+  bool writable;
+  bool open;
+
+  FileHandle(FileNode *node, bool writable);
 };
 } // namespace fs
 

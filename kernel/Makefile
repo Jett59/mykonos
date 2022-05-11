@@ -13,7 +13,7 @@
     #You should have received a copy of the GNU General Public License
     #along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-CXXFLAGS+=-ffreestanding -fno-rtti -fno-exceptions -fno-asynchronous-unwind-tables
+CXXFLAGS+=-ffreestanding -fno-rtti -fno-exceptions -fno-asynchronous-unwind-tables -fno-use-cxa-atexit
 LDFLAGS+=-Wl,--nmagic -T arch/$(ARCH)/linker.ld
 
 CPPFLAGS+=-I arch/$(ARCH)/include -I include

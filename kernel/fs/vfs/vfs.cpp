@@ -19,4 +19,32 @@
 
 namespace fs {
 static FileNode root;
+
+FileHandle::FileHandle(String path, bool writable)
+    : node(nullptr), writable(writable) {
+  FileHandle current(&root, false);
+  while (path.len() > 0) {
+    while (*path == '/') {
+      path = path.subString(1);
+    }
+    String currentComponent = path.findBefore('/');
+    if (currentComponent == "") {
+      break;
+    }
+    auto nextIndex = current.findChild(currentComponent);
+    if (nextIndex == SIZE_MAX) {
+      current.close();
+      open = false;
+      return;
+    }
+    auto next = current.openChild(nextIndex);
+    current.close();
+    current = next;
+    path = path.findNext('/');
+  }
+  node = current.node;
+  current.close();
+  node->openCount++;
+  open = true;
+}
 } // namespace fs
