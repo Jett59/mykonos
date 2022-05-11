@@ -17,7 +17,6 @@
 #ifndef _MYKONOS_FS_PROVIDER_H
 #define _MYKONOS_FS_PROVIDER_H
 
-#include <mykonos/callback.h>
 #include <mykonos/fs.h>
 #include <mykonos/mutex.h>
 #include <mykonos/string.h>
