@@ -45,6 +45,7 @@ public:
     return *this;
   }
   operator T *() { return value; }
+  T *operator->() { return value; }
 
 private:
   T *value;
