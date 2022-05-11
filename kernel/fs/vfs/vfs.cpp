@@ -37,14 +37,39 @@ FileHandle::FileHandle(String path, bool writable)
       open = false;
       return;
     }
-    auto next = current.openChild(nextIndex);
+    auto next = current.openChild(nextIndex, false);
     current.close();
     current = next;
     path = path.findNext('/');
   }
   node = current.node;
   current.close();
+  node->lock.acquire();
   node->openCount++;
+  node->lock.release();
   open = true;
+}
+FileHandle::FileHandle(FileNode *node, bool writable)
+    : node(node), writable(writable), open(true) {
+  node->lock.acquire();
+  node->openCount++;
+  node->lock.release();
+}
+void FileHandle::close() {
+  node->lock.acquire();
+  node->openCount--;
+  node->lock.release();
+}
+FileHandle FileHandle::openChild(size_t index, bool writable) {
+  if (node->type == FileType::DIRECTORY) {
+    node->lock.acquire();
+    if (index < node->children.getSize()) {
+      auto result = FileHandle(node->children[index], writable);
+      node->lock.release();
+      return result;
+    }
+    node->lock.release();
+  }
+  return FileHandle();
 }
 } // namespace fs

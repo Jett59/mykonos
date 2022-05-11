@@ -30,11 +30,12 @@ class FsProvider;
 struct FileNode {
   String name;
   FileType type;
-  size_t openCount;
+  size_t openCount = 0;
   util::Vector<FileNode> children;
   void *node; // Identifies the file (fs-specific)
   lock::Mutex lock;
   FsProvider *fsProvider;
+  bool populated = false;
 };
 class FsProvider {
 public:
