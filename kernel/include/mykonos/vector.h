@@ -25,7 +25,8 @@ namespace util {
 #define MINIMUM_VECTOR_SIZE 16
 template <typename T> class Vector {
 public:
-  Vector(size_t initialCapacity = MINIMUM_VECTOR_SIZE)
+  Vector() : capacity(0), data(nullptr) {}
+  Vector(size_t initialCapacity)
       : capacity(initialCapacity), data(new T[initialCapacity]) {}
 
   Vector(const Vector &) = delete;
@@ -65,7 +66,11 @@ public:
   void push_back(T value) {
     size_t index = size;
     if (index >= capacity) {
-      resize(capacity * 2);
+      if (capacity < MINIMUM_VECTOR_SIZE) {
+        resize(MINIMUM_VECTOR_SIZE);
+      } else {
+        resize(capacity * 2);
+      }
     }
     data[index] = move(value);
     size++;
@@ -75,6 +80,10 @@ public:
     T result = move(data[index]);
     if (size * 2 <= capacity && size > MINIMUM_VECTOR_SIZE) {
       resize(size);
+    } else if (size == 0) {
+      delete[] data;
+      data = nullptr;
+      capacity = 0;
     }
     return move(result);
   }
@@ -88,8 +97,10 @@ private:
 
   void resize(size_t newCapacity) {
     T *newData = new T[newCapacity];
-    move(newData, data, size);
-    delete[] data;
+    if (data != nullptr) {
+      move(newData, data, size);
+      delete[] data;
+    }
     data = newData;
     capacity = newCapacity;
   }
