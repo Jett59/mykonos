@@ -38,6 +38,15 @@ struct FileNode {
 };
 class FsProvider {
 public:
+  /**
+   * @brief read from a file
+   *
+   * @param node the file to read from
+   * @param offset the offset into the file
+   * @param length the length of the buffer
+   * @param buffer the buffer to read into
+   * @return the number of bytes read
+   */
   virtual size_t read(FileNode &node, size_t offset, size_t length,
                       void *buffer) {
     (void)node;
@@ -46,6 +55,15 @@ public:
     (void)buffer;
     return 0;
   }
+  /**
+   * @brief write to a file
+   *
+   * @param node the file to write to
+   * @param offset the offset into the file, where SIZE_MAX means to append
+   * @param length the length of the buffer
+   * @param buffer the buffer to write to the file
+   * @return the number of bytes written
+   */
   virtual size_t write(FileNode &node, size_t offset, size_t length,
                        void *buffer) {
     (void)node;
@@ -54,6 +72,18 @@ public:
     (void)buffer;
     return 0;
   }
+  /**
+   * @brief populate a directory's children
+   *
+   * Each child must have:
+   * 1) node.fsProvider = this
+   * 2) type = the file's type
+   * 3) name = the name of the file
+   *
+   * The child directories need not be populated.
+   *
+   * @param directory the directory to populate
+   */
   virtual void populateDirectory(FileNode &directory) { (void)directory; }
 };
 } // namespace fs
