@@ -79,7 +79,7 @@ public:
    *
    * @param index the index of the child
    * @return the name of the child, or empty string if the index is out of
-   * bounds
+   * range
    */
   String childName(size_t index);
   /**
