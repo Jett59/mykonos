@@ -100,6 +100,8 @@ public:
    */
   size_t findChild(String name);
 
+  bool isOpen() { return open; }
+
   bool operator==(nullptr_t) { return !open; }
   bool operator!=(nullptr_t) { return open; }
 
