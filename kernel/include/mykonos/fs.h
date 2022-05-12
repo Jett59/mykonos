@@ -28,7 +28,7 @@ struct FileNode;
 class FileHandle {
 public:
   /**
-   * @brief Construct a new File Handle object
+   * @brief open a new FileHandle from a path
    *
    * @param path the path to the file (unix-style, with '/' to separate the
    * components of the path)
