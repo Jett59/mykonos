@@ -27,18 +27,76 @@ struct FileNode;
 
 class FileHandle {
 public:
+  /**
+   * @brief Construct a new File Handle object
+   *
+   * @param path the path to the file (unix-style, with '/' to separate the
+   * components of the path)
+   * @param writable whether it is possible to write to the file
+   */
   FileHandle(String path, bool writable);
+  /**
+   * @brief Construct a new (empty) File Handle object
+   *
+   * All operations will be ignored as if close() had just been called.
+   */
   FileHandle();
 
+  /**
+   * @brief Get the file's type
+   *
+   * @return the type of the file
+   */
   FileType getType();
+  /**
+   * @brief close the file
+   *
+   * All operations after this point will do nothing and return defaults.
+   */
   void close();
 
+  /**
+   * @brief read from a file
+   *
+   * @param offset the offset into the file
+   * @param length the length of the buffer
+   * @param buffer the buffer to read data into
+   * @return the number of bytes read
+   */
   size_t read(size_t offset, size_t length, void *buffer);
+  /**
+   * @brief write to a file
+   *
+   * @param offset the offset into the file, where SIZE_MAX means to append
+   * @param length the length of the buffer
+   * @param buffer the buffer to write to the file
+   * @return the number of bytes written
+   */
   size_t write(size_t offset, size_t length, void *buffer);
 
+  /**
+   * @brief get the name of a child file
+   *
+   * @param index the index of the child
+   * @return the name of the child, or empty string if the index is out of
+   * bounds
+   */
   String childName(size_t index);
+  /**
+   * @brief open a child file
+   *
+   * @param index the index of the child file
+   * @param writable whether the file will be openned with write permitions
+   * @return the freshly openned FileHandle
+   */
   FileHandle openChild(size_t index, bool writable);
-  // SIZE_MAX if child does not exist
+  /**
+   * @brief Find the named child
+   *
+   * @param name the name of the child
+   * @return the index of the child, or SIZE_MAX if it does not exist or
+   * getType() != FileType::DIRECTORY
+   */
   size_t findChild(String name);
 
   // == nullptr means the handle is closed
