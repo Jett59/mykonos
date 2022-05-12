@@ -75,7 +75,7 @@ public:
   /**
    * @brief populate a directory's children
    *
-   * Each fchild must have:
+   * Each child must have:
    * 1) node.fsProvider = this
    * 2) type = the file's type
    * 3) name = the name of the file
