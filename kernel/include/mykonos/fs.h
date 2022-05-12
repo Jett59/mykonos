@@ -87,11 +87,12 @@ public:
    *
    * @param index the index of the child file
    * @param writable whether the file will be openned with write permitions
-   * @return the freshly openned FileHandle
+   * @return the freshly openned FileHandle, or an empty FileHandle if the index
+   * is out of range
    */
   FileHandle openChild(size_t index, bool writable);
   /**
-   * @brief Find the named child
+   * @brief Find the index of the named child
    *
    * @param name the name of the child
    * @return the index of the child, or SIZE_MAX if it does not exist or
@@ -99,7 +100,6 @@ public:
    */
   size_t findChild(String name);
 
-  // == nullptr means the handle is closed
   bool operator==(nullptr_t) { return !open; }
   bool operator!=(nullptr_t) { return open; }
 

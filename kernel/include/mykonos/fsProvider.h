@@ -61,7 +61,7 @@ public:
    * @param node the file to write to
    * @param offset the offset into the file, where SIZE_MAX means to append
    * @param length the length of the buffer
-   * @param buffer the buffer to write
+   * @param buffer the buffer to write to the file
    * @return the number of bytes written
    */
   virtual size_t write(FileNode &node, size_t offset, size_t length,
