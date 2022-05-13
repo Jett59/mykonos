@@ -67,11 +67,6 @@ extern "C" [[noreturn]] void kstart() {
   // Now that that's over
   multiboot::parseMbi();
   paging::initPageTables();
-  auto initialTask = new task::ControlBlock();
-  initialTask->priority = PRIORITY_NORMAL;
-  initialTask->originalStackPointer = nullptr;
-  scheduler::init(0, initialTask);
-  cleaner::init();
   display::initFrameBuffer();
   interrupts::init();
   interrupts::install();
@@ -79,6 +74,11 @@ extern "C" [[noreturn]] void kstart() {
   if (!cpuid::checkCpuidFlags()) {
     kpanic("Your CPU is not good enough");
   }
+  auto initialTask = new task::ControlBlock();
+  initialTask->priority = PRIORITY_NORMAL;
+  initialTask->originalStackPointer = nullptr;
+  scheduler::init(0, initialTask);
+  cleaner::init();
   if (test::runTests(kout::print)) {
     // Continue
     if (!memeq(acpi::rsdp.signature, "RSD PTR ", 8)) {
