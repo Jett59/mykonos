@@ -37,6 +37,6 @@ unsigned getHeight();
 
 void copyRegion(unsigned x, unsigned y, unsigned width, unsigned height,
                 unsigned newX, unsigned newY);
-}  // namespace display
+} // namespace display
 
 #endif
