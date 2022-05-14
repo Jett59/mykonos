@@ -34,6 +34,9 @@ void removeCharacter(unsigned x, unsigned y);
 // Screen dimensions
 unsigned getWidth();
 unsigned getHeight();
-} // namespace display
+
+void copyRegion(unsigned x, unsigned y, unsigned width, unsigned height,
+                unsigned newX, unsigned newY);
+}  // namespace display
 
 #endif
