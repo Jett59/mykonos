@@ -54,11 +54,11 @@ void clipRectangle(unsigned x, unsigned y, unsigned &width, unsigned &height) {
     height = 0;
     return;
   }
-  if (initialX + width > getWidth()) {
-    width = getWidth() - initialX;
+  if (x + width > getWidth()) {
+    width = getWidth() - x;
   }
-  if (initialY + height > getHeight()) {
-    height = getHeight() - initialY;
+  if (y + height > getHeight()) {
+    height = getHeight() - y;
   }
 }
 
@@ -110,8 +110,10 @@ void copyRegion(unsigned x, unsigned y, unsigned width, unsigned height,
     void *sourcePointer = (void *)((uint8_t *)backBuffer + sourceOffset);
     unsigned destOffset =
         ((newY + yOffset) * frameBuffer.pitch + newX * bytesPerPixel);
-    void *destPointer = (void *)((uint8_t *)backBuffer + destOffset);
-    memcpy(destPointer, sourcePointer, width * bytesPerPixel);
+    void *destBackBufferPointer = (void *)((uint8_t *)backBuffer + destOffset);
+    void *destScreenPointer = (void *)(frameBuffer.pointer + destOffset);
+    memcpy(destBackBufferPointer, sourcePointer, width * bytesPerPixel);
+    memcpy(destScreenPointer, sourcePointer, width * bytesPerPixel);
   }
 }
 } // namespace display
