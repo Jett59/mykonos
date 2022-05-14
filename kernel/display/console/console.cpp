@@ -55,10 +55,8 @@ void scrollDown() {
     }
     strcpy(previousLine, line);
     x = 0;
-    for (unsigned i = 0; i < (unsigned)lineLength; i++) {
-      display::writeCharacter(x, y - fontHeight, previousLine[i]);
-      x += fontWidth;
-    }
+    display::copyRegion(x, y, lineLength * fontWidth, fontHeight, x,
+                        y - fontHeight);
   }
   char *lastLine = SCREEN_BUFFER_LINE(lines - 1);
   int lastLineLength = strlen(lastLine);
