@@ -23,6 +23,15 @@
 namespace fs {
 enum class FileType { NONE, FILE, DIRECTORY };
 
+enum class FileError {
+  OKAY,
+  CLOSED,
+  NOT_FOUND,
+  READ_ONLY,
+  NOT_FILE,
+  NOT_DIRECTORY
+};
+
 struct FileNode;
 
 class FileHandle {
