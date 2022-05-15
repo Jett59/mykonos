@@ -35,6 +35,7 @@ FileHandle::FileHandle(String path, bool writable)
     if (nextIndex == SIZE_MAX) {
       current.close();
       open = false;
+      error = FileError::NOT_FOUND;
       return;
     }
     auto next = current.openChild(nextIndex, false);
@@ -48,9 +49,10 @@ FileHandle::FileHandle(String path, bool writable)
   node->openCount++;
   node->lock.release();
   open = true;
+  error = FileError::OKAY;
 }
 FileHandle::FileHandle(FileNode *node, bool writable)
-    : node(node), writable(writable), open(true) {
+    : node(node), writable(writable), open(true), error(FileError::OKAY) {
   node->lock.acquire();
   node->openCount++;
   node->lock.release();
@@ -73,6 +75,7 @@ void FileHandle::close() {
     node->openCount--;
     node->lock.release();
     node = nullptr;
+    error = FileError::CLOSED;
   }
 }
 
@@ -88,6 +91,8 @@ String FileHandle::childName(size_t index) {
         node->lock.release();
         return result;
       }
+    } else {
+      error = FileError::NOT_DIRECTORY;
     }
     node->lock.release();
   }
@@ -105,6 +110,8 @@ FileHandle FileHandle::openChild(size_t index, bool writable) {
         node->lock.release();
         return result;
       }
+    } else {
+      error = FileError::NOT_DIRECTORY;
     }
     node->lock.release();
   }
@@ -124,6 +131,8 @@ size_t FileHandle::findChild(String name) {
           return i;
         }
       }
+    } else {
+      error = FileError::NOT_DIRECTORY;
     }
     node->lock.release();
   }
@@ -137,6 +146,8 @@ size_t FileHandle::read(size_t offset, size_t length, void *buffer) {
       size_t result = node->fsProvider->read(*node, offset, length, buffer);
       node->lock.release();
       return result;
+    } else {
+      error = FileError::NOT_FILE;
     }
     node->lock.release();
   }
@@ -149,8 +160,12 @@ size_t FileHandle::write(size_t offset, size_t length, void *buffer) {
       size_t result = node->fsProvider->write(*node, offset, length, buffer);
       node->lock.release();
       return result;
+    } else {
+      error = FileError::NOT_FILE;
     }
     node->lock.release();
+  } else if (!writable) {
+    error = FileError::READ_ONLY;
   }
   return 0;
 }
