@@ -91,7 +91,7 @@ String FileHandle::childName(size_t index) {
         node->lock.release();
         return result;
       }
-    }else {
+    } else {
       error = FileError::NOT_DIRECTORY;
     }
     node->lock.release();
@@ -110,7 +110,7 @@ FileHandle FileHandle::openChild(size_t index, bool writable) {
         node->lock.release();
         return result;
       }
-    }else {
+    } else {
       error = FileError::NOT_DIRECTORY;
     }
     node->lock.release();
@@ -131,7 +131,7 @@ size_t FileHandle::findChild(String name) {
           return i;
         }
       }
-    }else {
+    } else {
       error = FileError::NOT_DIRECTORY;
     }
     node->lock.release();
