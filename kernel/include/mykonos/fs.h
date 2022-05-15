@@ -111,13 +111,13 @@ public:
 
   bool isOpen() { return open; }
 
-  bool operator==(nullptr_t) { return !open; }
-  bool operator!=(nullptr_t) { return open; }
+  FileError getError() { return error; }
 
 private:
   FileNode *node;
   bool writable;
   bool open;
+  FileError error;
 
   FileHandle(FileNode *node, bool writable);
 };
