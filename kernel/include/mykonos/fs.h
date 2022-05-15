@@ -39,6 +39,9 @@ public:
   /**
    * @brief open a new FileHandle from a path
    *
+   * If the file does not exist, error will be set to FileError::NOT_FOUND.
+   * Otherwise, error will be set to FileError::OKAY.
+   *
    * @param path the path to the file (unix-style, with '/' to separate the
    * components of the path)
    * @param writable whether it is possible to write to the file
@@ -49,7 +52,8 @@ public:
    *
    * All operations will be ignored as if close() had just been called.
    */
-  FileHandle();
+  FileHandle()
+      : node(nullptr), writable(false), open(false), error(FileError::CLOSED) {}
 
   /**
    * @brief Get the file's type
@@ -61,11 +65,15 @@ public:
    * @brief close the file
    *
    * All operations after this point will do nothing and return defaults.
+   * error will be set to FileError::CLOSED.
    */
   void close();
 
   /**
    * @brief read from a file
+   *
+   * If getType() != FileType::FILE, error will be set to
+   * FileError::NOT_FILE.
    *
    * @param offset the offset into the file
    * @param length the length of the buffer
@@ -75,6 +83,10 @@ public:
   size_t read(size_t offset, size_t length, void *buffer);
   /**
    * @brief write to a file
+   *
+   * If getType() != FileType::FILE, error will be set to
+   * FileError::NOT_FILE.
+   * If !writable, error will be set to FileError::READ_ONLY.
    *
    * @param offset the offset into the file, where SIZE_MAX means to append
    * @param length the length of the buffer
@@ -86,6 +98,9 @@ public:
   /**
    * @brief get the name of a child file
    *
+   *If getType() != FileType::DIRECTORY, error will be set to
+   * FileError::NOT_DIRECTORY.
+   *
    * @param index the index of the child
    * @return the name of the child, or empty string if the index is out of
    * range
@@ -93,6 +108,9 @@ public:
   String childName(size_t index);
   /**
    * @brief open a child file
+   *
+   * If getType() != FileType::DIRECTORY, error will be set to
+   * FileError::NOT_DIRECTORY.
    *
    * @param index the index of the child file
    * @param writable whether the file will be openned with write permitions
@@ -102,6 +120,9 @@ public:
   FileHandle openChild(size_t index, bool writable);
   /**
    * @brief Find the index of the named child
+   *
+   * If getType() != FileType::DIRECTORY, error will be set to
+   * FileError::NOT_DIRECTORY.
    *
    * @param name the name of the child
    * @return the index of the child, or SIZE_MAX if it does not exist or
