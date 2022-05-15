@@ -134,6 +134,8 @@ public:
 
   FileError getError() { return error; }
 
+  bool okay() { return getError() == FileError::OKAY; }
+
 private:
   FileNode *node;
   bool writable;
