@@ -29,10 +29,12 @@ enum class FileError {
   NOT_FOUND,
   READ_ONLY,
   NOT_FILE,
-  NOT_DIRECTORY
+  NOT_DIRECTORY,
+  BUSY
 };
 
 struct FileNode;
+class FsProvider;
 
 class FileHandle {
 public:
@@ -129,6 +131,19 @@ public:
    * getType() != FileType::DIRECTORY
    */
   size_t findChild(String name);
+
+  /**
+   * @brief mount a filesystem on this directory.
+   *
+   * If getType() != FileType::DIRECTORY, error will be set to
+   * FileError::NOT_DIRECTORY.
+   * If the number of loaded children is not 0, or the number of open
+   * FileHandles on this file is not one, error will be set to FileError::BUSY.
+   * If !writable, error will be set to FileError::READ_ONLY.
+   *
+   * @param fsProvider the file system to mount
+   */
+  void mount(FsProvider *fsProvider);
 
   bool isOpen() { return open; }
 
