@@ -85,6 +85,32 @@ public:
    * @param directory the directory to populate
    */
   virtual void populateDirectory(FileNode &directory) { (void)directory; }
+
+  /**
+   * @brief initialize the root directory of this file system.
+   *
+   * This function should set root.node to point to the data for the root
+   * directory.
+   *
+   * root.populated will equal false before this function is called.
+   *
+   * This function must be implemented.
+   *
+   * @param root the root of the file system
+   */
+  virtual void initRoot(FileNode &root) = 0;
+
+  /**
+   * @brief free the resources associated with the file node.
+   *
+   * If the node is a directory, node.children will be empty prior to this
+   * function being invoked.
+   *
+   * This function must be implemented.
+   *
+   * @param node the node to free
+   */
+  virtual void freeNode(FileNode &node) = 0;
 };
 } // namespace fs
 
