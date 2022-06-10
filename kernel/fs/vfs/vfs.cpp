@@ -178,6 +178,7 @@ void FileHandle::mount(FsProvider *fsProvider) {
         if (node->children.getSize() == 0 && node->openCount == 1) {
           node->fsProvider->freeNode(*node);
           node->fsProvider = fsProvider;
+          node->populated = false;
           fsProvider->initRoot(*node);
         } else {
           error = FileError::BUSY;
