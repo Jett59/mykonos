@@ -169,4 +169,26 @@ size_t FileHandle::write(size_t offset, size_t length, void *buffer) {
   }
   return 0;
 }
+
+void FileHandle::mount(FsProvider *fsProvider) {
+  if (open) {
+    if (writable) {
+      node->lock.acquire();
+      if (node->type == FileType::DIRECTORY) {
+        if (node->children.getSize() == 0 && node->openCount == 1) {
+          node->fsProvider->freeNode(*node);
+          node->fsProvider = fsProvider;
+          fsProvider->initRoot(*node);
+        } else {
+          error = FileError::BUSY;
+        }
+      } else {
+        error = FileError::NOT_DIRECTORY;
+      }
+      node->lock.release();
+    } else {
+      error = FileError::READ_ONLY;
+    }
+  }
+}
 } // namespace fs
