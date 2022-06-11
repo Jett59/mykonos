@@ -25,7 +25,7 @@ export ASFLAGS:=
 
 export LDFLAGS:=-nostdlib -Wl,--gc-sections
 
-all: check-dependencies kernel
+all: check-dependencies isoimage
 
 .PHONY: check-dependencies
 check-dependencies:
@@ -39,16 +39,24 @@ kernel: kernel/Makefile
 	@objcopy --only-keep-debug build/mykonos build/mykonos.debug
 	@strip --strip-all build/mykonos
 
+.PHONY: initramfs
+initramfs:
+	@mkdir -p build/initramfs
+	@cp -RT config/ build/initramfs/
+	@echo build build/initramfs.img
+	@tar -C build/initramfs -cf build/initramfs.img .
+
 EFI_FILE_NAME?=BOOTX64.EFI
 
 build/boot.efi:
 	@grub-mkimage -O $(ARCH)-efi -p /boot/grub -o $@ normal part_msdos fat iso9660 part_gpt all_video multiboot2
 
 .PHONY: isoimage
-isoimage: all build/boot.efi
+isoimage: kernel initramfs build/boot.efi
 	@mkdir -p build/isoroot
 	@mkdir -p build/isoroot/boot/grub
 	@cp build/mykonos build/isoroot/boot/mykonos
+	@cp build/initramfs.img build/isoroot/boot/initramfs.img
 	@cp grub/example.cfg build/isoroot/boot/grub/grub.cfg
 	@mkdir -p build/isoroot/EFI/BOOT
 	@cp build/boot.efi build/isoroot/EFI/BOOT/$(EFI_FILE_NAME)
