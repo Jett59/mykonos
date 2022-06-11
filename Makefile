@@ -56,7 +56,7 @@ isoimage: kernel initramfs build/boot.efi
 	@mkdir -p build/isoroot
 	@mkdir -p build/isoroot/boot/grub
 	@cp build/mykonos build/isoroot/boot/mykonos
-	@cp build/initramfs.img built/isoroot/boot/initramfs.img
+	@cp build/initramfs.img build/isoroot/boot/initramfs.img
 	@cp grub/example.cfg build/isoroot/boot/grub/grub.cfg
 	@mkdir -p build/isoroot/EFI/BOOT
 	@cp build/boot.efi build/isoroot/EFI/BOOT/$(EFI_FILE_NAME)
