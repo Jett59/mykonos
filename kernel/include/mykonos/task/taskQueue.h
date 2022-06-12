@@ -28,26 +28,26 @@ public:
   Queue(const Queue &other) = delete;
   Queue &operator=(Queue &other) = delete;
 
-// Move constructors.
-Queue(Queue &&other) {
-  lock = util::move(other.lock);
-  head = other.head;
-  tail = other.tail;
-  size = other.size;
-  other.head = nullptr;
-  other.tail = nullptr;
-  other.size = 0;
-}
-Queue &operator=(Queue &&other) {
-  lock = util::move(other.lock);
-  head = other.head;
-  tail = other.tail;
-  size = other.size;
-  other.head = nullptr;
-  other.tail = nullptr;
-  other.size = 0;
-  return *this;
-}
+  // Move constructors.
+  Queue(Queue &&other) {
+    lock = util::move(other.lock);
+    head = other.head;
+    tail = other.tail;
+    size = other.size;
+    other.head = nullptr;
+    other.tail = nullptr;
+    other.size = 0;
+  }
+  Queue &operator=(Queue &&other) {
+    lock = util::move(other.lock);
+    head = other.head;
+    tail = other.tail;
+    size = other.size;
+    other.head = nullptr;
+    other.tail = nullptr;
+    other.size = 0;
+    return *this;
+  }
 
   void push(ControlBlock *value) {
     lock.acquire();
