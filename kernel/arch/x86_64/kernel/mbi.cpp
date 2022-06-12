@@ -49,6 +49,14 @@ void parseMbi() {
     parseMbiTag(tag->type, tag);
     tag = (MbiTag *)((uint8_t *)tag + (tag->size + 7) / 8 * 8);
   }
+  // Now that the module and memory map tags are parsed, we should reserve the
+  // initramfs from the physical memory map.
+  auto &initramfs = initramfs::initramfs;
+  if (initramfs.size > 0) {
+    memory::physicalMemory.reserve(
+        {(void *)PAGE_ALIGN_DOWN((size_t)initramfs.pointer),
+         (void *)PAGE_ALIGN_UP((size_t)initramfs.pointer + initramfs.size)});
+  }
 }
 static void parseModuleTag(ModuleTag *tag);
 static void parseMemoryMapTag(MemoryMapTag *memoryMap);
