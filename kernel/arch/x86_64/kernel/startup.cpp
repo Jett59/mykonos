@@ -253,7 +253,7 @@ static bool hardwareInitLock = 0;
     kout::print("Mounting the initramfs\n");
     rootDirectory.mount(new initramfs::InitramfsFsProvider());
     kout::print("Openning the test file\n");
-    auto firstChild = rootDirectory.openChild(0, false);
+    auto firstChild = rootDirectory.openChild(rootDirectory.findChild("test.txt"), false);
     void *buffer = memory::kmalloc(512);
     size_t size = firstChild.read(0, 512, buffer);
     kout::print({(char *)buffer, size});

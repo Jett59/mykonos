@@ -85,6 +85,10 @@ void InitramfsFsProvider::populateDirectory(fs::FileNode &directory) {
     auto entry = *entryPointer;
     if (entry.name.startsWith(directoryEntry.name)) {
       String baseName = entry.name.subString(directoryEntry.name.len());
+      // Remove a leading /.
+      if (baseName[0] == '/') {
+        baseName = baseName.subString(1);
+      }
       if (baseName.len() > 0 && baseName.findNext('/') == nullptr) {
         fs::FileNode child;
         child.name = baseName;
