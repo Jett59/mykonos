@@ -81,6 +81,14 @@ public:
     }
   }
 
+  bool startsWith(String &other) {
+    if (length >= other.length) {
+      return memeq(cString, other.cString, other.length);
+    } else {
+      return false;
+    }
+  }
+
   bool operator==(nullptr_t) const { return cString == nullptr; }
   bool operator!=(nullptr_t) const { return cString != nullptr; }
 

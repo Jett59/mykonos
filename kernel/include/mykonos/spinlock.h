@@ -33,6 +33,21 @@ public:
   Spinlock(const Spinlock &) = delete;
   Spinlock &operator=(const Spinlock &) = delete;
 
+  // We do want move capabilities.
+  Spinlock(Spinlock &&other) {
+    lock = other.lock;
+    enableIrqs = other.enableIrqs;
+    other.lock = 1;
+    other.enableIrqs = false;
+  }
+  Spinlock &operator=(Spinlock &&other) {
+    lock = other.lock;
+    enableIrqs = other.enableIrqs;
+    other.lock = 1;
+    other.enableIrqs = false;
+    return *this;
+  }
+
   bool locked() { return __atomic_load_n(&lock, __ATOMIC_SEQ_CST) != 0; }
   void acquire() {
     bool oldIrqState = cpu::localIrqState();
