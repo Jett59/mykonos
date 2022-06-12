@@ -73,7 +73,9 @@ public:
     if (length == 0) {
       return {};
     }
-    const char *match = (const char *)memchr(cString + 1, c, length);
+    // +1 to allow for calling findNext multiple times without needing a
+    // subString.
+    const char *match = (const char *)memchr(cString + 1, c, length - 1);
     if (match == nullptr) {
       return {};
     } else {
