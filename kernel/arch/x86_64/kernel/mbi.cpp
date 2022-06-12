@@ -14,19 +14,23 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+#include <mykonos/acpi/rsdp.h>
 #include <mykonos/frameBuffer.h>
+#include <mykonos/initramfs.h>
 #include <mykonos/mbi.h>
 #include <mykonos/pageConstants.h>
 #include <mykonos/physicalMemory.h>
 #include <mykonos/string.h>
-
-#include <mykonos/acpi/rsdp.h>
 
 extern "C" {
 extern multiboot::Mbi *mbiPointer;
 
 extern void *kernelPhysicalAddress[0];
 extern void *kernelPhysicalEnd[0];
+}
+
+namespace initramfs {
+Initramfs initramfs;
 }
 
 namespace memory {
@@ -46,12 +50,17 @@ void parseMbi() {
     tag = (MbiTag *)((uint8_t *)tag + (tag->size + 7) / 8 * 8);
   }
 }
+static void parseModuleTag(ModuleTag *tag);
 static void parseMemoryMapTag(MemoryMapTag *memoryMap);
 static void parseFrameBufferTag(FrameBufferTag *tag);
 static void parseOldRsdpTag(OldRsdpTag *tag);
 static void parseNewRsdpTag(NewRsdpTag *tag);
 static void parseMbiTag(uint32_t type, MbiTag *tag) {
   switch (type) {
+  case MBI_TAG_MODULE: {
+    parseModuleTag((ModuleTag *)tag);
+    break;
+  }
   case MBI_TAG_MEMORY: {
     parseMemoryMapTag((MemoryMapTag *)tag);
     break;
@@ -71,6 +80,10 @@ static void parseMbiTag(uint32_t type, MbiTag *tag) {
   default:
     break;
   }
+}
+static void parseModuleTag(ModuleTag *tag) {
+  initramfs::initramfs = {(void *)(size_t)tag->moduleStart,
+                          tag->moduleEnd - tag->moduleStart};
 }
 static void parseMemoryMapTag(MemoryMapTag *memoryMap) {
   uint32_t numEntries =
