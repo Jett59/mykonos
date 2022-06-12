@@ -26,10 +26,20 @@ struct MbiTag {
   uint32_t type;
   uint32_t size;
 };
+#define MBI_TAG_MODULE 3
 #define MBI_TAG_MEMORY 6
 #define MBI_TAG_FRAME_BUFFER 8
 #define MBI_TAG_RSDP_OLD 14
 #define MBI_TAG_RSDP_NEW 15
+
+struct ModuleTag {
+  uint32_t type;
+  uint32_t size;
+  uint32_t moduleStart;
+  uint32_t moduleEnd;
+  char string[0];
+};
+static_assert(sizeof(ModuleTag) == 16, "ModuleTag has incorrect size");
 
 struct MemoryMapTag {
   uint32_t type;
