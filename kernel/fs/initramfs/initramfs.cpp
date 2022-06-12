@@ -15,6 +15,8 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 #include <mykonos/initramfs.h>
+#include <mykonos/string.h>
+#include <mykonos/util.h>
 #include <stddef.h>
 
 namespace initramfs {
@@ -67,9 +69,9 @@ size_t InitramfsFsProvider::read(fs::FileNode &node, void *buffer,
                                  size_t offset, size_t length) {
   InitramfsEntry &entry = *(InitramfsEntry *)node.node;
   if (offset < entry.size) {
-    // TODO
-    (void)length;
-    (void)buffer;
+    length = util::min(entry.size - offset, length);
+    memcpy(buffer, (void *)((char *)entry.data + offset), length);
+    return length;
   }
   return 0;
 }
@@ -95,5 +97,10 @@ void InitramfsFsProvider::populateDirectory(fs::FileNode &directory) {
       }
     }
   }
+}
+
+void InitramfsFsProvider::initRoot(fs::FileNode &root) {
+    // We assume that the first entry is the root directory.
+    root.node = (void *)entries[0];
 }
 } // namespace initramfs
