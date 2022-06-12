@@ -27,6 +27,7 @@
 #include <mykonos/drivers/tree.h>
 #include <mykonos/frameBuffer.h>
 #include <mykonos/hpet.h>
+#include <mykonos/initramfs.h>
 #include <mykonos/interrupts.h>
 #include <mykonos/kmalloc.h>
 #include <mykonos/kout.h>
@@ -67,6 +68,9 @@ extern "C" [[noreturn]] void kstart() {
   // Now that that's over
   multiboot::parseMbi();
   paging::initPageTables();
+  // Now that paging is enabled, we must map in the initramfs.
+  initramfs::initramfs.pointer = memory::mapAddress(
+      initramfs::initramfs.pointer, initramfs::initramfs.size, true);
   display::initFrameBuffer();
   interrupts::init();
   interrupts::install();
