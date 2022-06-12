@@ -26,6 +26,7 @@
 #include <mykonos/drivers/acpiTree.h>
 #include <mykonos/drivers/tree.h>
 #include <mykonos/frameBuffer.h>
+#include <mykonos/fs.h>
 #include <mykonos/hpet.h>
 #include <mykonos/initramfs.h>
 #include <mykonos/interrupts.h>
@@ -247,6 +248,9 @@ static bool hardwareInitLock = 0;
     kout::print("Starting hardware initialization\n");
     drivers::loadRootDevice();
     kout::print("Finished hardware initialization\n");
+    // Initialize the initramfs file system.
+    auto rootDirectory = fs::FileHandle("/", true);
+    rootDirectory.mount(new initramfs::InitramfsFsProvider());
   }
   thread::destroy();
 }

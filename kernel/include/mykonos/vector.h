@@ -33,7 +33,7 @@ public:
   Vector &operator=(const Vector &) = delete;
 
   Vector(Vector &&other)
-      : data(other.data), capacity(other.capacity), size(other.size) {
+      : capacity(other.capacity), size(other.size), data(other.data) {
     other.data = nullptr;
     other.capacity = 0;
     other.size = 0;
@@ -48,6 +48,7 @@ public:
     other.data = nullptr;
     other.capacity = 0;
     other.size = 0;
+    return *this;
   }
 
   ~Vector() {

@@ -49,12 +49,51 @@ InitramfsFsProvider::InitramfsFsProvider() {
                                                     : fs::FileType::NONE;
     size_t size = parseOctal(initramfsPointer + SIZE_OFFSET, SIZE_LENGTH);
     if (fileType != fs::FileType::NONE) {
+      String name = initramfsPointer;
+      // Directories often end in a / character, so get rid of it.
+      if (name[name.len() - 1] == '/') {
+        name = name.subString(0, name.len() - 1);
+      }
       void *data = (void *)(initramfsPointer + 512);
-      entries.push_back({initramfsPointer, fileType, data, size});
+      entries.push_back({name, fileType, data, size});
     }
-    // Add the header (512 bytes) + the size of the file (aligned to 512 bytes)
-    // to the initramfsPointer.
+    // Add the size of the header (512 bytes) + the size of the file (aligned to
+    // 512 bytes) to the initramfsPointer.
     initramfsPointer += (size + 511) / 512 * 512 + 512;
+  }
+}
+
+size_t InitramfsFsProvider::read(fs::FileNode &node, void *buffer,
+                                 size_t offset, size_t length) {
+  InitramfsEntry &entry = *(InitramfsEntry *)node.node;
+  if (offset < entry.size) {
+    // TODO
+    (void)length;
+    (void)buffer;
+  }
+  return 0;
+}
+
+void InitramfsFsProvider::freeNode(fs::FileNode &node) { node.node = nullptr; }
+
+void InitramfsFsProvider::populateDirectory(fs::FileNode &directory) {
+  InitramfsEntry &directoryEntry = *(InitramfsEntry *)directory.node;
+  for (size_t i = 0; i < entries.getSize(); i++) {
+    auto entryPointer = entries[i];
+    auto entry = *entryPointer;
+    if (entry.name.startsWith(directoryEntry.name)) {
+      String baseName = entry.name.subString(directoryEntry.name.len());
+      if (baseName.len() > 0 && baseName.findNext('/') == nullptr) {
+        fs::FileNode child;
+        child.name = baseName;
+        child.node = entryPointer;
+        child.type = entry.type;
+        child.fsProvider = this;
+        child.populated = false;
+        child.openCount = 0;
+        directory.children.push_back(util::move(child));
+      }
+    }
   }
 }
 } // namespace initramfs

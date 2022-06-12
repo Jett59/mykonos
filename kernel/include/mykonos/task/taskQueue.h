@@ -19,6 +19,7 @@
 
 #include <mykonos/spinlock.h>
 #include <mykonos/task/controlBlock.h>
+#include <mykonos/util.h>
 
 namespace task {
 class Queue {
@@ -26,6 +27,27 @@ public:
   Queue() = default;
   Queue(const Queue &other) = delete;
   Queue &operator=(Queue &other) = delete;
+
+// Move constructors.
+Queue(Queue &&other) {
+  lock = util::move(other.lock);
+  head = other.head;
+  tail = other.tail;
+  size = other.size;
+  other.head = nullptr;
+  other.tail = nullptr;
+  other.size = 0;
+}
+Queue &operator=(Queue &&other) {
+  lock = util::move(other.lock);
+  head = other.head;
+  tail = other.tail;
+  size = other.size;
+  other.head = nullptr;
+  other.tail = nullptr;
+  other.size = 0;
+  return *this;
+}
 
   void push(ControlBlock *value) {
     lock.acquire();
@@ -69,7 +91,7 @@ private:
   lock::Spinlock lock;
   ControlBlock *head = nullptr;
   ControlBlock *tail = nullptr;
-  unsigned size;
+  unsigned size = 0;
 };
 } // namespace task
 

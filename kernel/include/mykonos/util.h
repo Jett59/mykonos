@@ -27,7 +27,7 @@ template <typename T> struct WithoutReference<T &&> { using Type = T; };
 template <typename T> typename WithoutReference<T>::Type &&move(T &&value) {
   return (typename WithoutReference<T>::Type &&) value;
 }
-template <typename T> void move(T *dst, const T *src, size_t n) {
+template <typename T> void move(T *dst, T *src, size_t n) {
   for (size_t i = 0; i < n; i++) {
     dst[i] = move(src[i]);
   }
