@@ -1,1 +1,2 @@
 STEPS+=fs/vfs/vfs.o
+STEPS+=fs/initramfs/initramfs.o

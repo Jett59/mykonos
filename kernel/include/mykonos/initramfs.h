@@ -17,6 +17,9 @@
 #ifndef _MYKONOS_INITRAMFS_H
 #define _MYKONOS_INITRAMFS_H
 
+#include <mykonos/fsProvider.h>
+#include <mykonos/string.h>
+#include <mykonos/vector.h>
 #include <stddef.h>
 
 namespace initramfs {
@@ -25,6 +28,26 @@ struct Initramfs {
   size_t size;
 };
 extern Initramfs initramfs;
+
+struct InitramfsEntry {
+  String name;
+  fs::FileType type;
+  void *data;
+  size_t size;
+};
+
+class InitramfsFsProvider : public fs::FsProvider {
+public:
+  InitramfsFsProvider();
+
+  virtual size_t read(void *buffer, size_t offset, size_t length);
+  virtual void populateDirectory(fs::FileNode &directory);
+  virtual void freeNode(fs::FileNode &directory);
+  virtual void initRoot(fs::FileNode &root);
+
+private:
+  util::Vector<InitramfsEntry> entries;
+};
 } // namespace initramfs
 
 #endif
