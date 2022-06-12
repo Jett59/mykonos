@@ -20,6 +20,10 @@
 namespace fs {
 static FileNode root;
 
+static __attribute__((constructor)) void initializeRoot() {
+  root.type = FileType::DIRECTORY;
+}
+
 FileHandle::FileHandle(String path, bool writable)
     : node(nullptr), writable(writable) {
   FileHandle current(&root, false);
@@ -176,7 +180,11 @@ void FileHandle::mount(FsProvider *fsProvider) {
       node->lock.acquire();
       if (node->type == FileType::DIRECTORY) {
         if (node->children.getSize() == 0 && node->openCount == 1) {
-          node->fsProvider->freeNode(*node);
+          // If this isn't the unmounted root directory,
+          if (node->fsProvider != nullptr) {
+            // Then we have to tell it what we are doing.
+            node->fsProvider->freeNode(*node);
+          }
           node->fsProvider = fsProvider;
           node->populated = false;
           fsProvider->initRoot(*node);

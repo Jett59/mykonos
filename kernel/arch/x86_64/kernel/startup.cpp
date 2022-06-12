@@ -251,6 +251,10 @@ static bool hardwareInitLock = 0;
     // Initialize the initramfs file system.
     auto rootDirectory = fs::FileHandle("/", true);
     rootDirectory.mount(new initramfs::InitramfsFsProvider());
+    auto firstChild = rootDirectory.openChild(0, false);
+    void *buffer = memory::kmalloc(512);
+    size_t size = firstChild.read(0, 512, buffer);
+    kout::print((char *)buffer, size);
   }
   thread::destroy();
 }

@@ -30,7 +30,7 @@ static unsigned parseOctal(const char *str, size_t length) {
 }
 
 #define SIGNATURE_OFFSET 257
-#define SIGNATURE "USTAR"
+#define SIGNATURE "ustar"
 #define SIGNATURE_LENGTH 5
 
 #define TYPE_OFFSET 156
@@ -65,8 +65,8 @@ InitramfsFsProvider::InitramfsFsProvider() {
   }
 }
 
-size_t InitramfsFsProvider::read(fs::FileNode &node, void *buffer,
-                                 size_t offset, size_t length) {
+size_t InitramfsFsProvider::read(fs::FileNode &node, size_t offset,
+                                 size_t length, void *buffer) {
   InitramfsEntry &entry = *(InitramfsEntry *)node.node;
   if (offset < entry.size) {
     length = util::min(entry.size - offset, length);
@@ -100,7 +100,7 @@ void InitramfsFsProvider::populateDirectory(fs::FileNode &directory) {
 }
 
 void InitramfsFsProvider::initRoot(fs::FileNode &root) {
-    // We assume that the first entry is the root directory.
-    root.node = (void *)entries[0];
+  // We assume that the first entry is the root directory.
+  root.node = (void *)entries[0];
 }
 } // namespace initramfs
