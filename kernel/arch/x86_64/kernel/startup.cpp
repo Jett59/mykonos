@@ -69,8 +69,10 @@ extern "C" [[noreturn]] void kstart() {
   multiboot::parseMbi();
   paging::initPageTables();
   // Now that paging is enabled, we must map in the initramfs.
-  initramfs::initramfs.pointer = memory::mapAddress(
-      initramfs::initramfs.pointer, initramfs::initramfs.size, true);
+  if (initramfs::initramfs.size > 0) {
+    initramfs::initramfs.pointer = memory::mapAddress(
+        initramfs::initramfs.pointer, initramfs::initramfs.size, true);
+  }
   display::initFrameBuffer();
   interrupts::init();
   interrupts::install();
