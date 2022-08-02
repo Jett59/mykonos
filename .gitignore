@@ -39,3 +39,6 @@ build/
 
 # Log files
 *.log
+
+# Build configuration file
+.config

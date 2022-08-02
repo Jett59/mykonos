@@ -25,6 +25,9 @@ export ASFLAGS:=
 
 export LDFLAGS:=-nostdlib -Wl,--gc-sections
 
+# Import options from the .config file
+-include .config
+
 all: check-dependencies isoimage
 
 .PHONY: check-dependencies
