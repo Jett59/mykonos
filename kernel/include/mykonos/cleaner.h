@@ -20,9 +20,9 @@
 #include <mykonos/kmalloc.h>
 
 namespace cleaner {
-void addObject(void *object, void (*handler)(void *) = memory::kfree);
+void addObject(void* object, void (*handler)(void*) = memory::kfree);
 
 void init();
-} // namespace cleaner
+}  // namespace cleaner
 
 #endif

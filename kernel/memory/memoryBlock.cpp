@@ -26,17 +26,17 @@ void BlockMap::merge() {
   numBlocks = 0;
   for (unsigned i = 0; i < originalNumBlocks; i++) {
     if (temp[i].capacity() == 0) {
-      continue; // Ignore empty block
+      continue;  // Ignore empty block
     }
-    [&] { // Use lambda for multi level continue
+    [&] {  // Use lambda for multi level continue
       for (unsigned j = 0; j < numBlocks; j++) {
         if (blocks[j].start == temp[i].end) {
           blocks[j].start = temp[i].start;
-          return; // Multi level continue
+          return;  // Multi level continue
         }
         if (blocks[j].end == temp[i].start) {
           blocks[j].end = temp[i].end;
-          return; // Multi level continue
+          return;  // Multi level continue
         }
       }
       // Could not combine, just append
@@ -62,9 +62,9 @@ void BlockMap::addBlock(Block block, bool acquireLock) {
     }
   }
 }
-void *BlockMap::allocate(size_t amount) {
+void* BlockMap::allocate(size_t amount) {
   lock.acquire();
-  void *result = nullptr;
+  void* result = nullptr;
   for (unsigned i = 0; i < numBlocks; i++) {
     if (blocks[i].capacity() >= amount) {
       result = blocks[i].reserve(amount);
@@ -80,7 +80,7 @@ void BlockMap::reserve(Block blockToRemove) {
   lock.acquire();
   merge();
   for (unsigned i = 0; i < numBlocks; i++) {
-    Block &currentBlock = blocks[i];
+    Block& currentBlock = blocks[i];
     size_t currentBlockStart = (size_t)currentBlock.getStart();
     size_t currentBlockEnd = (size_t)currentBlock.getEnd();
     if (currentBlockStart >= blockToRemoveEnd) {
@@ -89,22 +89,21 @@ void BlockMap::reserve(Block blockToRemove) {
       continue;
     } else if (currentBlockStart >= blockToRemoveStart &&
                currentBlockEnd <=
-                   blockToRemoveEnd) { // currentBlock is inside blockToRemove
+                   blockToRemoveEnd) {  // currentBlock is inside blockToRemove
       currentBlock = Block();
-    } else { // There is some intersection between the blocks
+    } else {  // There is some intersection between the blocks
       if (currentBlockStart >= blockToRemoveStart) {
         currentBlock.start = blockToRemove.end;
       } else if (currentBlockEnd <= blockToRemoveEnd) {
         currentBlock.end = blockToRemove.start;
-      } else { // blockToRemove is entirely inside currentBlock
+      } else {  // blockToRemove is entirely inside currentBlock
         currentBlock = Block();
-        addBlock(Block((void *)currentBlockStart, (void *)blockToRemoveStart),
+        addBlock(Block((void*)currentBlockStart, (void*)blockToRemoveStart),
                  false);
-        addBlock(Block((void *)blockToRemoveEnd, (void *)currentBlockEnd),
-                 false);
+        addBlock(Block((void*)blockToRemoveEnd, (void*)currentBlockEnd), false);
       }
     }
   }
   lock.release();
 }
-} // namespace memory
+}  // namespace memory

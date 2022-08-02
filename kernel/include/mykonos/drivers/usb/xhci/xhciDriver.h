@@ -23,16 +23,16 @@
 namespace drivers {
 namespace xhci {
 class XhciDriver : public DeviceTree {
-public:
+ public:
   XhciDriver(XhciRegisterAccess registers)
       : DeviceTree(DeviceType::XHCI), registers(registers) {}
 
   void load();
 
-private:
+ private:
   XhciRegisterAccess registers;
 };
-} // namespace xhci
-} // namespace drivers
+}  // namespace xhci
+}  // namespace drivers
 
 #endif

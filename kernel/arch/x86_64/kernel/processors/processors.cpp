@@ -24,14 +24,14 @@
 namespace processors {
 struct MailboxEntry {
   lock::Spinlock lock;
-  callback::Callback<bool> *callback;
+  callback::Callback<bool>* callback;
   bool callerCanReturn;
 };
 static MailboxEntry mailboxes[MAX_CPUS];
 
-void runOn(unsigned cpuNumber, callback::Callback<bool> &&callback) {
+void runOn(unsigned cpuNumber, callback::Callback<bool>&& callback) {
   if (cpuNumber < MAX_CPUS) {
-    MailboxEntry &mailbox = mailboxes[cpuNumber];
+    MailboxEntry& mailbox = mailboxes[cpuNumber];
     mailbox.lock.acquire();
     mailbox.callback = &callback;
     mailbox.callerCanReturn = false;
@@ -50,7 +50,7 @@ void runOn(unsigned cpuNumber, callback::Callback<bool> &&callback) {
   }
 }
 void letCallerReturn() {
-  MailboxEntry &mailbox = mailboxes[cpu::getCpuNumber()];
+  MailboxEntry& mailbox = mailboxes[cpu::getCpuNumber()];
   mailbox.callerCanReturn = true;
 }
 void receiveCall() {
@@ -59,4 +59,4 @@ void receiveCall() {
     (*mailboxes[cpuNumber].callback)();
   }
 }
-} // namespace processors
+}  // namespace processors

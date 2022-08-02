@@ -70,7 +70,7 @@ bool vectorTest(::test::Logger logger) {
   return true;
 }
 ADD_TEST(vectorTest);
-} // namespace test
-} // namespace util
+}  // namespace test
+}  // namespace util
 
 #endif

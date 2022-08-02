@@ -28,13 +28,13 @@ unsigned processorCount();
 
 // Run the specified callback on CPU cpuNumber. The function returns when the
 // callback calls letCallerReturn()
-void runOn(unsigned cpuNumber, callback::Callback<bool> &&callback);
+void runOn(unsigned cpuNumber, callback::Callback<bool>&& callback);
 
 void letCallerReturn();
 
 // Internal function. Called when the CPU receives a request to execute a
 // callback
 void receiveCall();
-} // namespace processors
+}  // namespace processors
 
 #endif

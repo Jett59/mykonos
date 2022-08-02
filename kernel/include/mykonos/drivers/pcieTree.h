@@ -23,16 +23,16 @@
 
 namespace drivers {
 class PcieDeviceTree : public DeviceTree {
-public:
-  PcieDeviceTree(acpi::McfgTableManager *mcfg)
+ public:
+  PcieDeviceTree(acpi::McfgTableManager* mcfg)
       : DeviceTree(DeviceType::PCIE), mcfg(mcfg) {}
 
-protected:
+ protected:
   virtual void load();
 
-private:
-  acpi::McfgTableManager *mcfg;
+ private:
+  acpi::McfgTableManager* mcfg;
 };
-} // namespace drivers
+}  // namespace drivers
 
 #endif

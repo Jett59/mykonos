@@ -20,17 +20,17 @@
 #include <mykonos/kout.h>
 
 namespace acpi {
-HpetTableManager::HpetTableManager(TableHeader *header)
+HpetTableManager::HpetTableManager(TableHeader* header)
     : TableManager(TableType::HPET) {
-  HpetTable *hpet = (HpetTable *)header;
+  HpetTable* hpet = (HpetTable*)header;
   if (hpet->adress.adressSpace != 0) {
     kout::print("Unusable HPET: Not memory mapped\n");
   } else {
     legacyReplacementCapable = hpet->legacyReplacementCapable;
     numComparators = hpet->numComparators + 1;
-    physicalAddress = (void *)(size_t)hpet->adress.address;
+    physicalAddress = (void*)(size_t)hpet->adress.address;
     kout::printf("Found HPET with %d comparators\n", numComparators);
   }
   memory::unmapMemory(header, header->length);
 }
-} // namespace acpi
+}  // namespace acpi

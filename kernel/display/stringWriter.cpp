@@ -17,16 +17,16 @@
 #include <mykonos/display.h>
 #include <mykonos/fontRenderer.h>
 
-#define FOREGROUND                                                             \
+#define FOREGROUND \
   { .r = 0xFF, .g = 0xFF, .b = 0xFF }
-#define BACKGROUND                                                             \
+#define BACKGROUND \
   { .r = 0, .g = 0, .b = 0 }
 
 namespace display {
 void writeCharacter(unsigned x, unsigned y, char c) {
   font::render(c, x, y, FOREGROUND, BACKGROUND);
 }
-void writeString(unsigned x, unsigned y, const char *str) {
+void writeString(unsigned x, unsigned y, const char* str) {
   for (unsigned i = 0; str[i] != 0; i++) {
     font::render(str[i], x + i * font::getWidth(), y, FOREGROUND, BACKGROUND);
   }
@@ -34,4 +34,4 @@ void writeString(unsigned x, unsigned y, const char *str) {
 void removeCharacter(unsigned x, unsigned y) {
   font::render(' ', x, y, FOREGROUND, BACKGROUND);
 }
-} // namespace display
+}  // namespace display

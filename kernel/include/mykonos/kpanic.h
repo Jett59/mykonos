@@ -17,6 +17,6 @@
 #ifndef _MYKONOS_KPANIC_H
 #define _MYKONOS_KPANIC_H
 
-extern "C" [[noreturn]] void kpanic(const char *message);
+extern "C" [[noreturn]] void kpanic(const char* message);
 
 #endif

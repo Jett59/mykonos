@@ -29,11 +29,11 @@ namespace scheduler {
 // You should release any spinlocks first.
 void yield();
 
-task::ControlBlock *currentTask();
+task::ControlBlock* currentTask();
 // Returns the current task and removes it from the scheduler. Don't lose it!
-task::ControlBlock *removeSelf();
+task::ControlBlock* removeSelf();
 // Set the current task state to 'blocking' and return it. Don't lose it!
-task::ControlBlock *block();
+task::ControlBlock* block();
 // Block yield() on the current CPU.
 void lock();
 // Unblock yield() on the current CPU. Calls yield() if any yield() requests
@@ -41,17 +41,17 @@ void lock();
 void unlock();
 
 // Add the task to the scheduler. Used for unblocking tasks mostly.
-void addTask(task::ControlBlock *task);
+void addTask(task::ControlBlock* task);
 
 // Switch to the per-CPU stack. Use when you want to stop running the current
 // task. Will never return.
-[[noreturn]] void switchToSchedulerStack(void (*callback)(void *),
-                                         void *context);
+[[noreturn]] void switchToSchedulerStack(void (*callback)(void*),
+                                         void* context);
 
 // Call for each CPU with a freshly allocated task::ControlBlock
-void init(unsigned cpuNumber, task::ControlBlock *task);
+void init(unsigned cpuNumber, task::ControlBlock* task);
 // Call every 10ms for time slicing
 void tick();
-} // namespace scheduler
+}  // namespace scheduler
 
 #endif

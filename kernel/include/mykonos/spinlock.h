@@ -23,24 +23,24 @@
 
 namespace lock {
 class Spinlock {
-private:
+ private:
   uint8_t lock = 0;
   bool enableIrqs = false;
 
-public:
+ public:
   Spinlock() = default;
   // We don't want spinlocks to be copied
-  Spinlock(const Spinlock &) = delete;
-  Spinlock &operator=(const Spinlock &) = delete;
+  Spinlock(const Spinlock&) = delete;
+  Spinlock& operator=(const Spinlock&) = delete;
 
   // We do want move capabilities.
-  Spinlock(Spinlock &&other) {
+  Spinlock(Spinlock&& other) {
     lock = other.lock;
     enableIrqs = other.enableIrqs;
     other.lock = 1;
     other.enableIrqs = false;
   }
-  Spinlock &operator=(Spinlock &&other) {
+  Spinlock& operator=(Spinlock&& other) {
     lock = other.lock;
     enableIrqs = other.enableIrqs;
     other.lock = 1;
@@ -70,6 +70,6 @@ public:
     }
   }
 };
-} // namespace lock
+}  // namespace lock
 
 #endif

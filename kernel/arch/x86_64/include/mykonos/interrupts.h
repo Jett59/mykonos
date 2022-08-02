@@ -23,6 +23,6 @@ namespace interrupts {
 void init();
 // Install the interrupt table pointer in the current CPU
 void install();
-} // namespace interrupts
+}  // namespace interrupts
 
 #endif

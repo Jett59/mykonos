@@ -29,29 +29,33 @@ extern "C" {
 // Save current registers into *from and load the ones in *to into the CPU.
 // Calls unlockTask() after saving the current state and lockTask() before
 // restoring the new state
-void swapRegisters(task::Registers *from, task::Registers *to);
+void swapRegisters(task::Registers* from, task::Registers* to);
 // Just load *regs into the CPU.
 // Calls lockTask() immediately
-void restoreRegisters(task::Registers *regs);
+void restoreRegisters(task::Registers* regs);
 
 // Lock and unlock the task run lock
-void unlockTask(task::ControlBlock *task) { task->runLock.release(); }
-void lockTask(task::ControlBlock *task) { task->runLock.acquire(); }
+void unlockTask(task::ControlBlock* task) {
+  task->runLock.release();
+}
+void lockTask(task::ControlBlock* task) {
+  task->runLock.acquire();
+}
 }
 
 namespace scheduler {
 class Scheduler {
-private:
+ private:
   unsigned cpuNumber;
   task::Queue tasks;
-  void *schedulerStack = nullptr;
-  task::ControlBlock *currentTask;
+  void* schedulerStack = nullptr;
+  task::ControlBlock* currentTask;
   lock::Spinlock addTaskLock;
   bool yieldLocked = false;
   bool yieldPostponed = false;
 
-public:
-  void addTask(task::ControlBlock *task) {
+ public:
+  void addTask(task::ControlBlock* task) {
     task->state = task::State::RUNNABLE;
     addTaskLock.acquire();
     if (currentTask == nullptr || currentTask->state != task::State::RUNNING ||
@@ -86,8 +90,8 @@ public:
     if (!yieldLocked) {
       bool enableLocalIrqs = cpu::localIrqState();
       cpu::disableLocalIrqs();
-      task::ControlBlock *from = currentTask;
-      task::ControlBlock *to = tasks.pop();
+      task::ControlBlock* from = currentTask;
+      task::ControlBlock* to = tasks.pop();
       if (to != nullptr) {
         to->state = task::State::RUNNING;
         to->timeSlice = INITIAL_TIME_SLICE;
@@ -111,12 +115,12 @@ public:
         // when we are unblocked
         if (currentTask->state != task::State::RUNNING) {
           // swapRegisters() returned
-          auto haultCode = [](void *currentTaskPointer) {
-            auto currentTask = (task::ControlBlock *)currentTaskPointer;
+          auto haultCode = [](void* currentTaskPointer) {
+            auto currentTask = (task::ControlBlock*)currentTaskPointer;
             currentTask->runLock.release();
             cpu::haultWithIrqs();
           };
-          switchToSchedulerStack(haultCode, (void *)removeCurrent());
+          switchToSchedulerStack(haultCode, (void*)removeCurrent());
         } else {
           // Unblocked!
         }
@@ -141,20 +145,20 @@ public:
     }
   }
 
-  task::ControlBlock *getCurrentTask() { return currentTask; }
+  task::ControlBlock* getCurrentTask() { return currentTask; }
 
-  task::ControlBlock *removeCurrent() {
-    task::ControlBlock *result = currentTask;
+  task::ControlBlock* removeCurrent() {
+    task::ControlBlock* result = currentTask;
     currentTask = nullptr;
     return result;
   }
-  task::ControlBlock *block() {
+  task::ControlBlock* block() {
     currentTask->state = task::State::BLOCKING;
     return currentTask;
   }
 
-  [[noreturn]] void switchToSchedulerStack(void (*callback)(void *),
-                                           void *context) {
+  [[noreturn]] void switchToSchedulerStack(void (*callback)(void*),
+                                           void* context) {
     if (schedulerStack == nullptr) {
       schedulerStack = stacks::allocateStack();
     }
@@ -169,7 +173,7 @@ public:
     }
   }
 
-  void init(unsigned cpuNumber, task::ControlBlock *task) {
+  void init(unsigned cpuNumber, task::ControlBlock* task) {
     this->cpuNumber = cpuNumber;
     task->runLock.acquire();
     currentTask = task;
@@ -179,8 +183,8 @@ static Scheduler schedulers[MAX_CPUS];
 
 static unsigned cpuCount = 0;
 
-static Scheduler &getLeastBusy() {
-  Scheduler *bestScheduler = &schedulers[cpu::getCpuNumber()];
+static Scheduler& getLeastBusy() {
+  Scheduler* bestScheduler = &schedulers[cpu::getCpuNumber()];
   unsigned bestTaskCount = bestScheduler->taskCount();
   for (unsigned i = 0; i < cpuCount; i++) {
     if (bestTaskCount == 0) {
@@ -194,25 +198,37 @@ static Scheduler &getLeastBusy() {
   return *bestScheduler;
 }
 
-void addTask(task::ControlBlock *task) { getLeastBusy().addTask(task); }
-void tick() { schedulers[cpu::getCpuNumber()].tick(); }
-void yield() { schedulers[cpu::getCpuNumber()].yield(); }
-task::ControlBlock *currentTask() {
+void addTask(task::ControlBlock* task) {
+  getLeastBusy().addTask(task);
+}
+void tick() {
+  schedulers[cpu::getCpuNumber()].tick();
+}
+void yield() {
+  schedulers[cpu::getCpuNumber()].yield();
+}
+task::ControlBlock* currentTask() {
   return schedulers[cpu::getCpuNumber()].getCurrentTask();
 }
-task::ControlBlock *removeSelf() {
+task::ControlBlock* removeSelf() {
   return schedulers[cpu::getCpuNumber()].removeCurrent();
 }
-task::ControlBlock *block() { return schedulers[cpu::getCpuNumber()].block(); }
-[[noreturn]] void switchToSchedulerStack(void (*callback)(void *),
-                                         void *context) {
+task::ControlBlock* block() {
+  return schedulers[cpu::getCpuNumber()].block();
+}
+[[noreturn]] void switchToSchedulerStack(void (*callback)(void*),
+                                         void* context) {
   schedulers[cpu::getCpuNumber()].switchToSchedulerStack(callback, context);
 }
-void lock() { schedulers[cpu::getCpuNumber()].lock(); }
-void unlock() { schedulers[cpu::getCpuNumber()].unlock(); }
+void lock() {
+  schedulers[cpu::getCpuNumber()].lock();
+}
+void unlock() {
+  schedulers[cpu::getCpuNumber()].unlock();
+}
 
-void init(unsigned cpuNumber, task::ControlBlock *task) {
+void init(unsigned cpuNumber, task::ControlBlock* task) {
   schedulers[cpuNumber].init(cpuNumber, task);
   cpuCount++;
 }
-} // namespace scheduler
+}  // namespace scheduler

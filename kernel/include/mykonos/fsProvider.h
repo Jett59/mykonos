@@ -31,13 +31,13 @@ struct FileNode {
   FileType type;
   size_t openCount = 0;
   util::Vector<FileNode> children;
-  void *node; // Identifies the file (fs-specific)
+  void* node;  // Identifies the file (fs-specific)
   lock::Mutex lock;
-  FsProvider *fsProvider;
+  FsProvider* fsProvider;
   bool populated = false;
 };
 class FsProvider {
-public:
+ public:
   /**
    * @brief read from a file
    *
@@ -47,8 +47,10 @@ public:
    * @param buffer the buffer to read into
    * @return the number of bytes read
    */
-  virtual size_t read(FileNode &node, size_t offset, size_t length,
-                      void *buffer) {
+  virtual size_t read(FileNode& node,
+                      size_t offset,
+                      size_t length,
+                      void* buffer) {
     (void)node;
     (void)offset;
     (void)length;
@@ -64,8 +66,10 @@ public:
    * @param buffer the buffer to write to the file
    * @return the number of bytes written
    */
-  virtual size_t write(FileNode &node, size_t offset, size_t length,
-                       void *buffer) {
+  virtual size_t write(FileNode& node,
+                       size_t offset,
+                       size_t length,
+                       void* buffer) {
     (void)node;
     (void)offset;
     (void)length;
@@ -84,7 +88,7 @@ public:
    *
    * @param directory the directory to populate
    */
-  virtual void populateDirectory(FileNode &directory) { (void)directory; }
+  virtual void populateDirectory(FileNode& directory) { (void)directory; }
 
   /**
    * @brief initialize the root directory of this file system.
@@ -98,7 +102,7 @@ public:
    *
    * @param root the root of the file system
    */
-  virtual void initRoot(FileNode &root) = 0;
+  virtual void initRoot(FileNode& root) = 0;
 
   /**
    * @brief free the resources associated with the file node.
@@ -110,8 +114,8 @@ public:
    *
    * @param node the node to free
    */
-  virtual void freeNode(FileNode &node) = 0;
+  virtual void freeNode(FileNode& node) = 0;
 };
-} // namespace fs
+}  // namespace fs
 
 #endif

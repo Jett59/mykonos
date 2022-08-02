@@ -46,7 +46,9 @@ static inline uint32_t readPort32(uint16_t port) {
   return value;
 }
 
-static inline void delay() { writePort8(0, 0x80); }
-} // namespace io
+static inline void delay() {
+  writePort8(0, 0x80);
+}
+}  // namespace io
 
 #endif

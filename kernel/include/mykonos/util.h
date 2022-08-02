@@ -20,39 +20,57 @@
 #include <stddef.h>
 
 namespace util {
-template <typename T> struct WithoutReference { using Type = T; };
-template <typename T> struct WithoutReference<T &> { using Type = T; };
-template <typename T> struct WithoutReference<T &&> { using Type = T; };
+template <typename T>
+struct WithoutReference {
+  using Type = T;
+};
+template <typename T>
+struct WithoutReference<T&> {
+  using Type = T;
+};
+template <typename T>
+struct WithoutReference<T&&> {
+  using Type = T;
+};
 
-template <typename T> typename WithoutReference<T>::Type &&move(T &&value) {
+template <typename T>
+typename WithoutReference<T>::Type&& move(T&& value) {
   return (typename WithoutReference<T>::Type &&) value;
 }
-template <typename T> void move(T *dst, T *src, size_t n) {
+template <typename T>
+void move(T* dst, T* src, size_t n) {
   for (size_t i = 0; i < n; i++) {
     dst[i] = move(src[i]);
   }
 }
 
-template <typename T> class Accessor {
-public:
-  Accessor(T *value = nullptr) : value(value) {}
+template <typename T>
+class Accessor {
+ public:
+  Accessor(T* value = nullptr) : value(value) {}
 
   operator T() { return value != nullptr ? *value : T{}; }
-  Accessor<T> &operator=(T newValue) {
+  Accessor<T>& operator=(T newValue) {
     if (value != nullptr) {
       *value = newValue;
     }
     return *this;
   }
-  operator T *() { return value; }
-  T *operator->() { return value; }
+  operator T*() { return value; }
+  T* operator->() { return value; }
 
-private:
-  T *value;
+ private:
+  T* value;
 };
 
-template <typename T> T max(T a, T b) { return a < b ? b : a; }
-template <typename T> T min(T a, T b) { return a < b ? a : b; }
-} // namespace util
+template <typename T>
+T max(T a, T b) {
+  return a < b ? b : a;
+}
+template <typename T>
+T min(T a, T b) {
+  return a < b ? a : b;
+}
+}  // namespace util
 
 #endif

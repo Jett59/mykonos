@@ -23,13 +23,13 @@
 
 namespace task {
 class Queue {
-public:
+ public:
   Queue() = default;
-  Queue(const Queue &other) = delete;
-  Queue &operator=(Queue &other) = delete;
+  Queue(const Queue& other) = delete;
+  Queue& operator=(Queue& other) = delete;
 
   // Move constructors.
-  Queue(Queue &&other) {
+  Queue(Queue&& other) {
     lock = util::move(other.lock);
     head = other.head;
     tail = other.tail;
@@ -38,7 +38,7 @@ public:
     other.tail = nullptr;
     other.size = 0;
   }
-  Queue &operator=(Queue &&other) {
+  Queue& operator=(Queue&& other) {
     lock = util::move(other.lock);
     head = other.head;
     tail = other.tail;
@@ -49,7 +49,7 @@ public:
     return *this;
   }
 
-  void push(ControlBlock *value) {
+  void push(ControlBlock* value) {
     lock.acquire();
     if (head == nullptr) {
       head = tail = value;
@@ -60,7 +60,7 @@ public:
     __atomic_fetch_add(&size, 1, __ATOMIC_SEQ_CST);
     lock.release();
   }
-  void push_front(ControlBlock *value) {
+  void push_front(ControlBlock* value) {
     lock.acquire();
     if (head == nullptr) {
       head = tail = value;
@@ -71,9 +71,9 @@ public:
     __atomic_fetch_add(&size, 1, __ATOMIC_SEQ_CST);
     lock.release();
   }
-  ControlBlock *pop() {
+  ControlBlock* pop() {
     lock.acquire();
-    ControlBlock *result = head;
+    ControlBlock* result = head;
     if (head != nullptr) {
       if (head == tail) {
         head = tail = nullptr;
@@ -87,12 +87,12 @@ public:
   }
   unsigned getSize() { return __atomic_load_n(&size, __ATOMIC_SEQ_CST); }
 
-private:
+ private:
   lock::Spinlock lock;
-  ControlBlock *head = nullptr;
-  ControlBlock *tail = nullptr;
+  ControlBlock* head = nullptr;
+  ControlBlock* tail = nullptr;
   unsigned size = 0;
 };
-} // namespace task
+}  // namespace task
 
 #endif

@@ -21,9 +21,10 @@
 #include <stddef.h>
 
 namespace util {
-template <typename T> class RangedIterator {
-public:
-  RangedIterator(T *begin, T *end, T *pointer)
+template <typename T>
+class RangedIterator {
+ public:
+  RangedIterator(T* begin, T* end, T* pointer)
       : begin(begin), end(end), pointer(pointer) {}
 
   using DiffType = ptrdiff_t;
@@ -32,14 +33,14 @@ public:
     return pointer + index < end && pointer + index >= begin ? pointer + index
                                                              : nullptr;
   }
-  T &operator*() { return (*this)[0]; }
+  T& operator*() { return (*this)[0]; }
 
   RangedIterator<T> operator++(int) {
     RangedIterator<T> result = *this;
     pointer++;
     return result;
   }
-  RangedIterator<T> &operator++() {
+  RangedIterator<T>& operator++() {
     pointer++;
     return *this;
   }
@@ -51,7 +52,7 @@ public:
     pointer--;
     return result;
   }
-  RangedIterator<T> &operator--() {
+  RangedIterator<T>& operator--() {
     pointer--;
     return *this;
   }
@@ -59,7 +60,7 @@ public:
     return {begin, end, pointer - offset};
   }
 
-  DiffType operator-(const RangedIterator<T> &other) const {
+  DiffType operator-(const RangedIterator<T>& other) const {
     if (other.begin == begin && other.end == end) {
       return pointer - other.pointer;
     } else {
@@ -67,18 +68,18 @@ public:
     }
   }
 
-  bool operator==(const RangedIterator<T> &other) const {
+  bool operator==(const RangedIterator<T>& other) const {
     return other.begin == begin && other.end == end && other.pointer == pointer;
   }
-  bool operator!=(const RangedIterator<T> &other) const {
+  bool operator!=(const RangedIterator<T>& other) const {
     return !((*this) == other);
   }
 
-private:
-  T *begin;
-  T *end;
-  T *pointer;
+ private:
+  T* begin;
+  T* end;
+  T* pointer;
 };
-} // namespace util
+}  // namespace util
 
 #endif

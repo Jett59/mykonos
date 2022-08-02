@@ -25,9 +25,9 @@ namespace test {
 bool taskQueueTest(::test::Logger logger) {
   logger("taskQueueTest:\n");
   ControlBlock a, b, c;
-  ControlBlock *aPointer = &a;
-  ControlBlock *bPointer = &b;
-  ControlBlock *cPointer = &c;
+  ControlBlock* aPointer = &a;
+  ControlBlock* bPointer = &b;
+  ControlBlock* cPointer = &c;
   Queue queue;
   queue.push(aPointer);
   queue.push(bPointer);
@@ -52,7 +52,7 @@ bool taskQueueTest(::test::Logger logger) {
   return true;
 }
 ADD_TEST(taskQueueTest);
-} // namespace test
-} // namespace task
+}  // namespace test
+}  // namespace task
 
 #endif

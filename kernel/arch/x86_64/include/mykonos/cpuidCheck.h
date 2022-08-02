@@ -20,6 +20,6 @@
 namespace cpuid {
 // Check if the current CPU supports all of the required features
 bool checkCpuidFlags();
-} // namespace cpuid
+}  // namespace cpuid
 
 #endif

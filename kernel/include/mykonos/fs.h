@@ -37,7 +37,7 @@ struct FileNode;
 class FsProvider;
 
 class FileHandle {
-public:
+ public:
   /**
    * @brief open a new FileHandle from a path
    *
@@ -82,7 +82,7 @@ public:
    * @param buffer the buffer to read data into
    * @return the number of bytes read
    */
-  size_t read(size_t offset, size_t length, void *buffer);
+  size_t read(size_t offset, size_t length, void* buffer);
   /**
    * @brief write to a file
    *
@@ -95,7 +95,7 @@ public:
    * @param buffer the buffer to write to the file
    * @return the number of bytes written
    */
-  size_t write(size_t offset, size_t length, void *buffer);
+  size_t write(size_t offset, size_t length, void* buffer);
 
   /**
    * @brief get the name of a child file
@@ -143,7 +143,7 @@ public:
    *
    * @param fsProvider the file system to mount
    */
-  void mount(FsProvider *fsProvider);
+  void mount(FsProvider* fsProvider);
 
   bool isOpen() { return open; }
 
@@ -151,14 +151,14 @@ public:
 
   bool okay() { return getError() == FileError::OKAY; }
 
-private:
-  FileNode *node;
+ private:
+  FileNode* node;
   bool writable;
   bool open;
   FileError error;
 
-  FileHandle(FileNode *node, bool writable);
+  FileHandle(FileNode* node, bool writable);
 };
-} // namespace fs
+}  // namespace fs
 
 #endif

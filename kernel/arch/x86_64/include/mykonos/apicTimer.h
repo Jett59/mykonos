@@ -22,8 +22,8 @@
 #define APIC_TIMER_INTERRUPT 0xf0
 
 namespace apic {
-unsigned timerTicksPer(unsigned nanos, hpet::Hpet &hpet);
+unsigned timerTicksPer(unsigned nanos, hpet::Hpet& hpet);
 void setUpTimer(unsigned tickFrequency);
-} // namespace apic
+}  // namespace apic
 
 #endif

@@ -38,12 +38,19 @@ extern PsfFile _binary_display_font_font_psf_start;
 #define fontFile _binary_display_font_font_psf_start
 
 namespace font {
-void render(char c, unsigned x, unsigned y, display::Pixel foreground,
+void render(char c,
+            unsigned x,
+            unsigned y,
+            display::Pixel foreground,
             display::Pixel background) {
-  uint8_t *glyph = fontFile.data + (c * fontFile.glyphSize);
+  uint8_t* glyph = fontFile.data + (c * fontFile.glyphSize);
   display::writeBitmap(x, y, fontFile.width, fontFile.height, glyph, foreground,
                        background);
 }
-unsigned getWidth() { return fontFile.width; }
-unsigned getHeight() { return fontFile.height; }
-} // namespace font
+unsigned getWidth() {
+  return fontFile.width;
+}
+unsigned getHeight() {
+  return fontFile.height;
+}
+}  // namespace font

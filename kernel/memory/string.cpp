@@ -16,35 +16,35 @@
     */
 #include <mykonos/string.h>
 
-extern "C" void *memchr(const void *ptr, int c, size_t n) {
-  const unsigned char *str = (const unsigned char *)ptr;
+extern "C" void* memchr(const void* ptr, int c, size_t n) {
+  const unsigned char* str = (const unsigned char*)ptr;
   for (size_t i = 0; i < n; i++) {
     if (str[i] == c) {
-      return (void *)(str + i);
+      return (void*)(str + i);
     }
   }
   return nullptr;
 }
 
-extern "C" int strlen(const char *str) {
+extern "C" int strlen(const char* str) {
   int i;
   for (i = 0; *str != 0; i++) {
     str++;
   }
   return i;
 }
-extern "C" char *strcpy(char *dst, const char *src) {
+extern "C" char* strcpy(char* dst, const char* src) {
   int size = strlen(src);
   memcpy(dst, src, size);
   dst[size] = 0;
   return dst;
 }
-extern "C" char *strchr(const char *str, int c) {
+extern "C" char* strchr(const char* str, int c) {
   char chr = (char)c;
   int len = strlen(str);
   for (int i = 0; i < len; i++) {
     if (str[i] == chr) {
-      return (char *)str + i;
+      return (char*)str + i;
     }
   }
   return nullptr;

@@ -32,7 +32,7 @@ enum class PageTableFlags : uint64_t {
 inline PageTableFlags operator|(PageTableFlags a, PageTableFlags b) {
   return (PageTableFlags)((uint64_t)a + (uint64_t)b);
 }
-inline PageTableFlags &operator|=(PageTableFlags &a, PageTableFlags b) {
+inline PageTableFlags& operator|=(PageTableFlags& a, PageTableFlags b) {
   return a = a | b;
 }
 inline uint64_t operator&(PageTableFlags a, PageTableFlags b) {
@@ -48,9 +48,9 @@ typedef Pml3 Pml4[512];
 
 // Quick check: is the pml4 512gb in size?
 static_assert(sizeof(Pml4) == 549755813888, "Pml4 must be 512gb in size");
-} // namespace paging
+}  // namespace paging
 
 // Recursive mapping
-#define PAGE_TABLE_POINTER ((paging::Pml4 *)0xFFFFFF8000000000)
+#define PAGE_TABLE_POINTER ((paging::Pml4*)0xFFFFFF8000000000)
 
 #endif

@@ -19,7 +19,7 @@
 #include <mykonos/pageTables.h>
 
 extern "C" {
-void *kernelVirtualOffset[0];
+void* kernelVirtualOffset[0];
 }
 
 #define PHYSICAL_ADDRESS(PTR) ((uint64_t)PTR - (uint64_t)kernelVirtualOffset)
@@ -51,4 +51,4 @@ void initPageTables() {
   // Load it
   __asm__ volatile("mov %0, %%cr3" : : "a"(pml4[511]) : "memory");
 }
-} // namespace paging
+}  // namespace paging

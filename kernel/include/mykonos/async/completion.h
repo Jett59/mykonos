@@ -22,15 +22,15 @@
 
 namespace async {
 class Completion {
-public:
+ public:
   void signalComplete();
   void await();
 
-private:
+ private:
   lock::Spinlock lock;
   task::Queue waitingTasks;
   bool completed = false;
 };
-} // namespace async
+}  // namespace async
 
 #endif

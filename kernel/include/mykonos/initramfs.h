@@ -24,7 +24,7 @@
 
 namespace initramfs {
 struct Initramfs {
-  void *pointer;
+  void* pointer;
   size_t size;
 };
 extern Initramfs initramfs;
@@ -32,23 +32,25 @@ extern Initramfs initramfs;
 struct InitramfsEntry {
   String name;
   fs::FileType type;
-  void *data;
+  void* data;
   size_t size;
 };
 
 class InitramfsFsProvider : public fs::FsProvider {
-public:
+ public:
   InitramfsFsProvider();
 
-  virtual size_t read(fs::FileNode &node, size_t offset, size_t length,
-                      void *buffer);
-  virtual void populateDirectory(fs::FileNode &directory);
-  virtual void freeNode(fs::FileNode &directory);
-  virtual void initRoot(fs::FileNode &root);
+  virtual size_t read(fs::FileNode& node,
+                      size_t offset,
+                      size_t length,
+                      void* buffer);
+  virtual void populateDirectory(fs::FileNode& directory);
+  virtual void freeNode(fs::FileNode& directory);
+  virtual void initRoot(fs::FileNode& root);
 
-private:
+ private:
   util::Vector<InitramfsEntry> entries;
 };
-} // namespace initramfs
+}  // namespace initramfs
 
 #endif

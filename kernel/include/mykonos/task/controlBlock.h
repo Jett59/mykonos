@@ -25,13 +25,13 @@ enum class State { RUNNING, RUNNABLE, BLOCKING };
 
 struct ControlBlock {
   Registers registers;
-  void *originalStackPointer = nullptr;
+  void* originalStackPointer = nullptr;
   lock::Spinlock runLock;
   State state;
   unsigned timeSlice;
   unsigned priority;
-  ControlBlock *next = nullptr;
+  ControlBlock* next = nullptr;
 };
-} // namespace task
+}  // namespace task
 
 #endif

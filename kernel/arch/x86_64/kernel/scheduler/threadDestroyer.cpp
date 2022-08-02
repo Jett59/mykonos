@@ -26,8 +26,8 @@ namespace thread {
 [[noreturn]] void destroy() {
   cpu::disableLocalIrqs();
   auto currentTask = scheduler::block();
-  auto destructionCode = [](void *currentTaskPointer) {
-    task::ControlBlock *currentTask = (task::ControlBlock *)currentTaskPointer;
+  auto destructionCode = [](void* currentTaskPointer) {
+    task::ControlBlock* currentTask = (task::ControlBlock*)currentTaskPointer;
     // Use the runLock to wait for the task to finish running
     currentTask->runLock.acquire();
     currentTask->runLock.release();
@@ -36,9 +36,9 @@ namespace thread {
     }
     delete currentTask;
   };
-  cleaner::addObject((void *)currentTask, destructionCode);
+  cleaner::addObject((void*)currentTask, destructionCode);
   scheduler::yield();
   // Make the compiler happy about noreturn
   kpanic("thread::destroy somehow returned!?\n");
 }
-} // namespace thread
+}  // namespace thread

@@ -18,7 +18,7 @@
 #include <mykonos/kout.h>
 #include <mykonos/kpanic.h>
 
-extern "C" [[noreturn]] void kpanic(const char *message) {
+extern "C" [[noreturn]] void kpanic(const char* message) {
   kout::print("Kpanic!\n");
   kout::print(message);
   cpu::hault();

@@ -34,7 +34,7 @@ struct LocalApicDescriptor {
   uint8_t apicId;
 };
 struct IoApicDescriptor {
-  void *physicalAddress;
+  void* physicalAddress;
   uint32_t gsiBase;
 };
 
@@ -83,9 +83,9 @@ struct IoApicDescriptor {
 #define APIC_DIVIDE_128 0xa
 
 class LocalApic {
-public:
+ public:
   // APIC initialization
-  void init(void *physicalAddress);
+  void init(void* physicalAddress);
   void enable();
 
   uint32_t getVersion() {
@@ -99,8 +99,12 @@ public:
   uint32_t readErrors() { return readRegister(LOCAL_APIC_ERROR_REGISTER); }
 
   // Send an IPI to another CPU. messageType is one of the codes above.
-  void sendIpi(uint8_t vector, uint8_t messageType, bool logicalDestination,
-               bool assert, bool levelTriggered, uint8_t destinationApicId);
+  void sendIpi(uint8_t vector,
+               uint8_t messageType,
+               bool logicalDestination,
+               bool assert,
+               bool levelTriggered,
+               uint8_t destinationApicId);
 
   // APIC timer control
   void writeTimerLvt(bool periodic, bool mask, uint8_t vector) {
@@ -129,8 +133,8 @@ public:
   // Signal End Of Interrupt
   void eoi() { writeRegister(LOCAL_APIC_EOI_REGISTER, 0); }
 
-private:
-  uint32_t *registers = nullptr;
+ private:
+  uint32_t* registers = nullptr;
 
   void writeRegister(size_t offset, uint32_t value) {
     mmio::write(registers + (offset / 4), value);
@@ -139,8 +143,11 @@ private:
     return mmio::read(registers + (offset / 4));
   }
 
-  void writeLvtRegister(size_t registerOffset, bool timerPeriodic, bool mask,
-                        bool levelTriggered, uint8_t messageType,
+  void writeLvtRegister(size_t registerOffset,
+                        bool timerPeriodic,
+                        bool mask,
+                        bool levelTriggered,
+                        uint8_t messageType,
                         uint8_t vector) {
     writeRegister(registerOffset, ((uint32_t)timerPeriodic << 17) |
                                       ((uint32_t)mask << 16) |
@@ -156,6 +163,6 @@ private:
 extern uint8_t localApicIds[MAX_LOCAL_APICS];
 
 extern LocalApic localApic;
-} // namespace apic
+}  // namespace apic
 
 #endif

@@ -23,10 +23,10 @@
 #include <mykonos/string.h>
 
 extern "C" {
-extern multiboot::Mbi *mbiPointer;
+extern multiboot::Mbi* mbiPointer;
 
-extern void *kernelPhysicalAddress[0];
-extern void *kernelPhysicalEnd[0];
+extern void* kernelPhysicalAddress[0];
+extern void* kernelPhysicalEnd[0];
 }
 
 namespace initramfs {
@@ -42,84 +42,84 @@ RsdpV2 rsdp;
 }
 
 namespace multiboot {
-static void parseMbiTag(uint32_t type, MbiTag *tag);
+static void parseMbiTag(uint32_t type, MbiTag* tag);
 void parseMbi() {
-  MbiTag *tag = &mbiPointer->firstTag;
+  MbiTag* tag = &mbiPointer->firstTag;
   while (tag->type != 0) {
     parseMbiTag(tag->type, tag);
-    tag = (MbiTag *)((uint8_t *)tag + (tag->size + 7) / 8 * 8);
+    tag = (MbiTag*)((uint8_t*)tag + (tag->size + 7) / 8 * 8);
   }
   // Now that the module and memory map tags are parsed, we should reserve the
   // initramfs from the physical memory map.
-  auto &initramfs = initramfs::initramfs;
+  auto& initramfs = initramfs::initramfs;
   if (initramfs.size > 0) {
     memory::physicalMemory.reserve(
-        {(void *)PAGE_ALIGN_DOWN((size_t)initramfs.pointer),
-         (void *)PAGE_ALIGN_UP((size_t)initramfs.pointer + initramfs.size)});
+        {(void*)PAGE_ALIGN_DOWN((size_t)initramfs.pointer),
+         (void*)PAGE_ALIGN_UP((size_t)initramfs.pointer + initramfs.size)});
   }
 }
-static void parseModuleTag(ModuleTag *tag);
-static void parseMemoryMapTag(MemoryMapTag *memoryMap);
-static void parseFrameBufferTag(FrameBufferTag *tag);
-static void parseOldRsdpTag(OldRsdpTag *tag);
-static void parseNewRsdpTag(NewRsdpTag *tag);
-static void parseMbiTag(uint32_t type, MbiTag *tag) {
+static void parseModuleTag(ModuleTag* tag);
+static void parseMemoryMapTag(MemoryMapTag* memoryMap);
+static void parseFrameBufferTag(FrameBufferTag* tag);
+static void parseOldRsdpTag(OldRsdpTag* tag);
+static void parseNewRsdpTag(NewRsdpTag* tag);
+static void parseMbiTag(uint32_t type, MbiTag* tag) {
   switch (type) {
-  case MBI_TAG_MODULE: {
-    parseModuleTag((ModuleTag *)tag);
-    break;
-  }
-  case MBI_TAG_MEMORY: {
-    parseMemoryMapTag((MemoryMapTag *)tag);
-    break;
-  }
-  case MBI_TAG_FRAME_BUFFER: {
-    parseFrameBufferTag((FrameBufferTag *)tag);
-    break;
-  }
-  case MBI_TAG_RSDP_OLD: {
-    parseOldRsdpTag((OldRsdpTag *)tag);
-    break;
-  }
-  case MBI_TAG_RSDP_NEW: {
-    parseNewRsdpTag((NewRsdpTag *)tag);
-    break;
-  }
-  default:
-    break;
+    case MBI_TAG_MODULE: {
+      parseModuleTag((ModuleTag*)tag);
+      break;
+    }
+    case MBI_TAG_MEMORY: {
+      parseMemoryMapTag((MemoryMapTag*)tag);
+      break;
+    }
+    case MBI_TAG_FRAME_BUFFER: {
+      parseFrameBufferTag((FrameBufferTag*)tag);
+      break;
+    }
+    case MBI_TAG_RSDP_OLD: {
+      parseOldRsdpTag((OldRsdpTag*)tag);
+      break;
+    }
+    case MBI_TAG_RSDP_NEW: {
+      parseNewRsdpTag((NewRsdpTag*)tag);
+      break;
+    }
+    default:
+      break;
   }
 }
-static void parseModuleTag(ModuleTag *tag) {
-  initramfs::initramfs = {(void *)(size_t)tag->moduleStart,
+static void parseModuleTag(ModuleTag* tag) {
+  initramfs::initramfs = {(void*)(size_t)tag->moduleStart,
                           tag->moduleEnd - tag->moduleStart};
 }
-static void parseMemoryMapTag(MemoryMapTag *memoryMap) {
+static void parseMemoryMapTag(MemoryMapTag* memoryMap) {
   uint32_t numEntries =
       (memoryMap->size - sizeof(MemoryMapTag)) / memoryMap->entrySize;
   for (uint32_t i = 0; i < numEntries; i++) {
     if (memoryMap->memory[i].type == 1) {
-      void *entryBase = (void *)PAGE_ALIGN_UP(memoryMap->memory[i].base);
+      void* entryBase = (void*)PAGE_ALIGN_UP(memoryMap->memory[i].base);
       size_t entrySize = PAGE_ALIGN_DOWN(memoryMap->memory[i].length);
-      void *entryEnd = (void *)((uint8_t *)entryBase + entrySize);
+      void* entryEnd = (void*)((uint8_t*)entryBase + entrySize);
       memory::physicalMemory.addBlock(memory::Block(entryBase, entryEnd));
     }
   }
   memory::physicalMemory.reserve(
-      memory::Block((void *)PAGE_ALIGN_DOWN((size_t)kernelPhysicalAddress),
-                    (void *)PAGE_ALIGN_UP((size_t)kernelPhysicalEnd)));
-  memory::physicalMemory.reserve(memory::Block((void *)0x0, (void *)0x100000));
+      memory::Block((void*)PAGE_ALIGN_DOWN((size_t)kernelPhysicalAddress),
+                    (void*)PAGE_ALIGN_UP((size_t)kernelPhysicalEnd)));
+  memory::physicalMemory.reserve(memory::Block((void*)0x0, (void*)0x100000));
 }
-static void parseFrameBufferTag(FrameBufferTag *tag) {
-  display::frameBuffer.pointer = (uint8_t *)tag->address;
+static void parseFrameBufferTag(FrameBufferTag* tag) {
+  display::frameBuffer.pointer = (uint8_t*)tag->address;
   display::frameBuffer.width = tag->width;
   display::frameBuffer.height = tag->height;
   display::frameBuffer.depth = tag->depth;
   display::frameBuffer.pitch = tag->pitch;
 }
-static void parseOldRsdpTag(OldRsdpTag *tag) {
+static void parseOldRsdpTag(OldRsdpTag* tag) {
   memcpy(&acpi::rsdp, &tag->rsdp, sizeof(acpi::RsdpV1));
 }
-static void parseNewRsdpTag(NewRsdpTag *tag) {
+static void parseNewRsdpTag(NewRsdpTag* tag) {
   memcpy(&acpi::rsdp, &tag->rsdp, sizeof(acpi::RsdpV2));
 }
-} // namespace multiboot
+}  // namespace multiboot

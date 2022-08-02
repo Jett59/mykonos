@@ -46,38 +46,48 @@ static inline unsigned getCpuNumber() {
 }
 // Used to initialize the TSC auxiliary data with the CPU number
 static inline void setCpuNumber(unsigned cpuNumber) {
-  wrmsr(cpuNumber, 0xc0000103); // rdtscp processor id
+  wrmsr(cpuNumber, 0xc0000103);  // rdtscp processor id
 }
 
 // Read the rflags register using pushfq
 static inline uint64_t getFlags() {
   uint64_t result;
-  __asm__ volatile("pushfq;"
-                   "popq %0"
-                   : "=g"(result)
-                   :
-                   : "memory");
+  __asm__ volatile(
+      "pushfq;"
+      "popq %0"
+      : "=g"(result)
+      :
+      : "memory");
   return result;
 }
 // Set rflags using popfq
 static inline void setFlags(uint64_t flags) {
-  __asm__ volatile("pushq %0;"
-                   "popfq"
-                   :
-                   : "g"(flags)
-                   : "memory", "cc");
+  __asm__ volatile(
+      "pushq %0;"
+      "popfq"
+      :
+      : "g"(flags)
+      : "memory", "cc");
 }
 // Get the value of the interrupt flag
-static inline bool localIrqState() { return (getFlags() & (1 << 9)) != 0; }
+static inline bool localIrqState() {
+  return (getFlags() & (1 << 9)) != 0;
+}
 // cli and sti instructions
-static inline void enableLocalIrqs() { __asm__ volatile("sti" : : : "memory"); }
+static inline void enableLocalIrqs() {
+  __asm__ volatile("sti" : : : "memory");
+}
 static inline void disableLocalIrqs() {
   __asm__ volatile("cli" : : : "memory");
 }
 
-static inline void mfence() { __asm__ volatile("mfence" : : : "memory"); }
+static inline void mfence() {
+  __asm__ volatile("mfence" : : : "memory");
+}
 // Pause instruction
-static inline void relax() { __asm__ volatile("pause"); }
+static inline void relax() {
+  __asm__ volatile("pause");
+}
 
 // Hault forever ignoring IRQs
 [[noreturn]] static inline void hault() {
@@ -93,6 +103,6 @@ static inline void relax() { __asm__ volatile("pause"); }
     __asm__("hlt");
   }
 }
-} // namespace cpu
+}  // namespace cpu
 
 #endif

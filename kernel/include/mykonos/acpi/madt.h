@@ -30,11 +30,11 @@ struct MadtGsiOverride {
   uint32_t destination;
 };
 class MadtTableManager : public TableManager {
-public:
-  MadtTableManager(TableHeader *header);
+ public:
+  MadtTableManager(TableHeader* header);
 
   bool getHasPic() { return hasPic; }
-  void *getLocalApicAddress() { return localApicAddress; }
+  void* getLocalApicAddress() { return localApicAddress; }
 
   unsigned localApicCount() { return numLocalApics; }
   apic::LocalApicDescriptor getLocalApic(size_t i) {
@@ -51,9 +51,9 @@ public:
     return i < numGsiOverrides ? gsiOverrides[i] : MadtGsiOverride();
   }
 
-private:
+ private:
   bool hasPic;
-  void *localApicAddress;
+  void* localApicAddress;
   unsigned numLocalApics = 0;
   apic::LocalApicDescriptor localApics[MAX_LOCAL_APICS];
   unsigned numIoApics = 0;
@@ -109,6 +109,6 @@ struct __attribute__((packed)) MadtGsiOverrideEntry {
 };
 static_assert(sizeof(MadtGsiOverrideEntry) == 10,
               "MadtGsiOverrideEntry has not been packed");
-} // namespace acpi
+}  // namespace acpi
 
 #endif

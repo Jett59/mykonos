@@ -22,15 +22,15 @@
 
 namespace lock {
 class Mutex {
-private:
+ private:
   Spinlock spinlock;
   bool lock = false;
   task::Queue blockedTasks;
 
-public:
+ public:
   void acquire();
   void release();
 };
-} // namespace lock
+}  // namespace lock
 
 #endif

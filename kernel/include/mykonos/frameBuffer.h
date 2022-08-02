@@ -21,7 +21,7 @@
 
 namespace display {
 struct FrameBuffer {
-  uint8_t *pointer;
+  uint8_t* pointer;
   unsigned width;
   unsigned height;
   unsigned pitch;
@@ -29,6 +29,6 @@ struct FrameBuffer {
 };
 extern FrameBuffer frameBuffer;
 void initFrameBuffer();
-} // namespace display
+}  // namespace display
 
 #endif

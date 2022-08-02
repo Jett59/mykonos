@@ -21,24 +21,24 @@
 #include <stddef.h>
 
 extern "C" {
-void *memset(void *str, int c, size_t size);
-void *memcpy(void *dst, const void *src, size_t size);
-int memcmp(const void *a, const void *b, size_t n);
-void *memchr(const void *str, int c, size_t n);
-int strlen(const char *str);
-char *strcpy(char *dst, const char *src);
-char *strchr(const char *str, int c);
+void* memset(void* str, int c, size_t size);
+void* memcpy(void* dst, const void* src, size_t size);
+int memcmp(const void* a, const void* b, size_t n);
+void* memchr(const void* str, int c, size_t n);
+int strlen(const char* str);
+char* strcpy(char* dst, const char* src);
+char* strchr(const char* str, int c);
 }
 
-static inline bool memeq(const void *a, const void *b, size_t n) {
+static inline bool memeq(const void* a, const void* b, size_t n) {
   return memcmp(a, b, n) == 0;
 }
 
 class String {
-public:
+ public:
   String() : cString(nullptr), length(0) {}
-  String(const char *cString) : cString(cString), length(strlen(cString)) {}
-  String(const char *cString, size_t length)
+  String(const char* cString) : cString(cString), length(strlen(cString)) {}
+  String(const char* cString, size_t length)
       : cString(cString), length(length) {}
 
   size_t len() const { return length; }
@@ -75,7 +75,7 @@ public:
     }
     // +1 to allow for calling findNext multiple times without needing a
     // subString.
-    const char *match = (const char *)memchr(cString + 1, c, length - 1);
+    const char* match = (const char*)memchr(cString + 1, c, length - 1);
     if (match == nullptr) {
       return {};
     } else {
@@ -83,7 +83,7 @@ public:
     }
   }
 
-  bool startsWith(String &other) {
+  bool startsWith(String& other) {
     if (length >= other.length) {
       return memeq(cString, other.cString, other.length);
     } else {
@@ -94,22 +94,24 @@ public:
   bool operator==(nullptr_t) const { return cString == nullptr; }
   bool operator!=(nullptr_t) const { return cString != nullptr; }
 
-  bool operator==(const String &other) const {
+  bool operator==(const String& other) const {
     if (other.length != length) {
       return false;
     } else if (length == 0) {
       return true;
     } else {
-      return memeq((const void *)cString, (const void *)other.cString, length);
+      return memeq((const void*)cString, (const void*)other.cString, length);
     }
   }
-  bool operator!=(const String &other) const { return !(*this == other); }
+  bool operator!=(const String& other) const { return !(*this == other); }
 
-private:
-  const char *cString;
+ private:
+  const char* cString;
   size_t length;
 };
 
-static inline String operator"" _s(const char *str) { return String(str); }
+static inline String operator"" _s(const char* str) {
+  return String(str);
+}
 
 #endif

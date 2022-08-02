@@ -40,4 +40,4 @@ void Mutex::release() {
     scheduler::addTask(nextTask);
   }
 }
-} // namespace lock
+}  // namespace lock

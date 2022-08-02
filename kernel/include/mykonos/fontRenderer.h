@@ -20,12 +20,15 @@
 #include <mykonos/display.h>
 
 namespace font {
-void render(char c, unsigned x, unsigned y, display::Pixel foreground,
+void render(char c,
+            unsigned x,
+            unsigned y,
+            display::Pixel foreground,
             display::Pixel background);
 
 // Font dimensions
 unsigned getWidth();
 unsigned getHeight();
-} // namespace font
+}  // namespace font
 
 #endif

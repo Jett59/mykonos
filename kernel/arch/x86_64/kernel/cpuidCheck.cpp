@@ -34,4 +34,4 @@ bool checkCpuidFlags() {
   }
   return true;
 }
-} // namespace cpuid
+}  // namespace cpuid

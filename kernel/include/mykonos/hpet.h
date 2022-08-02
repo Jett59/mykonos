@@ -27,12 +27,12 @@
 
 namespace hpet {
 class Hpet {
-public:
-  Hpet(void *physicalAddress);
+ public:
+  Hpet(void* physicalAddress);
   ~Hpet();
 
-  Hpet(Hpet &other) = delete;
-  Hpet &operator=(Hpet &other) = delete;
+  Hpet(Hpet& other) = delete;
+  Hpet& operator=(Hpet& other) = delete;
 
   uint64_t nanoTime() {
     return (readRegister(HPET_REGISTER_COUNTER) * frequencyFemtos) / 1000000;
@@ -48,8 +48,8 @@ public:
     }
   }
 
-private:
-  uint64_t *registerPointer;
+ private:
+  uint64_t* registerPointer;
 
   uint64_t frequencyFemtos;
 
@@ -60,6 +60,6 @@ private:
     return mmio::read(registerPointer + (offset / 8));
   }
 };
-} // namespace hpet
+}  // namespace hpet
 
 #endif

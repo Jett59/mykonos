@@ -27,9 +27,9 @@ uint8_t localApicIds[MAX_LOCAL_APICS];
 
 LocalApic localApic;
 
-void LocalApic::init(void *physicalAddress) {
+void LocalApic::init(void* physicalAddress) {
   if (registers == nullptr) {
-    registers = (uint32_t *)memory::mapAddress(physicalAddress, 4096, false);
+    registers = (uint32_t*)memory::mapAddress(physicalAddress, 4096, false);
   }
 }
 
@@ -39,9 +39,12 @@ void LocalApic::enable() {
                     LOCAL_APIC_SPURIOUS_INTERRUPT_REGISTER_ENABLE);
 }
 
-void LocalApic::sendIpi(uint8_t vector, uint8_t messageType,
-                        bool logicalDestination, bool assert,
-                        bool levelTriggered, uint8_t destinationApicId) {
+void LocalApic::sendIpi(uint8_t vector,
+                        uint8_t messageType,
+                        bool logicalDestination,
+                        bool assert,
+                        bool levelTriggered,
+                        uint8_t destinationApicId) {
   // Send the ipi
   writeRegister(LOCAL_APIC_IPI_REGISTER_HIGH,
                 (uint32_t)destinationApicId << 24);
@@ -61,4 +64,4 @@ void LocalApic::maskAllInternal() {
   maskLvtRegister(LOCAL_APIC_PERFORMANCE_LVT_REGISTER);
   maskLvtRegister(LOCAL_APIC_ERROR_LVT_REGISTER);
 }
-} // namespace apic
+}  // namespace apic

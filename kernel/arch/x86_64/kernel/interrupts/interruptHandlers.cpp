@@ -23,18 +23,18 @@
 
 extern "C" void handleInterrupt(uint8_t interruptNumber) {
   switch (interruptNumber) {
-  case APIC_TIMER_INTERRUPT: {
-    apic::localApic.eoi();
-    scheduler::tick();
-    break;
-  }
-  case PROCESSOR_CALLBACK_INTERRUPT: {
-    apic::localApic.eoi();
-    processors::receiveCall();
-    break;
-  }
-  default:
-    break;
+    case APIC_TIMER_INTERRUPT: {
+      apic::localApic.eoi();
+      scheduler::tick();
+      break;
+    }
+    case PROCESSOR_CALLBACK_INTERRUPT: {
+      apic::localApic.eoi();
+      processors::receiveCall();
+      break;
+    }
+    default:
+      break;
   }
   if (apic::localApic.inService(interruptNumber)) {
     apic::localApic.eoi();

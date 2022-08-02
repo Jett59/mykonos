@@ -20,7 +20,7 @@
 #include <stddef.h>
 
 namespace initramfs {
-static unsigned parseOctal(const char *str, size_t length) {
+static unsigned parseOctal(const char* str, size_t length) {
   unsigned result = 0;
   for (size_t i = 0; i < length; i++) {
     result *= 8;
@@ -41,7 +41,7 @@ static unsigned parseOctal(const char *str, size_t length) {
 #define SIZE_LENGTH 11
 
 InitramfsFsProvider::InitramfsFsProvider() {
-  char *initramfsPointer = (char *)initramfs.pointer;
+  char* initramfsPointer = (char*)initramfs.pointer;
   while (
       memeq(initramfsPointer + SIGNATURE_OFFSET, SIGNATURE, SIGNATURE_LENGTH)) {
     char type = initramfsPointer[TYPE_OFFSET];
@@ -56,7 +56,7 @@ InitramfsFsProvider::InitramfsFsProvider() {
       if (name[name.len() - 1] == '/') {
         name = name.subString(0, name.len() - 1);
       }
-      void *data = (void *)(initramfsPointer + 512);
+      void* data = (void*)(initramfsPointer + 512);
       entries.push_back({name, fileType, data, size});
     }
     // Add the size of the header (512 bytes) + the size of the file (aligned to
@@ -65,21 +65,25 @@ InitramfsFsProvider::InitramfsFsProvider() {
   }
 }
 
-size_t InitramfsFsProvider::read(fs::FileNode &node, size_t offset,
-                                 size_t length, void *buffer) {
-  InitramfsEntry &entry = *(InitramfsEntry *)node.node;
+size_t InitramfsFsProvider::read(fs::FileNode& node,
+                                 size_t offset,
+                                 size_t length,
+                                 void* buffer) {
+  InitramfsEntry& entry = *(InitramfsEntry*)node.node;
   if (offset < entry.size) {
     length = util::min(entry.size - offset, length);
-    memcpy(buffer, (void *)((char *)entry.data + offset), length);
+    memcpy(buffer, (void*)((char*)entry.data + offset), length);
     return length;
   }
   return 0;
 }
 
-void InitramfsFsProvider::freeNode(fs::FileNode &node) { node.node = nullptr; }
+void InitramfsFsProvider::freeNode(fs::FileNode& node) {
+  node.node = nullptr;
+}
 
-void InitramfsFsProvider::populateDirectory(fs::FileNode &directory) {
-  InitramfsEntry &directoryEntry = *(InitramfsEntry *)directory.node;
+void InitramfsFsProvider::populateDirectory(fs::FileNode& directory) {
+  InitramfsEntry& directoryEntry = *(InitramfsEntry*)directory.node;
   for (size_t i = 0; i < entries.getSize(); i++) {
     auto entryPointer = entries[i];
     auto entry = *entryPointer;
@@ -103,8 +107,8 @@ void InitramfsFsProvider::populateDirectory(fs::FileNode &directory) {
   }
 }
 
-void InitramfsFsProvider::initRoot(fs::FileNode &root) {
+void InitramfsFsProvider::initRoot(fs::FileNode& root) {
   // We assume that the first entry is the root directory.
-  root.node = (void *)entries[0];
+  root.node = (void*)entries[0];
 }
-} // namespace initramfs
+}  // namespace initramfs

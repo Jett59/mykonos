@@ -43,4 +43,4 @@ void disablePic() {
   io::writePort8(0xff, 0xa1);
   io::delay();
 }
-} // namespace pic
+}  // namespace pic

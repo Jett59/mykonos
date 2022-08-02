@@ -25,9 +25,9 @@
 #define HPET_CONFIGURATION_LEGACY_BIT (1 << 1)
 
 namespace hpet {
-Hpet::Hpet(void *physicalAddress)
+Hpet::Hpet(void* physicalAddress)
     : registerPointer(
-          (uint64_t *)memory::mapAddress(physicalAddress, 1024, false)) {
+          (uint64_t*)memory::mapAddress(physicalAddress, 1024, false)) {
   frequencyFemtos = readRegister(HPET_REGISTER_GENERAL_CAPABILITIES) >> 32;
   // Remove legacy mappings
   writeRegister(HPET_REGISTER_GENERAL_CONFIGURATION,
@@ -35,7 +35,9 @@ Hpet::Hpet(void *physicalAddress)
                     ~HPET_CONFIGURATION_LEGACY_BIT);
   reset();
 }
-Hpet::~Hpet() { memory::unmapMemory(registerPointer, 1024); }
+Hpet::~Hpet() {
+  memory::unmapMemory(registerPointer, 1024);
+}
 
 void Hpet::reset() {
   // Stop the counter
@@ -49,4 +51,4 @@ void Hpet::reset() {
                 readRegister(HPET_REGISTER_GENERAL_CONFIGURATION) |
                     HPET_CONFIGURATION_ENABLE_BIT);
 }
-} // namespace hpet
+}  // namespace hpet

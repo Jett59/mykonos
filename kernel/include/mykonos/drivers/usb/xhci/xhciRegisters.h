@@ -30,18 +30,18 @@ struct XhciRegisters {
   // ...
 };
 class XhciRegisterAccess {
-public:
-  XhciRegisterAccess(XhciRegisters *registers) : registers(registers) {}
+ public:
+  XhciRegisterAccess(XhciRegisters* registers) : registers(registers) {}
 
   uint8_t getCapabilityLength() {
     return mmio::read(&registers->capabilityLength);
   }
   uint16_t getVersion() { return mmio::read(&registers->version); }
 
-private:
-  XhciRegisters *registers;
+ private:
+  XhciRegisters* registers;
 };
-} // namespace xhci
-} // namespace drivers
+}  // namespace xhci
+}  // namespace drivers
 
 #endif

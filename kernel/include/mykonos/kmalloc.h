@@ -21,17 +21,17 @@
 
 namespace memory {
 // We keep track of the size of the memory for you
-void *kmalloc(size_t size);
-void kfree(void *ptr);
+void* kmalloc(size_t size);
+void kfree(void* ptr);
 
-void *mapAddress(void *physicalAddress, size_t size, bool cacheable);
-void unmapMemory(void *address, size_t size);
+void* mapAddress(void* physicalAddress, size_t size, bool cacheable);
+void unmapMemory(void* address, size_t size);
 
 // You keep track of the size of the memory for yourself
-void *allocateMemory(size_t size);
-static inline void freeMemory(void *ptr, size_t size) {
+void* allocateMemory(size_t size);
+static inline void freeMemory(void* ptr, size_t size) {
   unmapMemory(ptr, size);
 }
-} // namespace memory
+}  // namespace memory
 
 #endif

@@ -22,11 +22,13 @@
 #include <mykonos/task/taskQueue.h>
 
 namespace util {
-template <typename T> class Queue;
-template <typename T> class QueueElement {
-private:
+template <typename T>
+class Queue;
+template <typename T>
+class QueueElement {
+ private:
   T value;
-  QueueElement<T> *next;
+  QueueElement<T>* next;
   friend class Queue<T>;
 };
 /**
@@ -34,15 +36,16 @@ private:
  *
  * @tparam T the type of element stored in the queue
  */
-template <typename T> class Queue {
-private:
+template <typename T>
+class Queue {
+ private:
   lock::Spinlock lock;
   task::Queue waitingTasks;
-  QueueElement<T> *head = nullptr;
-  QueueElement<T> *tail = nullptr;
+  QueueElement<T>* head = nullptr;
+  QueueElement<T>* tail = nullptr;
 
-public:
-  void push(const T &value) {
+ public:
+  void push(const T& value) {
     auto newElement = new QueueElement<T>();
     newElement->value = value;
     lock.acquire();
@@ -79,6 +82,6 @@ public:
     return result;
   }
 };
-} // namespace util
+}  // namespace util
 
 #endif

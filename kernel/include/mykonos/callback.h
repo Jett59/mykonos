@@ -20,11 +20,12 @@
 namespace callback {
 // Note: Don't use with void return type.
 // Pass by value won't work due to c++ inheritance.
-template <typename Result, typename... ParameterTypes> class Callback {
-private:
+template <typename Result, typename... ParameterTypes>
+class Callback {
+ private:
   virtual Result invoke(ParameterTypes...);
 
-public:
+ public:
   Result operator()(ParameterTypes... args) { return invoke(args...); }
 };
 
@@ -33,15 +34,15 @@ public:
 // Lambda<decltype(codeToRun), Result, ParameterTypes...>(codeToRun)
 template <typename LambdaType, typename Result, typename... ParameterTypes>
 class Lambda : public Callback<Result, ParameterTypes...> {
-private:
+ private:
   LambdaType lambda;
 
-public:
+ public:
   Lambda<LambdaType, Result, ParameterTypes...>(LambdaType lambda)
       : lambda(lambda) {}
 
   virtual Result invoke(ParameterTypes... args) { return lambda(args...); }
 };
-} // namespace callback
+}  // namespace callback
 
 #endif

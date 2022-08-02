@@ -20,21 +20,23 @@
 
 namespace cleaner {
 struct CleanerObject {
-  void *object;
-  void (*handler)(void *);
+  void* object;
+  void (*handler)(void*);
 };
 static util::Queue<CleanerObject> queue;
 
-void addObject(void *object, void (*handler)(void *)) {
+void addObject(void* object, void (*handler)(void*)) {
   queue.push({object, handler});
 }
 
-static void cleanerThread(void *) {
+static void cleanerThread(void*) {
   while (true) {
     auto object = queue.pop();
     object.handler(object.object);
   }
 }
 
-void init() { thread::create(cleanerThread, nullptr, PRIORITY_LOW); }
-} // namespace cleaner
+void init() {
+  thread::create(cleanerThread, nullptr, PRIORITY_LOW);
+}
+}  // namespace cleaner

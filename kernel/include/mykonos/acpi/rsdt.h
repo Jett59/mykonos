@@ -23,21 +23,21 @@
 
 namespace acpi {
 class RsdtTableManager : public TableManager {
-public:
-  RsdtTableManager(TableHeader *header);
+ public:
+  RsdtTableManager(TableHeader* header);
   virtual ~RsdtTableManager();
 
-  TableManager *operator[](size_t i) {
+  TableManager* operator[](size_t i) {
     return i < numChildren ? children[i] : nullptr;
   }
   size_t childCount() { return numChildren; }
 
-  TableManager *get(TableType type, int num = 0);
+  TableManager* get(TableType type, int num = 0);
 
-private:
-  TableManager **children;
+ private:
+  TableManager** children;
   size_t numChildren;
 };
-} // namespace acpi
+}  // namespace acpi
 
 #endif

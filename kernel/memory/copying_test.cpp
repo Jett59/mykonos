@@ -64,6 +64,6 @@ bool memcmpTest(::test::Logger logger) {
   return true;
 }
 ADD_TEST(memcmpTest);
-} // namespace test
+}  // namespace test
 
 #endif

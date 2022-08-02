@@ -62,7 +62,7 @@ static volatile unsigned localApicTickSetting = 0;
 extern "C" [[noreturn]] void kstart() {
   // Global constructors must be called
   // We use init_array method, for simplicity
-  for (ConstructorOrDestructor *initArrayElement = __init_array_start;
+  for (ConstructorOrDestructor* initArrayElement = __init_array_start;
        initArrayElement != __init_array_end; initArrayElement++) {
     (*initArrayElement)();
   }
@@ -95,17 +95,17 @@ extern "C" [[noreturn]] void kstart() {
       kpanic("Checksum of RSDP failed");
     }
     kout::printf("Found RSDP (revision: %d)\n", acpi::rsdp.revision);
-    void *rsdtAddress = (acpi::rsdp.revision >= 2)
-                            ? (void *)(size_t)acpi::rsdp.xsdtAddress
-                            : (void *)(size_t)acpi::rsdp.rsdtAddress;
-    acpi::RsdtTableManager *rsdt =
-        (acpi::RsdtTableManager *)acpi::loadTable(rsdtAddress);
+    void* rsdtAddress = (acpi::rsdp.revision >= 2)
+                            ? (void*)(size_t)acpi::rsdp.xsdtAddress
+                            : (void*)(size_t)acpi::rsdp.rsdtAddress;
+    acpi::RsdtTableManager* rsdt =
+        (acpi::RsdtTableManager*)acpi::loadTable(rsdtAddress);
     if (rsdt == nullptr) {
       kpanic("Error loading RSDT");
     }
     kout::print("Found RSDT\n");
-    acpi::HpetTableManager *hpetTableManager =
-        (acpi::HpetTableManager *)rsdt->get(acpi::TableType::HPET);
+    acpi::HpetTableManager* hpetTableManager =
+        (acpi::HpetTableManager*)rsdt->get(acpi::TableType::HPET);
     if (hpetTableManager == nullptr) {
       kpanic("No HPET found");
     }
@@ -113,11 +113,12 @@ extern "C" [[noreturn]] void kstart() {
       kpanic("No usable HPET found");
     }
     hpet::Hpet hpet(hpetTableManager->getPhysicalAddress());
-    kout::printf("HPET says current time is %lns sinse reset (with precision "
-                 "of %lkHz)\n",
-                 hpet.nanoTime(), hpet.getFrequencyKhz());
-    acpi::MadtTableManager *madt =
-        (acpi::MadtTableManager *)rsdt->get(acpi::TableType::MADT);
+    kout::printf(
+        "HPET says current time is %lns sinse reset (with precision "
+        "of %lkHz)\n",
+        hpet.nanoTime(), hpet.getFrequencyKhz());
+    acpi::MadtTableManager* madt =
+        (acpi::MadtTableManager*)rsdt->get(acpi::TableType::MADT);
     if (madt == nullptr) {
       kpanic("No MADT found");
     }
@@ -132,8 +133,8 @@ extern "C" [[noreturn]] void kstart() {
     numCpus = madt->localApicCount();
     if (numCpus > 1) {
       // Copy smp trampoline to low memory
-      void *smpTrampolineDestination =
-          memory::mapAddress((void *)0x8000, 0x1000, false);
+      void* smpTrampolineDestination =
+          memory::mapAddress((void*)0x8000, 0x1000, false);
       size_t smpTrampolineSize =
           (size_t)&smpTrampolineEnd - (size_t)&smpTrampolineStart;
       uint8_t previousTrampolineContents[smpTrampolineSize];
@@ -164,7 +165,7 @@ extern "C" [[noreturn]] void kstart() {
              smpTrampolineSize);
       // We can't unmap anything just now due to TLB shootdown
       cleaner::addObject(smpTrampolineDestination,
-                         [](void *ptr) { memory::unmapMemory(ptr, 0x1000); });
+                         [](void* ptr) { memory::unmapMemory(ptr, 0x1000); });
     }
     // Store our CPU number (0 for BSP)
     cpu::setCpuNumber(0);
@@ -226,15 +227,15 @@ static bool hardwareInitLock = 0;
     cpu::relax();
   }
   volatile bool otherThreadDone = false;
-  auto otherThreadFunction = [](void *otherThreadDonePtr) {
+  auto otherThreadFunction = [](void* otherThreadDonePtr) {
     kout::printf("Other thread got CPU time on CPU %d\n", cpu::getCpuNumber());
     scheduler::yield();
     kout::printf("Other thread got CPU time after yield on CPU %d\n",
                  cpu::getCpuNumber());
-    *((bool *)otherThreadDonePtr) = true;
+    *((bool*)otherThreadDonePtr) = true;
     thread::destroy();
   };
-  thread::create(otherThreadFunction, (void *)&otherThreadDone, PRIORITY_HIGH);
+  thread::create(otherThreadFunction, (void*)&otherThreadDone, PRIORITY_HIGH);
   kout::printf("Main thread yielding on CPU %d\n", cpu::getCpuNumber());
   while (!otherThreadDone) {
     cpu::relax();
@@ -253,11 +254,12 @@ static bool hardwareInitLock = 0;
     kout::print("Mounting the initramfs\n");
     rootDirectory.mount(new initramfs::InitramfsFsProvider());
     kout::print("Openning the test file\n");
-    auto firstChild = rootDirectory.openChild(rootDirectory.findChild("test.txt"), false);
+    auto firstChild =
+        rootDirectory.openChild(rootDirectory.findChild("test.txt"), false);
     rootDirectory.close();
-    void *buffer = memory::kmalloc(512);
+    void* buffer = memory::kmalloc(512);
     size_t size = firstChild.read(0, 512, buffer);
-    kout::print({(char *)buffer, size});
+    kout::print({(char*)buffer, size});
     kout::print("\n");
     memory::kfree(buffer);
     firstChild.close();

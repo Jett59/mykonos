@@ -22,16 +22,16 @@
 
 namespace drivers {
 class AcpiDeviceTree : public DeviceTree {
-public:
-  AcpiDeviceTree(acpi::RsdtTableManager *tables)
+ public:
+  AcpiDeviceTree(acpi::RsdtTableManager* tables)
       : DeviceTree(DeviceType::ACPI), tables(tables) {}
 
-protected:
+ protected:
   virtual void load();
 
-private:
-  acpi::RsdtTableManager *tables;
+ private:
+  acpi::RsdtTableManager* tables;
 };
-} // namespace drivers
+}  // namespace drivers
 
 #endif

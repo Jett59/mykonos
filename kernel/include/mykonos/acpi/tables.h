@@ -43,16 +43,16 @@ static_assert(sizeof(Address) == 12, "Address is not packed");
 
 enum class TableType { RSDT, MADT, HPET, MCFG };
 class TableManager {
-public:
+ public:
   const TableType type;
 
   virtual ~TableManager() {}
 
-protected:
+ protected:
   TableManager(TableType type) : type(type) {}
 };
 
-TableManager *loadTable(void *physicalAddress);
-} // namespace acpi
+TableManager* loadTable(void* physicalAddress);
+}  // namespace acpi
 
 #endif

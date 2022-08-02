@@ -23,22 +23,23 @@
 
 namespace util {
 #define MINIMUM_VECTOR_SIZE 16
-template <typename T> class Vector {
-public:
+template <typename T>
+class Vector {
+ public:
   Vector() : capacity(0), data(nullptr) {}
   Vector(size_t initialCapacity)
       : capacity(initialCapacity), data(new T[initialCapacity]) {}
 
-  Vector(const Vector &) = delete;
-  Vector &operator=(const Vector &) = delete;
+  Vector(const Vector&) = delete;
+  Vector& operator=(const Vector&) = delete;
 
-  Vector(Vector &&other)
+  Vector(Vector&& other)
       : capacity(other.capacity), size(other.size), data(other.data) {
     other.data = nullptr;
     other.capacity = 0;
     other.size = 0;
   }
-  Vector &operator=(Vector &&other) {
+  Vector& operator=(Vector&& other) {
     if (data != nullptr) {
       delete[] data;
     }
@@ -91,13 +92,13 @@ public:
 
   size_t getSize() const { return size; }
 
-private:
+ private:
   size_t capacity;
   size_t size = 0;
-  T *data;
+  T* data;
 
   void resize(size_t newCapacity) {
-    T *newData = new T[newCapacity];
+    T* newData = new T[newCapacity];
     if (data != nullptr) {
       move(newData, data, size);
       delete[] data;
@@ -106,6 +107,6 @@ private:
     capacity = newCapacity;
   }
 };
-} // namespace util
+}  // namespace util
 
 #endif

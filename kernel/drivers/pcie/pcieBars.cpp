@@ -26,7 +26,7 @@
 #define PCIE_BAR_32 0
 
 namespace drivers {
-void *PcieDeviceAccess::mapBar(unsigned number) {
+void* PcieDeviceAccess::mapBar(unsigned number) {
   if (number > 5) {
     kout::printf("Invalid BAR number %d\n", number);
     return nullptr;
@@ -45,6 +45,6 @@ void *PcieDeviceAccess::mapBar(unsigned number) {
   writeBar(number, 0xffffffff);
   size_t mappedSize = ~(readBar(number) & 0xfffffff0) + 1;
   writeBar(number, bar & 0xffffffff);
-  return memory::mapAddress((void *)bar, mappedSize, false);
+  return memory::mapAddress((void*)bar, mappedSize, false);
 }
-} // namespace drivers
+}  // namespace drivers

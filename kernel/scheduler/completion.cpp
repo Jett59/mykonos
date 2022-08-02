@@ -40,4 +40,4 @@ void Completion::signalComplete() {
   scheduler::unlock();
   lock.release();
 }
-} // namespace async
+}  // namespace async

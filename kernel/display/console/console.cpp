@@ -29,8 +29,8 @@ namespace kout {
 static unsigned line, column;
 static unsigned lines, columns;
 
-static char *screenBuffer;
-#define SCREEN_BUFFER_CHARACTER(COLUMN, LINE)                                  \
+static char* screenBuffer;
+#define SCREEN_BUFFER_CHARACTER(COLUMN, LINE) \
   (screenBuffer[(LINE) * (columns + 1) + (COLUMN)])
 #define SCREEN_BUFFER_LINE(LINE) (&screenBuffer[(LINE) * (columns + 1)])
 
@@ -44,8 +44,8 @@ void scrollDown() {
   unsigned y = 0;
   for (unsigned i = 1; i < lines; i++) {
     y += fontHeight;
-    char *line = SCREEN_BUFFER_LINE(i);
-    char *previousLine = SCREEN_BUFFER_LINE(i - 1);
+    char* line = SCREEN_BUFFER_LINE(i);
+    char* previousLine = SCREEN_BUFFER_LINE(i - 1);
     int lineLength = strlen(line);
     unsigned previousLineLength = strlen(previousLine);
     x = lineLength * fontWidth;
@@ -58,7 +58,7 @@ void scrollDown() {
     display::copyRegion(x, y, lineLength * fontWidth, fontHeight, x,
                         y - fontHeight);
   }
-  char *lastLine = SCREEN_BUFFER_LINE(lines - 1);
+  char* lastLine = SCREEN_BUFFER_LINE(lines - 1);
   int lastLineLength = strlen(lastLine);
   x = 0;
   for (unsigned i = 0; i < (unsigned)lastLineLength; i++) {
@@ -79,7 +79,7 @@ void print(String str, bool skipLocking) {
     fontHeight = font::getHeight();
     columns = displayWidth / fontWidth;
     lines = displayHeight / fontHeight;
-    screenBuffer = (char *)memory::kmalloc((columns + 1) * lines);
+    screenBuffer = (char*)memory::kmalloc((columns + 1) * lines);
     for (unsigned i = 0; i < lines; i++) {
       SCREEN_BUFFER_CHARACTER(0, i) = 0;
     }
@@ -133,6 +133,10 @@ void print(unsigned long value, unsigned long base, bool skipLocking) {
   print(buffer, skipLocking);
 }
 
-void acquireConsoleLock() { consoleLock.acquire(); }
-void releaseConsoleLock() { consoleLock.release(); }
-} // namespace kout
+void acquireConsoleLock() {
+  consoleLock.acquire();
+}
+void releaseConsoleLock() {
+  consoleLock.release();
+}
+}  // namespace kout

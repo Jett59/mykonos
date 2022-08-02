@@ -25,13 +25,13 @@ enum class DeviceType { ACPI, PCIE, XHCI };
 void loadRootDevice();
 
 class DeviceTree {
-public:
+ public:
   class Iterator {
-  private:
-    DeviceTree *ptr;
+   private:
+    DeviceTree* ptr;
 
-  public:
-    Iterator(DeviceTree *tree) : ptr(tree) {}
+   public:
+    Iterator(DeviceTree* tree) : ptr(tree) {}
 
     Iterator operator++(int) {
       Iterator result = *this;
@@ -43,17 +43,17 @@ public:
       return *this;
     }
 
-    DeviceTree &operator*() { return *ptr; }
+    DeviceTree& operator*() { return *ptr; }
 
-    bool operator==(Iterator &other) { return this->ptr == other.ptr; }
-    bool operator!=(Iterator &other) { return !(*this == other); }
+    bool operator==(Iterator& other) { return this->ptr == other.ptr; }
+    bool operator!=(Iterator& other) { return !(*this == other); }
 
     operator bool() { return ptr != nullptr; }
   };
 
   DeviceTree(DeviceType type) : type(type) {}
   virtual ~DeviceTree() {
-    for (auto &child : *this) {
+    for (auto& child : *this) {
       delete &child;
     }
   }
@@ -63,26 +63,26 @@ public:
   Iterator begin() { return Iterator(firstChild); }
   Iterator end() { return Iterator(nullptr); }
 
-protected:
-  void appendAndLoad(DeviceTree *child);
+ protected:
+  void appendAndLoad(DeviceTree* child);
 
   virtual void load() = 0;
 
-private:
+ private:
   const DeviceType type;
   async::Completion initializationCompletion;
 
-  DeviceTree *firstChild = nullptr;
-  DeviceTree *lastChild = nullptr;
+  DeviceTree* firstChild = nullptr;
+  DeviceTree* lastChild = nullptr;
 
-  DeviceTree *next = nullptr;
+  DeviceTree* next = nullptr;
 
   void loadAndWait();
 
   friend void loadRootDevice();
 };
 
-void setRootDevice(DeviceTree *device);
-} // namespace drivers
+void setRootDevice(DeviceTree* device);
+}  // namespace drivers
 
 #endif

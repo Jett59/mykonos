@@ -24,7 +24,7 @@ namespace test {
 bool kmallocTest(::test::Logger logger) {
   logger("kmallocTest:\n");
   // Stress test: can it allocate forever?
-  void *allocatedMemory[2048];
+  void* allocatedMemory[2048];
   bool passed = true;
   int numAllocated = 0;
   for (int i = 0; i < 2048; i++) {
@@ -50,7 +50,7 @@ bool kmallocTest(::test::Logger logger) {
 bool mapMemoryTest(::test::Logger logger) {
   logger("mapMemoryTest:\n");
   for (int i = 0; i < 4096; i++) {
-    void *ptr = mapAddress(nullptr, 1048576, true);
+    void* ptr = mapAddress(nullptr, 1048576, true);
     if (ptr == nullptr) {
       logger("mapMemoryTest: Stress test failed\n");
       return false;
@@ -64,7 +64,7 @@ bool mapMemoryTest(::test::Logger logger) {
 }
 ADD_TEST(kmallocTest);
 ADD_TEST(mapMemoryTest);
-} // namespace test
-} // namespace memory
+}  // namespace test
+}  // namespace memory
 
 #endif

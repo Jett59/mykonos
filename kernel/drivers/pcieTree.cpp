@@ -19,10 +19,10 @@
 #include <mykonos/drivers/usb/xhci/xhciDriver.h>
 #include <mykonos/kout.h>
 
-#define PCIE_DEVICE(BASE, BUS, DEVICE, FUNCTION)                               \
-  PcieDeviceAccess {                                                           \
-    (PcieDeviceHeader *)((size_t)(BASE) + ((BUS) << 20) + ((DEVICE) << 15) +   \
-                         ((FUNCTION) << 12))                                   \
+#define PCIE_DEVICE(BASE, BUS, DEVICE, FUNCTION)                            \
+  PcieDeviceAccess {                                                        \
+    (PcieDeviceHeader*)((size_t)(BASE) + ((BUS) << 20) + ((DEVICE) << 15) + \
+                        ((FUNCTION) << 12))                                 \
   }
 
 namespace drivers {
@@ -33,14 +33,14 @@ struct PcieDriver {
   // Used if vendorId == 0xffff
   uint8_t classId;
   uint8_t subclass;
-  uint8_t registerInterface; // Used if != 0xff
+  uint8_t registerInterface;  // Used if != 0xff
 
-  DeviceTree *(*get)(PcieDeviceAccess);
+  DeviceTree* (*get)(PcieDeviceAccess);
 };
 
-static DeviceTree *loadXhciDriver(PcieDeviceAccess access) {
+static DeviceTree* loadXhciDriver(PcieDeviceAccess access) {
   return new xhci::XhciDriver(
-      xhci::XhciRegisterAccess((xhci::XhciRegisters *)access.mapBar(0)));
+      xhci::XhciRegisterAccess((xhci::XhciRegisters*)access.mapBar(0)));
 }
 
 static PcieDriver pcieDrivers[] = {
@@ -62,7 +62,7 @@ void PcieDeviceTree::load() {
                          access.getVendorId(), access.getDeviceId(),
                          access.getClass(), access.getSubclass());
             bool matched = false;
-            for (auto &driver : pcieDrivers) {
+            for (auto& driver : pcieDrivers) {
               if (driver.vendorId != 0xffff) {
                 matched = driver.vendorId == access.getVendorId() &&
                           driver.deviceId == access.getDeviceId();
@@ -91,4 +91,4 @@ void PcieDeviceTree::load() {
   }
   kout::printf("%d unknown PCIE devices\n", unknownDeviceCount);
 }
-} // namespace drivers
+}  // namespace drivers

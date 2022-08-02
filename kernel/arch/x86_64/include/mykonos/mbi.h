@@ -87,12 +87,12 @@ static_assert(sizeof(NewRsdpTag) == sizeof(acpi::RsdpV2) + 8,
 
 void parseMbi();
 class Mbi {
-private:
+ private:
   uint32_t size;
   uint32_t reserved;
   MbiTag firstTag;
   friend void parseMbi();
 };
-} // namespace multiboot
+}  // namespace multiboot
 
 #endif

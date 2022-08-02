@@ -26,7 +26,7 @@ bool runTests(Logger logger) {
 #ifdef RUNTIME_TESTS
   logger("Running tests...\n");
   unsigned passed = 0, failed = 0;
-  for (TestFunction *testFunction = __test_array_start;
+  for (TestFunction* testFunction = __test_array_start;
        testFunction != __test_array_end; testFunction++) {
     if ((*testFunction)(logger)) {
       passed++;
@@ -46,4 +46,4 @@ bool runTests(Logger logger) {
   return true;
 #endif
 }
-} // namespace test
+}  // namespace test

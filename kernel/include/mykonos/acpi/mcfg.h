@@ -24,22 +24,22 @@
 
 namespace acpi {
 struct McfgEntry {
-  void *address;
+  void* address;
   unsigned segmentGroup;
   unsigned firstBusNumber;
   unsigned lastBusNumber;
 };
 #define MAX_MCFG_ENTRIES 16
 class McfgTableManager : public TableManager {
-public:
-  McfgTableManager(TableHeader *header);
+ public:
+  McfgTableManager(TableHeader* header);
 
   unsigned entryCount() { return numEntries; }
   McfgEntry getEntry(unsigned index) {
     return index < numEntries ? entries[index] : McfgEntry{nullptr, 0, 0, 0};
   }
 
-private:
+ private:
   unsigned numEntries;
   McfgEntry entries[MAX_MCFG_ENTRIES];
 };
@@ -52,6 +52,6 @@ struct McfgTableEntry {
   uint32_t reserved;
 };
 static_assert(sizeof(McfgTableEntry) == 16, "McfgTableEntry must be 16 bytes");
-} // namespace acpi
+}  // namespace acpi
 
 #endif

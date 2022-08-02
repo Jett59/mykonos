@@ -19,27 +19,27 @@
 #include <mykonos/kmalloc.h>
 
 namespace acpi {
-RsdtTableManager::RsdtTableManager(TableHeader *header)
+RsdtTableManager::RsdtTableManager(TableHeader* header)
     : TableManager(TableType::RSDT) {
   size_t entrySize = header->signature[0] == 'X' ? 8 : 4;
   numChildren = (header->length - sizeof(TableHeader)) / entrySize;
-  children = new TableManager *[numChildren];
-  uint8_t *entry = (uint8_t *)header + sizeof(TableHeader);
+  children = new TableManager*[numChildren];
+  uint8_t* entry = (uint8_t*)header + sizeof(TableHeader);
   for (unsigned i = 0; i < numChildren; i++) {
     switch (entrySize) {
-    case 4: {
-      uint32_t entryValue = *(uint32_t *)entry;
-      children[i] = loadTable((void *)(size_t)entryValue);
-      break;
-    }
-    case 8: {
-      uint64_t entryValue = *(uint64_t *)entry;
-      children[i] = loadTable((void *)(size_t)entryValue);
-      break;
-    }
-    default:
-      children[i] = nullptr;
-      break;
+      case 4: {
+        uint32_t entryValue = *(uint32_t*)entry;
+        children[i] = loadTable((void*)(size_t)entryValue);
+        break;
+      }
+      case 8: {
+        uint64_t entryValue = *(uint64_t*)entry;
+        children[i] = loadTable((void*)(size_t)entryValue);
+        break;
+      }
+      default:
+        children[i] = nullptr;
+        break;
     }
     entry += entrySize;
   }
@@ -54,7 +54,7 @@ RsdtTableManager::~RsdtTableManager() {
   delete[] children;
 }
 
-TableManager *RsdtTableManager::get(TableType type, int num) {
+TableManager* RsdtTableManager::get(TableType type, int num) {
   for (size_t i = 0; i < numChildren; i++) {
     if (children[i] != nullptr) {
       if (children[i]->type == type) {
@@ -66,4 +66,4 @@ TableManager *RsdtTableManager::get(TableType type, int num) {
   }
   return nullptr;
 }
-} // namespace acpi
+}  // namespace acpi

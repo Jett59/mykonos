@@ -55,7 +55,7 @@ FileHandle::FileHandle(String path, bool writable)
   open = true;
   error = FileError::OKAY;
 }
-FileHandle::FileHandle(FileNode *node, bool writable)
+FileHandle::FileHandle(FileNode* node, bool writable)
     : node(node), writable(writable), open(true), error(FileError::OKAY) {
   node->lock.acquire();
   node->openCount++;
@@ -143,7 +143,7 @@ size_t FileHandle::findChild(String name) {
   return SIZE_MAX;
 }
 
-size_t FileHandle::read(size_t offset, size_t length, void *buffer) {
+size_t FileHandle::read(size_t offset, size_t length, void* buffer) {
   if (open) {
     node->lock.acquire();
     if (node->type == FileType::FILE) {
@@ -157,7 +157,7 @@ size_t FileHandle::read(size_t offset, size_t length, void *buffer) {
   }
   return 0;
 }
-size_t FileHandle::write(size_t offset, size_t length, void *buffer) {
+size_t FileHandle::write(size_t offset, size_t length, void* buffer) {
   if (open && writable) {
     node->lock.acquire();
     if (node->type == FileType::FILE) {
@@ -174,7 +174,7 @@ size_t FileHandle::write(size_t offset, size_t length, void *buffer) {
   return 0;
 }
 
-void FileHandle::mount(FsProvider *fsProvider) {
+void FileHandle::mount(FsProvider* fsProvider) {
   if (open) {
     if (writable) {
       node->lock.acquire();
@@ -200,4 +200,4 @@ void FileHandle::mount(FsProvider *fsProvider) {
     }
   }
 }
-} // namespace fs
+}  // namespace fs

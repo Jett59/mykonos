@@ -22,13 +22,13 @@
 extern "C" {
 volatile uint8_t runningCpus = 1;
 
-void *initialStackPointers[MAX_LOCAL_APICS];
+void* initialStackPointers[MAX_LOCAL_APICS];
 }
 
 #define SMP_TRAMPOLINE_PAGE 8
 
 namespace smp {
-bool startCpu(uint8_t apicId, hpet::Hpet &hpet) {
+bool startCpu(uint8_t apicId, hpet::Hpet& hpet) {
   uint8_t previousRunningCpus = runningCpus;
   // Send the init ipi
   apic::localApic.clearErrors();
@@ -64,11 +64,13 @@ void allocateStacks(unsigned numLocalApics) {
     initialStackPointers[i] = stacks::allocateStack();
   }
 }
-void *getInitialStackPointer(unsigned cpuNumber) {
+void* getInitialStackPointer(unsigned cpuNumber) {
   return initialStackPointers[cpuNumber];
 }
-} // namespace smp
+}  // namespace smp
 
 namespace processors {
-unsigned processorCount() { return runningCpus; }
-} // namespace processors
+unsigned processorCount() {
+  return runningCpus;
+}
+}  // namespace processors

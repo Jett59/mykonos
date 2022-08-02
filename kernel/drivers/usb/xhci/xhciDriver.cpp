@@ -22,5 +22,5 @@ namespace xhci {
 void XhciDriver::load() {
   kout::printf("XHCI version %x\n", registers.getVersion());
 }
-} // namespace xhci
-} // namespace drivers
+}  // namespace xhci
+}  // namespace drivers

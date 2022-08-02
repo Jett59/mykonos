@@ -19,7 +19,7 @@
 #include <mykonos/apic.h>
 
 namespace apic {
-unsigned timerTicksPer(unsigned nanos, hpet::Hpet &hpet) {
+unsigned timerTicksPer(unsigned nanos, hpet::Hpet& hpet) {
   localApic.writeTimerLvt(false, false, APIC_TIMER_INTERRUPT);
   localApic.writeTimerDivideRegister(APIC_DIVIDE_16);
   localApic.writeTimerInitialCountRegister(0xffffffff);
@@ -33,4 +33,4 @@ void setUpTimer(unsigned tickFrequency) {
   apic::localApic.writeTimerDivideRegister(APIC_DIVIDE_16);
   apic::localApic.writeTimerInitialCountRegister(tickFrequency / 16);
 }
-} // namespace apic
+}  // namespace apic

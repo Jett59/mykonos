@@ -27,23 +27,23 @@
 #include <mykonos/string.h>
 
 namespace acpi {
-typedef TableManager *(*TableManagerCreator)(TableHeader *);
+typedef TableManager* (*TableManagerCreator)(TableHeader*);
 
 struct TableHandler {
-  char signature[5]; // Includes unused null pointer
+  char signature[5];  // Includes unused null pointer
   TableManagerCreator creator;
 };
 
-TableManager *loadRsdt(TableHeader *header) {
+TableManager* loadRsdt(TableHeader* header) {
   return new RsdtTableManager(header);
 }
-TableManager *loadMadt(TableHeader *header) {
+TableManager* loadMadt(TableHeader* header) {
   return new MadtTableManager(header);
 }
-TableManager *loadHpet(TableHeader *header) {
+TableManager* loadHpet(TableHeader* header) {
   return new HpetTableManager(header);
 }
-TableManager *loadMcfg(TableHeader *header) {
+TableManager* loadMcfg(TableHeader* header) {
   return new McfgTableManager(header);
 }
 
@@ -54,8 +54,8 @@ static TableHandler tableHandlers[] = {{"RSDT", loadRsdt},
                                        {"MCFG", loadMcfg}};
 #define numTableHandlers (sizeof(tableHandlers) / sizeof(TableHandler))
 
-static bool doChecksum(TableHeader *header) {
-  unsigned char *tablePointer = (unsigned char *)header;
+static bool doChecksum(TableHeader* header) {
+  unsigned char* tablePointer = (unsigned char*)header;
   unsigned char sum = 0;
   for (unsigned i = 0; i < header->length; i++) {
     sum += tablePointer[i];
@@ -63,8 +63,8 @@ static bool doChecksum(TableHeader *header) {
   return sum == 0;
 }
 
-TableManager *loadTable(void *physicalAddress) {
-  TableHeader *header = (TableHeader *)memory::mapAddress(
+TableManager* loadTable(void* physicalAddress) {
+  TableHeader* header = (TableHeader*)memory::mapAddress(
       physicalAddress, sizeof(TableHeader), true);
   kout::print("Loading ACPI table: ");
   kout::print(String(header->signature, 4));
@@ -75,7 +75,7 @@ TableManager *loadTable(void *physicalAddress) {
     return nullptr;
   }
   memory::unmapMemory(header, sizeof(TableHeader));
-  header = (TableHeader *)memory::mapAddress(physicalAddress, tableSize, true);
+  header = (TableHeader*)memory::mapAddress(physicalAddress, tableSize, true);
   if (!doChecksum(header)) {
     kout::print("Table did not pass checksum\n");
     memory::unmapMemory(header, header->length);
@@ -91,4 +91,4 @@ TableManager *loadTable(void *physicalAddress) {
   memory::unmapMemory(header, tableSize);
   return nullptr;
 }
-} // namespace acpi
+}  // namespace acpi

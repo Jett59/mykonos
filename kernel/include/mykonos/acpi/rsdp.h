@@ -21,7 +21,7 @@
 
 namespace acpi {
 struct RsdpV1 {
-  char signature[8]; // "RSD PTR "
+  char signature[8];  // "RSD PTR "
   uint8_t checksum;
   char oemId[6];
   uint8_t revision;
@@ -29,7 +29,7 @@ struct RsdpV1 {
 };
 static_assert(sizeof(RsdpV1) == 20, "RsdpV1 must be 20 bytes");
 struct __attribute__((packed)) RsdpV2 {
-  char signature[8]; // "RSD PTR "
+  char signature[8];  // "RSD PTR "
   uint8_t checksum;
   char oemId[6];
   uint8_t revision;
@@ -41,7 +41,7 @@ struct __attribute__((packed)) RsdpV2 {
   uint8_t reserved[3];
 
   bool doChecksum() {
-    unsigned char *rsdpBytes = (unsigned char *)this;
+    unsigned char* rsdpBytes = (unsigned char*)this;
     unsigned char sum = 0;
     for (unsigned i = 0; i < (revision >= 2 ? sizeof(RsdpV2) : sizeof(RsdpV1));
          i++) {
@@ -54,6 +54,6 @@ static_assert(sizeof(RsdpV2) == 36, "RsdpV2 must be 36 bytes");
 
 // V1 structure can fit in v2, so just use v2 structure
 extern RsdpV2 rsdp;
-} // namespace acpi
+}  // namespace acpi
 
 #endif

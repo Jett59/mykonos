@@ -20,14 +20,17 @@
 #include <mykonos/pageTables.h>
 
 namespace paging {
-void mapPage(void *virtualAddress, void *physicalAddress, PageTableFlags flags,
-             bool allocated, bool cacheable);
+void mapPage(void* virtualAddress,
+             void* physicalAddress,
+             PageTableFlags flags,
+             bool allocated,
+             bool cacheable);
 // Unmaps the page and invalidates the TLB for the page
-void unmapPage(void *virtualAddress);
+void unmapPage(void* virtualAddress);
 
-static inline void invalidateTlb(void *address) {
+static inline void invalidateTlb(void* address) {
   __asm__ volatile("invlpg (%0)" : : "r"(address) : "memory");
 }
-} // namespace paging
+}  // namespace paging
 
 #endif

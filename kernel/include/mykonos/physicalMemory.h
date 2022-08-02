@@ -28,8 +28,8 @@ static inline size_t allocateFrame() {
   return (size_t)physicalMemory.allocate(PAGE_SIZE) / PAGE_SIZE;
 }
 static inline void returnFrame(size_t frameIndex) {
-  physicalMemory.returnMemory((void *)(frameIndex * PAGE_SIZE), PAGE_SIZE);
+  physicalMemory.returnMemory((void*)(frameIndex * PAGE_SIZE), PAGE_SIZE);
 }
-} // namespace memory
+}  // namespace memory
 
 #endif

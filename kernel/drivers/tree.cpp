@@ -18,7 +18,7 @@
 #include <mykonos/thread.h>
 
 namespace drivers {
-void DeviceTree::appendAndLoad(DeviceTree *child) {
+void DeviceTree::appendAndLoad(DeviceTree* child) {
   if (firstChild == nullptr) {
     firstChild = lastChild = child;
   } else {
@@ -26,24 +26,28 @@ void DeviceTree::appendAndLoad(DeviceTree *child) {
     lastChild = child;
   }
   thread::create(
-      [](void *childPointer) {
-        auto child = (DeviceTree *)childPointer;
+      [](void* childPointer) {
+        auto child = (DeviceTree*)childPointer;
         child->loadAndWait();
         thread::destroy();
       },
-      (void *)child);
+      (void*)child);
 }
 
 void DeviceTree::loadAndWait() {
   load();
-  for (auto &child : *this) {
+  for (auto& child : *this) {
     child.initializationCompletion.await();
   }
   initializationCompletion.signalComplete();
 }
 
-static DeviceTree *rootDevice;
+static DeviceTree* rootDevice;
 
-void setRootDevice(DeviceTree *device) { rootDevice = device; }
-void loadRootDevice() { rootDevice->loadAndWait(); }
-} // namespace drivers
+void setRootDevice(DeviceTree* device) {
+  rootDevice = device;
+}
+void loadRootDevice() {
+  rootDevice->loadAndWait();
+}
+}  // namespace drivers
