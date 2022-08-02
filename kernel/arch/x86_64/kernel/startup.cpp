@@ -62,7 +62,8 @@ static volatile unsigned localApicTickSetting = 0;
 extern "C" [[noreturn]] void kstart() {
   // Global constructors must be called
   // We use init_array method, for simplicity
-  for (ConstructorOrDestructor* initArrayElement = __init_array_start; initArrayElement != __init_array_end; initArrayElement++) {
+  for (ConstructorOrDestructor* initArrayElement = __init_array_start; initArrayElement != __init_array_end;
+       initArrayElement++) {
     (*initArrayElement)();
   }
   // Now that that's over
@@ -93,7 +94,8 @@ extern "C" [[noreturn]] void kstart() {
       kpanic("Checksum of RSDP failed");
     }
     kout::printf("Found RSDP (revision: %d)\n", acpi::rsdp.revision);
-    void* rsdtAddress = (acpi::rsdp.revision >= 2) ? (void*)(size_t)acpi::rsdp.xsdtAddress : (void*)(size_t)acpi::rsdp.rsdtAddress;
+    void* rsdtAddress =
+        (acpi::rsdp.revision >= 2) ? (void*)(size_t)acpi::rsdp.xsdtAddress : (void*)(size_t)acpi::rsdp.rsdtAddress;
     acpi::RsdtTableManager* rsdt = (acpi::RsdtTableManager*)acpi::loadTable(rsdtAddress);
     if (rsdt == nullptr) {
       kpanic("Error loading RSDT");

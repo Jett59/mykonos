@@ -53,7 +53,8 @@ void parseMbi() {
   // initramfs from the physical memory map.
   auto& initramfs = initramfs::initramfs;
   if (initramfs.size > 0) {
-    memory::physicalMemory.reserve({(void*)PAGE_ALIGN_DOWN((size_t)initramfs.pointer), (void*)PAGE_ALIGN_UP((size_t)initramfs.pointer + initramfs.size)});
+    memory::physicalMemory.reserve({(void*)PAGE_ALIGN_DOWN((size_t)initramfs.pointer),
+                                    (void*)PAGE_ALIGN_UP((size_t)initramfs.pointer + initramfs.size)});
   }
 }
 static void parseModuleTag(ModuleTag* tag);
@@ -100,7 +101,8 @@ static void parseMemoryMapTag(MemoryMapTag* memoryMap) {
       memory::physicalMemory.addBlock(memory::Block(entryBase, entryEnd));
     }
   }
-  memory::physicalMemory.reserve(memory::Block((void*)PAGE_ALIGN_DOWN((size_t)kernelPhysicalAddress), (void*)PAGE_ALIGN_UP((size_t)kernelPhysicalEnd)));
+  memory::physicalMemory.reserve(memory::Block((void*)PAGE_ALIGN_DOWN((size_t)kernelPhysicalAddress),
+                                               (void*)PAGE_ALIGN_UP((size_t)kernelPhysicalEnd)));
   memory::physicalMemory.reserve(memory::Block((void*)0x0, (void*)0x100000));
 }
 static void parseFrameBufferTag(FrameBufferTag* tag) {

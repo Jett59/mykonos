@@ -29,7 +29,9 @@ struct InterruptStackFrame {
 };
 static_assert(sizeof(InterruptStackFrame) == 40, "InterruptStackFrame must be 40 bytes");
 
-extern "C" void handleCpuException(uint64_t exceptionNumber, uint64_t errorCode, InterruptStackFrame* interruptStackFrame) {
+extern "C" void handleCpuException(uint64_t exceptionNumber,
+                                   uint64_t errorCode,
+                                   InterruptStackFrame* interruptStackFrame) {
   kout::printf("Exception at address %p:\n", interruptStackFrame->rip);
   switch (exceptionNumber) {
     case CPU_DE: {

@@ -38,7 +38,8 @@ void runOn(unsigned cpuNumber, callback::Callback<bool>&& callback) {
     // Make sure those modifications are done
     cpu::mfence();
     // Tell the CPU to start executing the request
-    apic::localApic.sendIpi(PROCESSOR_CALLBACK_INTERRUPT, APIC_FIXED_IPI, false, true, true, apic::localApicIds[cpuNumber]);
+    apic::localApic.sendIpi(PROCESSOR_CALLBACK_INTERRUPT, APIC_FIXED_IPI, false, true, true,
+                            apic::localApicIds[cpuNumber]);
     // Wait for it to be handled
     while (!mailbox.callerCanReturn) {
       cpu::relax();

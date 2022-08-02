@@ -33,8 +33,8 @@
 
 namespace paging {
 static PageTableEntry allocatePageTable() {
-  return (PageTableEntry)(memory::allocateFrame() << 12) | PageTableFlags::PRESENT | PageTableFlags::WRITABLE | PageTableFlags::ALLOCATED |
-         PageTableFlags::USER;
+  return (PageTableEntry)(memory::allocateFrame() << 12) | PageTableFlags::PRESENT | PageTableFlags::WRITABLE |
+         PageTableFlags::ALLOCATED | PageTableFlags::USER;
 }
 // If not allocatePageTables, return nullptr if the page table does not exist
 static PageTableEntry* getPageTableEntry(void* virtualAddress, bool allocatePageTables) {

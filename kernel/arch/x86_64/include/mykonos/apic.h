@@ -95,20 +95,29 @@ class LocalApic {
   uint32_t readErrors() { return readRegister(LOCAL_APIC_ERROR_REGISTER); }
 
   // Send an IPI to another CPU. messageType is one of the codes above.
-  void sendIpi(uint8_t vector, uint8_t messageType, bool logicalDestination, bool assert, bool levelTriggered, uint8_t destinationApicId);
+  void sendIpi(uint8_t vector,
+               uint8_t messageType,
+               bool logicalDestination,
+               bool assert,
+               bool levelTriggered,
+               uint8_t destinationApicId);
 
   // APIC timer control
   void writeTimerLvt(bool periodic, bool mask, uint8_t vector) {
     writeLvtRegister(LOCAL_APIC_TIMER_LVT_REGISTER, periodic, mask, false, LOCAL_APIC_FIXED_MESSAGE, vector);
   }
-  void writeTimerInitialCountRegister(uint32_t initialCount) { writeRegister(LOCAL_APIC_TIMER_INITIAL_COUNT_REGISTER, initialCount); }
+  void writeTimerInitialCountRegister(uint32_t initialCount) {
+    writeRegister(LOCAL_APIC_TIMER_INITIAL_COUNT_REGISTER, initialCount);
+  }
   uint32_t getTimerCurrentCount() { return readRegister(LOCAL_APIC_TIMER_CURRENT_COUNT_REGISTER); }
   void writeTimerDivideRegister(uint8_t divideFlag) { writeRegister(LOCAL_APIC_TIMER_DIVIDE_REGISTER, divideFlag); }
 
   // Mask all internal APIC interrupts
   void maskAllInternal();
 
-  bool inService(uint8_t vector) { return (readRegister(LOCAL_APIC_IN_SERVICE_REGISTERS + ((vector / 32) * 16)) & (1 << (vector & 0x1f))) != 0; }
+  bool inService(uint8_t vector) {
+    return (readRegister(LOCAL_APIC_IN_SERVICE_REGISTERS + ((vector / 32) * 16)) & (1 << (vector & 0x1f))) != 0;
+  }
 
   // Signal End Of Interrupt
   void eoi() { writeRegister(LOCAL_APIC_EOI_REGISTER, 0); }
@@ -119,12 +128,19 @@ class LocalApic {
   void writeRegister(size_t offset, uint32_t value) { mmio::write(registers + (offset / 4), value); }
   uint32_t readRegister(size_t offset) { return mmio::read(registers + (offset / 4)); }
 
-  void writeLvtRegister(size_t registerOffset, bool timerPeriodic, bool mask, bool levelTriggered, uint8_t messageType, uint8_t vector) {
-    writeRegister(registerOffset,
-                  ((uint32_t)timerPeriodic << 17) | ((uint32_t)mask << 16) | ((uint32_t)levelTriggered << 15) | ((uint32_t)messageType << 8) | vector);
+  void writeLvtRegister(size_t registerOffset,
+                        bool timerPeriodic,
+                        bool mask,
+                        bool levelTriggered,
+                        uint8_t messageType,
+                        uint8_t vector) {
+    writeRegister(registerOffset, ((uint32_t)timerPeriodic << 17) | ((uint32_t)mask << 16) |
+                                      ((uint32_t)levelTriggered << 15) | ((uint32_t)messageType << 8) | vector);
   }
 
-  void maskLvtRegister(size_t registerOffset) { writeRegister(registerOffset, readRegister(registerOffset) | (1 << 16)); }
+  void maskLvtRegister(size_t registerOffset) {
+    writeRegister(registerOffset, readRegister(registerOffset) | (1 << 16));
+  }
 };
 
 extern uint8_t localApicIds[MAX_LOCAL_APICS];

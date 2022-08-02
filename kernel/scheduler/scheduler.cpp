@@ -58,7 +58,8 @@ class Scheduler {
   void addTask(task::ControlBlock* task) {
     task->state = task::State::RUNNABLE;
     addTaskLock.acquire();
-    if (currentTask == nullptr || currentTask->state != task::State::RUNNING || currentTask->priority < task->priority) {
+    if (currentTask == nullptr || currentTask->state != task::State::RUNNING ||
+        currentTask->priority < task->priority) {
       tasks.push_front(task);
       if (cpuNumber == cpu::getCpuNumber()) {
         addTaskLock.release();
@@ -78,7 +79,8 @@ class Scheduler {
     }
   }
   void tick() {
-    if (!yieldLocked && currentTask != nullptr && currentTask->state == task::State::RUNNING && --currentTask->timeSlice == 0) {
+    if (!yieldLocked && currentTask != nullptr && currentTask->state == task::State::RUNNING &&
+        --currentTask->timeSlice == 0) {
       yield();
     }
   }

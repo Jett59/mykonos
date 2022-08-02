@@ -54,7 +54,8 @@ FileHandle::FileHandle(String path, bool writable) : node(nullptr), writable(wri
   open = true;
   error = FileError::OKAY;
 }
-FileHandle::FileHandle(FileNode* node, bool writable) : node(node), writable(writable), open(true), error(FileError::OKAY) {
+FileHandle::FileHandle(FileNode* node, bool writable)
+    : node(node), writable(writable), open(true), error(FileError::OKAY) {
   node->lock.acquire();
   node->openCount++;
   node->lock.release();

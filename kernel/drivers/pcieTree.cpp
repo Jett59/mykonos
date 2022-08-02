@@ -52,15 +52,16 @@ void PcieDeviceTree::load() {
           auto access = PCIE_DEVICE(mcfgEntry.address, bus, device, function);
           unsigned headerType = access.getHeaderType();
           if ((headerType & 0x7f) == 0 && access.getVendorId() != 0xffff) {
-            kout::printf("Vendor: %x, device: %x, class: %x, subclass: %x\n", access.getVendorId(), access.getDeviceId(), access.getClass(),
-                         access.getSubclass());
+            kout::printf("Vendor: %x, device: %x, class: %x, subclass: %x\n", access.getVendorId(),
+                         access.getDeviceId(), access.getClass(), access.getSubclass());
             bool matched = false;
             for (auto& driver : pcieDrivers) {
               if (driver.vendorId != 0xffff) {
                 matched = driver.vendorId == access.getVendorId() && driver.deviceId == access.getDeviceId();
               } else {
-                matched = driver.classId == access.getClass() && driver.subclass == access.getSubclass() &&
-                          (driver.registerInterface == 0xff || driver.registerInterface == access.getRegisterInterface());
+                matched =
+                    driver.classId == access.getClass() && driver.subclass == access.getSubclass() &&
+                    (driver.registerInterface == 0xff || driver.registerInterface == access.getRegisterInterface());
               }
               if (matched) {
                 appendAndLoad(driver.get(access));

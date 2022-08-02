@@ -47,7 +47,11 @@ TableManager* loadMcfg(TableHeader* header) {
   return new McfgTableManager(header);
 }
 
-static TableHandler tableHandlers[] = {{"RSDT", loadRsdt}, {"XSDT", loadRsdt}, {"APIC", loadMadt}, {"HPET", loadHpet}, {"MCFG", loadMcfg}};
+static TableHandler tableHandlers[] = {{"RSDT", loadRsdt},
+                                       {"XSDT", loadRsdt},
+                                       {"APIC", loadMadt},
+                                       {"HPET", loadHpet},
+                                       {"MCFG", loadMcfg}};
 #define numTableHandlers (sizeof(tableHandlers) / sizeof(TableHandler))
 
 static bool doChecksum(TableHeader* header) {

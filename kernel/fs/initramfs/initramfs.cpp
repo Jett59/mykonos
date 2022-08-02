@@ -44,7 +44,8 @@ InitramfsFsProvider::InitramfsFsProvider() {
   char* initramfsPointer = (char*)initramfs.pointer;
   while (memeq(initramfsPointer + SIGNATURE_OFFSET, SIGNATURE, SIGNATURE_LENGTH)) {
     char type = initramfsPointer[TYPE_OFFSET];
-    fs::FileType fileType = type == TYPE_FILE ? fs::FileType::FILE : type == TYPE_DIRECTORY ? fs::FileType::DIRECTORY : fs::FileType::NONE;
+    fs::FileType fileType =
+        type == TYPE_FILE ? fs::FileType::FILE : type == TYPE_DIRECTORY ? fs::FileType::DIRECTORY : fs::FileType::NONE;
     size_t size = parseOctal(initramfsPointer + SIZE_OFFSET, SIZE_LENGTH);
     if (fileType != fs::FileType::NONE) {
       String name = initramfsPointer;

@@ -25,7 +25,8 @@ FrameBuffer frameBuffer;
 static void* backBuffer;
 
 void initFrameBuffer() {
-  frameBuffer.pointer = (uint8_t*)memory::mapAddress(frameBuffer.pointer, frameBuffer.pitch * frameBuffer.height, false);
+  frameBuffer.pointer =
+      (uint8_t*)memory::mapAddress(frameBuffer.pointer, frameBuffer.pitch * frameBuffer.height, false);
   backBuffer = memory::allocateMemory(frameBuffer.pitch * frameBuffer.height);
   memset(frameBuffer.pointer, 0, frameBuffer.pitch * frameBuffer.height);
   memset(backBuffer, 0, frameBuffer.pitch * frameBuffer.height);
@@ -59,7 +60,13 @@ void clipRectangle(unsigned x, unsigned y, unsigned& width, unsigned& height) {
   }
 }
 
-void writeBitmap(unsigned initialX, unsigned initialY, unsigned width, unsigned height, void* bitmap, Pixel foreground, Pixel background) {
+void writeBitmap(unsigned initialX,
+                 unsigned initialY,
+                 unsigned width,
+                 unsigned height,
+                 void* bitmap,
+                 Pixel foreground,
+                 Pixel background) {
   clipRectangle(initialX, initialY, width, height);
   if (width == 0 || height == 0) {
     return;

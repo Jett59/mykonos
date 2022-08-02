@@ -87,7 +87,8 @@ void BlockMap::reserve(Block blockToRemove) {
       continue;
     } else if (currentBlockEnd <= blockToRemoveStart) {
       continue;
-    } else if (currentBlockStart >= blockToRemoveStart && currentBlockEnd <= blockToRemoveEnd) {  // currentBlock is inside blockToRemove
+    } else if (currentBlockStart >= blockToRemoveStart &&
+               currentBlockEnd <= blockToRemoveEnd) {  // currentBlock is inside blockToRemove
       currentBlock = Block();
     } else {  // There is some intersection between the blocks
       if (currentBlockStart >= blockToRemoveStart) {

@@ -75,7 +75,8 @@ void* mapAddress(void* physicalAddress, size_t size, bool cacheable) {
     return nullptr;
   }
   for (size_t i = 0; i < size; i += PAGE_SIZE) {
-    paging::mapPage(ADD_TO_POINTER(ptr, i), ADD_TO_POINTER(physicalAddress, i), paging::PageTableFlags::WRITABLE, false, cacheable);
+    paging::mapPage(ADD_TO_POINTER(ptr, i), ADD_TO_POINTER(physicalAddress, i), paging::PageTableFlags::WRITABLE, false,
+                    cacheable);
   }
   return ADD_TO_POINTER(ptr, pageOffset);
 }

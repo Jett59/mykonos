@@ -28,7 +28,9 @@ class RangedIterator {
 
   using DiffType = ptrdiff_t;
 
-  Accessor<T> operator[](DiffType index) const { return pointer + index < end && pointer + index >= begin ? pointer + index : nullptr; }
+  Accessor<T> operator[](DiffType index) const {
+    return pointer + index < end && pointer + index >= begin ? pointer + index : nullptr;
+  }
   T& operator*() { return (*this)[0]; }
 
   RangedIterator<T> operator++(int) {
@@ -60,7 +62,9 @@ class RangedIterator {
     }
   }
 
-  bool operator==(const RangedIterator<T>& other) const { return other.begin == begin && other.end == end && other.pointer == pointer; }
+  bool operator==(const RangedIterator<T>& other) const {
+    return other.begin == begin && other.end == end && other.pointer == pointer;
+  }
   bool operator!=(const RangedIterator<T>& other) const { return !((*this) == other); }
 
  private:
