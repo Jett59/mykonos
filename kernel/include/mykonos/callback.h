@@ -38,8 +38,7 @@ class Lambda : public Callback<Result, ParameterTypes...> {
   LambdaType lambda;
 
  public:
-  Lambda<LambdaType, Result, ParameterTypes...>(LambdaType lambda)
-      : lambda(lambda) {}
+  Lambda<LambdaType, Result, ParameterTypes...>(LambdaType lambda) : lambda(lambda) {}
 
   virtual Result invoke(ParameterTypes... args) { return lambda(args...); }
 };

@@ -24,15 +24,11 @@ namespace util {
 template <typename T>
 class RangedIterator {
  public:
-  RangedIterator(T* begin, T* end, T* pointer)
-      : begin(begin), end(end), pointer(pointer) {}
+  RangedIterator(T* begin, T* end, T* pointer) : begin(begin), end(end), pointer(pointer) {}
 
   using DiffType = ptrdiff_t;
 
-  Accessor<T> operator[](DiffType index) const {
-    return pointer + index < end && pointer + index >= begin ? pointer + index
-                                                             : nullptr;
-  }
+  Accessor<T> operator[](DiffType index) const { return pointer + index < end && pointer + index >= begin ? pointer + index : nullptr; }
   T& operator*() { return (*this)[0]; }
 
   RangedIterator<T> operator++(int) {
@@ -44,9 +40,7 @@ class RangedIterator {
     pointer++;
     return *this;
   }
-  RangedIterator<T> operator+(DiffType offset) const {
-    return {begin, end, pointer + offset};
-  }
+  RangedIterator<T> operator+(DiffType offset) const { return {begin, end, pointer + offset}; }
   RangedIterator<T> operator--(int) {
     RangedIterator<T> result = *this;
     pointer--;
@@ -56,9 +50,7 @@ class RangedIterator {
     pointer--;
     return *this;
   }
-  RangedIterator<T> operator-(DiffType offset) const {
-    return {begin, end, pointer - offset};
-  }
+  RangedIterator<T> operator-(DiffType offset) const { return {begin, end, pointer - offset}; }
 
   DiffType operator-(const RangedIterator<T>& other) const {
     if (other.begin == begin && other.end == end) {
@@ -68,12 +60,8 @@ class RangedIterator {
     }
   }
 
-  bool operator==(const RangedIterator<T>& other) const {
-    return other.begin == begin && other.end == end && other.pointer == pointer;
-  }
-  bool operator!=(const RangedIterator<T>& other) const {
-    return !((*this) == other);
-  }
+  bool operator==(const RangedIterator<T>& other) const { return other.begin == begin && other.end == end && other.pointer == pointer; }
+  bool operator!=(const RangedIterator<T>& other) const { return !((*this) == other); }
 
  private:
   T* begin;

@@ -35,9 +35,7 @@ class McfgTableManager : public TableManager {
   McfgTableManager(TableHeader* header);
 
   unsigned entryCount() { return numEntries; }
-  McfgEntry getEntry(unsigned index) {
-    return index < numEntries ? entries[index] : McfgEntry{nullptr, 0, 0, 0};
-  }
+  McfgEntry getEntry(unsigned index) { return index < numEntries ? entries[index] : McfgEntry{nullptr, 0, 0, 0}; }
 
  private:
   unsigned numEntries;

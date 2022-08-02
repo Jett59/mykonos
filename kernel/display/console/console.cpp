@@ -30,8 +30,7 @@ static unsigned line, column;
 static unsigned lines, columns;
 
 static char* screenBuffer;
-#define SCREEN_BUFFER_CHARACTER(COLUMN, LINE) \
-  (screenBuffer[(LINE) * (columns + 1) + (COLUMN)])
+#define SCREEN_BUFFER_CHARACTER(COLUMN, LINE) (screenBuffer[(LINE) * (columns + 1) + (COLUMN)])
 #define SCREEN_BUFFER_LINE(LINE) (&screenBuffer[(LINE) * (columns + 1)])
 
 static unsigned displayWidth, displayHeight;
@@ -55,8 +54,7 @@ void scrollDown() {
     }
     strcpy(previousLine, line);
     x = 0;
-    display::copyRegion(x, y, lineLength * fontWidth, fontHeight, x,
-                        y - fontHeight);
+    display::copyRegion(x, y, lineLength * fontWidth, fontHeight, x, y - fontHeight);
   }
   char* lastLine = SCREEN_BUFFER_LINE(lines - 1);
   int lastLineLength = strlen(lastLine);
@@ -117,9 +115,7 @@ void print(unsigned long value, unsigned long base, bool skipLocking) {
   char buffer[sizeof(unsigned long) * 8 + 1];
   unsigned i = 0;
   do {
-    buffer[i++] =
-        "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ+/"
-            [value % base];
+    buffer[i++] = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ+/"[value % base];
     value /= base;
   } while (value != 0);
   buffer[i] = 0;

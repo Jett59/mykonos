@@ -27,14 +27,12 @@ template <typename T>
 class Vector {
  public:
   Vector() : capacity(0), data(nullptr) {}
-  Vector(size_t initialCapacity)
-      : capacity(initialCapacity), data(new T[initialCapacity]) {}
+  Vector(size_t initialCapacity) : capacity(initialCapacity), data(new T[initialCapacity]) {}
 
   Vector(const Vector&) = delete;
   Vector& operator=(const Vector&) = delete;
 
-  Vector(Vector&& other)
-      : capacity(other.capacity), size(other.size), data(other.data) {
+  Vector(Vector&& other) : capacity(other.capacity), size(other.size), data(other.data) {
     other.data = nullptr;
     other.capacity = 0;
     other.size = 0;

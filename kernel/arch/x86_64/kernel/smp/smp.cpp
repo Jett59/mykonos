@@ -37,8 +37,7 @@ bool startCpu(uint8_t apicId, hpet::Hpet& hpet) {
   hpet.wait(10000000);
   // Send the first sipi
   apic::localApic.clearErrors();
-  apic::localApic.sendIpi(SMP_TRAMPOLINE_PAGE, APIC_STARTUP_IPI, false, true,
-                          false, apicId);
+  apic::localApic.sendIpi(SMP_TRAMPOLINE_PAGE, APIC_STARTUP_IPI, false, true, false, apicId);
   // Wait for 1 millisecond
   hpet.wait(1000000);
   // Check if the cpu incremented the runningCpus counter
@@ -47,12 +46,10 @@ bool startCpu(uint8_t apicId, hpet::Hpet& hpet) {
   } else {
     // Send the second sipi
     apic::localApic.clearErrors();
-    apic::localApic.sendIpi(SMP_TRAMPOLINE_PAGE, APIC_STARTUP_IPI, false, true,
-                            false, apicId);
+    apic::localApic.sendIpi(SMP_TRAMPOLINE_PAGE, APIC_STARTUP_IPI, false, true, false, apicId);
     // Poll for an incremented runningCpus with a timeout of 1 second
     uint64_t pollStart = hpet.nanoTime();
-    while (runningCpus == previousRunningCpus &&
-           hpet.nanoTime() < pollStart + 1000000000) {
+    while (runningCpus == previousRunningCpus && hpet.nanoTime() < pollStart + 1000000000) {
       cpu::relax();
     }
   }

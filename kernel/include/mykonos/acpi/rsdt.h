@@ -27,9 +27,7 @@ class RsdtTableManager : public TableManager {
   RsdtTableManager(TableHeader* header);
   virtual ~RsdtTableManager();
 
-  TableManager* operator[](size_t i) {
-    return i < numChildren ? children[i] : nullptr;
-  }
+  TableManager* operator[](size_t i) { return i < numChildren ? children[i] : nullptr; }
   size_t childCount() { return numChildren; }
 
   TableManager* get(TableType type, int num = 0);

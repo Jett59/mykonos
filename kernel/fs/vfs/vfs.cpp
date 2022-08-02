@@ -24,8 +24,7 @@ static __attribute__((constructor)) void initializeRoot() {
   root.type = FileType::DIRECTORY;
 }
 
-FileHandle::FileHandle(String path, bool writable)
-    : node(nullptr), writable(writable) {
+FileHandle::FileHandle(String path, bool writable) : node(nullptr), writable(writable) {
   FileHandle current(&root, false);
   while (path.len() > 0) {
     while (*path == '/') {
@@ -55,8 +54,7 @@ FileHandle::FileHandle(String path, bool writable)
   open = true;
   error = FileError::OKAY;
 }
-FileHandle::FileHandle(FileNode* node, bool writable)
-    : node(node), writable(writable), open(true), error(FileError::OKAY) {
+FileHandle::FileHandle(FileNode* node, bool writable) : node(node), writable(writable), open(true), error(FileError::OKAY) {
   node->lock.acquire();
   node->openCount++;
   node->lock.release();

@@ -23,15 +23,7 @@
 namespace fs {
 enum class FileType { NONE, FILE, DIRECTORY };
 
-enum class FileError {
-  OKAY,
-  CLOSED,
-  NOT_FOUND,
-  READ_ONLY,
-  NOT_FILE,
-  NOT_DIRECTORY,
-  BUSY
-};
+enum class FileError { OKAY, CLOSED, NOT_FOUND, READ_ONLY, NOT_FILE, NOT_DIRECTORY, BUSY };
 
 struct FileNode;
 class FsProvider;
@@ -54,8 +46,7 @@ class FileHandle {
    *
    * All operations will be ignored as if close() had just been called.
    */
-  FileHandle()
-      : node(nullptr), writable(false), open(false), error(FileError::CLOSED) {}
+  FileHandle() : node(nullptr), writable(false), open(false), error(FileError::CLOSED) {}
 
   /**
    * @brief Get the file's type

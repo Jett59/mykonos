@@ -20,18 +20,13 @@
 #include <mykonos/kout.h>
 
 namespace acpi {
-McfgTableManager::McfgTableManager(TableHeader* header)
-    : TableManager(TableType::MCFG) {
+McfgTableManager::McfgTableManager(TableHeader* header) : TableManager(TableType::MCFG) {
   this->numEntries = (header->length - 44) / 16;
   McfgTableEntry* tableEntries = (McfgTableEntry*)((size_t)header + 44);
   for (unsigned i = 0; i < numEntries; i++) {
     auto& tableEntry = tableEntries[i];
-    void* mappedAddress = memory::mapAddress(
-        (void*)tableEntry.address,
-        (tableEntry.lastBusNumber - tableEntry.firstBusNumber + 1) * 1048576,
-        false);
-    entries[i] = {mappedAddress, tableEntry.segmentGroup,
-                  tableEntry.firstBusNumber, tableEntry.lastBusNumber};
+    void* mappedAddress = memory::mapAddress((void*)tableEntry.address, (tableEntry.lastBusNumber - tableEntry.firstBusNumber + 1) * 1048576, false);
+    entries[i] = {mappedAddress, tableEntry.segmentGroup, tableEntry.firstBusNumber, tableEntry.lastBusNumber};
   }
   kout::printf("Found %d MCFG entries\n", numEntries);
   memory::unmapMemory(header, header->length);

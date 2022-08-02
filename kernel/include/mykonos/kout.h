@@ -26,9 +26,7 @@ static inline void print(String str) {
   print(str, false);
 }
 
-void print(unsigned long value,
-           unsigned long base = 10,
-           bool skipLocking = false);
+void print(unsigned long value, unsigned long base = 10, bool skipLocking = false);
 
 // Don't use unless you are printf
 void acquireConsoleLock();

@@ -47,10 +47,7 @@ class FsProvider {
    * @param buffer the buffer to read into
    * @return the number of bytes read
    */
-  virtual size_t read(FileNode& node,
-                      size_t offset,
-                      size_t length,
-                      void* buffer) {
+  virtual size_t read(FileNode& node, size_t offset, size_t length, void* buffer) {
     (void)node;
     (void)offset;
     (void)length;
@@ -66,10 +63,7 @@ class FsProvider {
    * @param buffer the buffer to write to the file
    * @return the number of bytes written
    */
-  virtual size_t write(FileNode& node,
-                       size_t offset,
-                       size_t length,
-                       void* buffer) {
+  virtual size_t write(FileNode& node, size_t offset, size_t length, void* buffer) {
     (void)node;
     (void)offset;
     (void)length;

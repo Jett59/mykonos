@@ -38,15 +38,12 @@ class String {
  public:
   String() : cString(nullptr), length(0) {}
   String(const char* cString) : cString(cString), length(strlen(cString)) {}
-  String(const char* cString, size_t length)
-      : cString(cString), length(length) {}
+  String(const char* cString, size_t length) : cString(cString), length(length) {}
 
   size_t len() const { return length; }
 
   char operator*() const { return (*this)[0]; }
-  char operator[](size_t index) const {
-    return index < length ? cString[index] : 0;
-  }
+  char operator[](size_t index) const { return index < length ? cString[index] : 0; }
 
   using Iterator = util::RangedIterator<const char>;
 
@@ -65,9 +62,7 @@ class String {
   }
   String subString(size_t begin) const { return subString(begin, length); }
 
-  String findBefore(char delimiter) const {
-    return subString(0, length - findNext(delimiter).length);
-  }
+  String findBefore(char delimiter) const { return subString(0, length - findNext(delimiter).length); }
 
   String findNext(char c) const {
     if (length == 0) {

@@ -34,20 +34,15 @@ PageTableEntry pml4[512] __attribute__((aligned(4096)));
 }
 void initPageTables() {
   // Set up the mappings
-  pml4[256] = (PageTableEntry)PHYSICAL_ADDRESS(pml3) | PageTableFlags::PRESENT |
-              PageTableFlags::WRITABLE;
-  pml3[0] = (PageTableEntry)PHYSICAL_ADDRESS(pml2) | PageTableFlags::PRESENT |
-            PageTableFlags::WRITABLE;
-  pml2[1] = (PageTableEntry)PHYSICAL_ADDRESS(pml1) | PageTableFlags::PRESENT |
-            PageTableFlags::WRITABLE;
+  pml4[256] = (PageTableEntry)PHYSICAL_ADDRESS(pml3) | PageTableFlags::PRESENT | PageTableFlags::WRITABLE;
+  pml3[0] = (PageTableEntry)PHYSICAL_ADDRESS(pml2) | PageTableFlags::PRESENT | PageTableFlags::WRITABLE;
+  pml2[1] = (PageTableEntry)PHYSICAL_ADDRESS(pml1) | PageTableFlags::PRESENT | PageTableFlags::WRITABLE;
   for (unsigned i = 0; i < 512; i++) {
     uint64_t address = i * 4096 + 0x200000;
-    pml1[i] = (PageTableEntry)address | PageTableFlags::PRESENT |
-              PageTableFlags::WRITABLE;
+    pml1[i] = (PageTableEntry)address | PageTableFlags::PRESENT | PageTableFlags::WRITABLE;
   }
   // Set up the recursive mapping
-  pml4[511] = (PageTableEntry)PHYSICAL_ADDRESS(pml4) | PageTableFlags::PRESENT |
-              PageTableFlags::WRITABLE;
+  pml4[511] = (PageTableEntry)PHYSICAL_ADDRESS(pml4) | PageTableFlags::PRESENT | PageTableFlags::WRITABLE;
   // Load it
   __asm__ volatile("mov %0, %%cr3" : : "a"(pml4[511]) : "memory");
 }

@@ -42,9 +42,7 @@ class Block {
     }
     return nullptr;
   }
-  void addToBeginning(size_t amount) {
-    start = (void*)((uint8_t*)start - amount);
-  }
+  void addToBeginning(size_t amount) { start = (void*)((uint8_t*)start - amount); }
   void addToEnd(size_t amount) { end = (void*)((uint8_t*)end + amount); }
   friend class BlockMap;
 };
@@ -60,9 +58,7 @@ class BlockMap {
  public:
   void addBlock(Block block) { addBlock(block, true); }
   void* allocate(size_t amount);
-  void returnMemory(void* ptr, size_t amount) {
-    addBlock(Block(ptr, (void*)((uint8_t*)ptr + amount)));
-  }
+  void returnMemory(void* ptr, size_t amount) { addBlock(Block(ptr, (void*)((uint8_t*)ptr + amount))); }
   void reserve(Block block);
 
   void clear() {

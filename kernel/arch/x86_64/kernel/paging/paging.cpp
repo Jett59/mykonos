@@ -23,29 +23,22 @@
 
 #define PML4TABLE ((*PAGE_TABLE_POINTER)[511][511][511])
 #define PML3TABLE(PML4INDEX) ((*PAGE_TABLE_POINTER)[511][511][PML4INDEX])
-#define PML2TABLE(PML4INDEX, PML3INDEX) \
-  ((*PAGE_TABLE_POINTER)[511][PML4INDEX][PML3INDEX])
-#define PML1TABLE(PML4INDEX, PML3INDEX, PML2INDEX) \
-  ((*PAGE_TABLE_POINTER)[PML4INDEX][PML3INDEX][PML2INDEX])
+#define PML2TABLE(PML4INDEX, PML3INDEX) ((*PAGE_TABLE_POINTER)[511][PML4INDEX][PML3INDEX])
+#define PML1TABLE(PML4INDEX, PML3INDEX, PML2INDEX) ((*PAGE_TABLE_POINTER)[PML4INDEX][PML3INDEX][PML2INDEX])
 
 #define PML4ENTRY(PML4INDEX) (PML4TABLE[PML4INDEX])
 #define PML3ENTRY(PML4INDEX, PML3INDEX) (PML3TABLE(PML4INDEX)[PML3INDEX])
-#define PML2ENTRY(PML4INDEX, PML3INDEX, PML2INDEX) \
-  (PML2TABLE(PML4INDEX, PML3INDEX)[PML2INDEX])
-#define PML1ENTRY(PML4INDEX, PML3INDEX, PML2INDEX, PML1INDEX) \
-  (PML1TABLE(PML4INDEX, PML3INDEX, PML2INDEX)[PML1INDEX])
+#define PML2ENTRY(PML4INDEX, PML3INDEX, PML2INDEX) (PML2TABLE(PML4INDEX, PML3INDEX)[PML2INDEX])
+#define PML1ENTRY(PML4INDEX, PML3INDEX, PML2INDEX, PML1INDEX) (PML1TABLE(PML4INDEX, PML3INDEX, PML2INDEX)[PML1INDEX])
 
 namespace paging {
 static PageTableEntry allocatePageTable() {
-  return (PageTableEntry)(memory::allocateFrame() << 12) |
-         PageTableFlags::PRESENT | PageTableFlags::WRITABLE |
-         PageTableFlags::ALLOCATED | PageTableFlags::USER;
+  return (PageTableEntry)(memory::allocateFrame() << 12) | PageTableFlags::PRESENT | PageTableFlags::WRITABLE | PageTableFlags::ALLOCATED |
+         PageTableFlags::USER;
 }
 // If not allocatePageTables, return nullptr if the page table does not exist
-static PageTableEntry* getPageTableEntry(void* virtualAddress,
-                                         bool allocatePageTables) {
-  uint64_t address = (uint64_t)virtualAddress &
-                     ((1UL << 48) - 1);  // Mask for 48 bit address space
+static PageTableEntry* getPageTableEntry(void* virtualAddress, bool allocatePageTables) {
+  uint64_t address = (uint64_t)virtualAddress & ((1UL << 48) - 1);  // Mask for 48 bit address space
   // Mask and shift out the parts of the address
   address >>= 12;  // Remove the byte offset
   uint64_t pml1Index = address & 511;
@@ -73,8 +66,7 @@ static PageTableEntry* getPageTableEntry(void* virtualAddress,
       return nullptr;
     }
   }
-  if ((PML2ENTRY(pml4Index, pml3Index, pml2Index) & PageTableFlags::PRESENT) ==
-      0) {
+  if ((PML2ENTRY(pml4Index, pml3Index, pml2Index) & PageTableFlags::PRESENT) == 0) {
     if (allocatePageTables) {
       PML2ENTRY(pml4Index, pml3Index, pml2Index) = allocatePageTable();
       memset(PML1TABLE(pml4Index, pml3Index, pml2Index), 0, 4096);
@@ -84,11 +76,7 @@ static PageTableEntry* getPageTableEntry(void* virtualAddress,
   }
   return &PML1ENTRY(pml4Index, pml3Index, pml2Index, pml1Index);
 }
-void mapPage(void* virtualAddress,
-             void* physicalAddress,
-             PageTableFlags flags,
-             bool allocated,
-             bool cacheable) {
+void mapPage(void* virtualAddress, void* physicalAddress, PageTableFlags flags, bool allocated, bool cacheable) {
   flags |= PageTableFlags::PRESENT;
   if (allocated) {
     flags |= PageTableFlags::ALLOCATED;
@@ -96,16 +84,14 @@ void mapPage(void* virtualAddress,
   if (!cacheable) {
     flags |= PageTableFlags::UNCACHEABLE;
   }
-  PageTableEntry pageTableEntry =
-      (PageTableEntry)((uint64_t)flags | ((uint64_t)physicalAddress & ~4095ul));
+  PageTableEntry pageTableEntry = (PageTableEntry)((uint64_t)flags | ((uint64_t)physicalAddress & ~4095ul));
   *getPageTableEntry(virtualAddress, true) = pageTableEntry;
 }
 void unmapPage(void* virtualAddress) {
   PageTableEntry* pageTableEntry = getPageTableEntry(virtualAddress, false);
   if (pageTableEntry != nullptr) {
     if ((*pageTableEntry & PageTableFlags::ALLOCATED) != 0) {
-      memory::returnFrame(((uint64_t)*pageTableEntry >> 12) &
-                          ((1ul << 52) - 1));
+      memory::returnFrame(((uint64_t)*pageTableEntry >> 12) & ((1ul << 52) - 1));
     }
     *pageTableEntry = (PageTableEntry)0;
     invalidateTlb(virtualAddress);

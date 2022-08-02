@@ -62,8 +62,7 @@ static volatile unsigned localApicTickSetting = 0;
 extern "C" [[noreturn]] void kstart() {
   // Global constructors must be called
   // We use init_array method, for simplicity
-  for (ConstructorOrDestructor* initArrayElement = __init_array_start;
-       initArrayElement != __init_array_end; initArrayElement++) {
+  for (ConstructorOrDestructor* initArrayElement = __init_array_start; initArrayElement != __init_array_end; initArrayElement++) {
     (*initArrayElement)();
   }
   // Now that that's over
@@ -71,8 +70,7 @@ extern "C" [[noreturn]] void kstart() {
   paging::initPageTables();
   // Now that paging is enabled, we must map in the initramfs.
   if (initramfs::initramfs.size > 0) {
-    initramfs::initramfs.pointer = memory::mapAddress(
-        initramfs::initramfs.pointer, initramfs::initramfs.size, true);
+    initramfs::initramfs.pointer = memory::mapAddress(initramfs::initramfs.pointer, initramfs::initramfs.size, true);
   }
   display::initFrameBuffer();
   interrupts::init();
@@ -95,17 +93,13 @@ extern "C" [[noreturn]] void kstart() {
       kpanic("Checksum of RSDP failed");
     }
     kout::printf("Found RSDP (revision: %d)\n", acpi::rsdp.revision);
-    void* rsdtAddress = (acpi::rsdp.revision >= 2)
-                            ? (void*)(size_t)acpi::rsdp.xsdtAddress
-                            : (void*)(size_t)acpi::rsdp.rsdtAddress;
-    acpi::RsdtTableManager* rsdt =
-        (acpi::RsdtTableManager*)acpi::loadTable(rsdtAddress);
+    void* rsdtAddress = (acpi::rsdp.revision >= 2) ? (void*)(size_t)acpi::rsdp.xsdtAddress : (void*)(size_t)acpi::rsdp.rsdtAddress;
+    acpi::RsdtTableManager* rsdt = (acpi::RsdtTableManager*)acpi::loadTable(rsdtAddress);
     if (rsdt == nullptr) {
       kpanic("Error loading RSDT");
     }
     kout::print("Found RSDT\n");
-    acpi::HpetTableManager* hpetTableManager =
-        (acpi::HpetTableManager*)rsdt->get(acpi::TableType::HPET);
+    acpi::HpetTableManager* hpetTableManager = (acpi::HpetTableManager*)rsdt->get(acpi::TableType::HPET);
     if (hpetTableManager == nullptr) {
       kpanic("No HPET found");
     }
@@ -117,15 +111,13 @@ extern "C" [[noreturn]] void kstart() {
         "HPET says current time is %lns sinse reset (with precision "
         "of %lkHz)\n",
         hpet.nanoTime(), hpet.getFrequencyKhz());
-    acpi::MadtTableManager* madt =
-        (acpi::MadtTableManager*)rsdt->get(acpi::TableType::MADT);
+    acpi::MadtTableManager* madt = (acpi::MadtTableManager*)rsdt->get(acpi::TableType::MADT);
     if (madt == nullptr) {
       kpanic("No MADT found");
     }
     apic::localApic.init(madt->getLocalApicAddress());
     apic::localApic.enable();
-    kout::printf("Initialized local APIC with version %x\n",
-                 apic::localApic.getVersion());
+    kout::printf("Initialized local APIC with version %x\n", apic::localApic.getVersion());
     if (madt->getHasPic()) {
       kout::print("Disabling legacy PIC\n");
       pic::disablePic();
@@ -133,13 +125,10 @@ extern "C" [[noreturn]] void kstart() {
     numCpus = madt->localApicCount();
     if (numCpus > 1) {
       // Copy smp trampoline to low memory
-      void* smpTrampolineDestination =
-          memory::mapAddress((void*)0x8000, 0x1000, false);
-      size_t smpTrampolineSize =
-          (size_t)&smpTrampolineEnd - (size_t)&smpTrampolineStart;
+      void* smpTrampolineDestination = memory::mapAddress((void*)0x8000, 0x1000, false);
+      size_t smpTrampolineSize = (size_t)&smpTrampolineEnd - (size_t)&smpTrampolineStart;
       uint8_t previousTrampolineContents[smpTrampolineSize];
-      memcpy(previousTrampolineContents, smpTrampolineDestination,
-             smpTrampolineSize);
+      memcpy(previousTrampolineContents, smpTrampolineDestination, smpTrampolineSize);
       memcpy(smpTrampolineDestination, &smpTrampolineStart, smpTrampolineSize);
       smp::allocateStacks(madt->localApicCount());
       kout::print("Beginning SMP initialization\n");
@@ -161,11 +150,9 @@ extern "C" [[noreturn]] void kstart() {
           apic::localApicIds[0] = apicId;
         }
       }
-      memcpy(smpTrampolineDestination, previousTrampolineContents,
-             smpTrampolineSize);
+      memcpy(smpTrampolineDestination, previousTrampolineContents, smpTrampolineSize);
       // We can't unmap anything just now due to TLB shootdown
-      cleaner::addObject(smpTrampolineDestination,
-                         [](void* ptr) { memory::unmapMemory(ptr, 0x1000); });
+      cleaner::addObject(smpTrampolineDestination, [](void* ptr) { memory::unmapMemory(ptr, 0x1000); });
     }
     // Store our CPU number (0 for BSP)
     cpu::setCpuNumber(0);
@@ -199,14 +186,11 @@ extern "C" [[noreturn]] void kstartApCpu(uint8_t cpuNumber) {
   cpu::enableLocalIrqs();
   // Run some code on another CPU for the fun of it
   auto otherCpuCode = [=]() -> bool {
-    kout::printf("I am CPU %d called from CPU %d\n", cpu::getCpuNumber(),
-                 cpuNumber);
+    kout::printf("I am CPU %d called from CPU %d\n", cpu::getCpuNumber(), cpuNumber);
     processors::letCallerReturn();
     return true;
   };
-  processors::runOn(
-      cpuNumber - 1,
-      callback::Lambda<decltype(otherCpuCode), bool>(otherCpuCode));
+  processors::runOn(cpuNumber - 1, callback::Lambda<decltype(otherCpuCode), bool>(otherCpuCode));
   // Wait for the BSP to figure out the APIC setting
   while (localApicTickSetting == 0) {
     cpu::relax();
@@ -230,8 +214,7 @@ static bool hardwareInitLock = 0;
   auto otherThreadFunction = [](void* otherThreadDonePtr) {
     kout::printf("Other thread got CPU time on CPU %d\n", cpu::getCpuNumber());
     scheduler::yield();
-    kout::printf("Other thread got CPU time after yield on CPU %d\n",
-                 cpu::getCpuNumber());
+    kout::printf("Other thread got CPU time after yield on CPU %d\n", cpu::getCpuNumber());
     *((bool*)otherThreadDonePtr) = true;
     thread::destroy();
   };
@@ -254,8 +237,7 @@ static bool hardwareInitLock = 0;
     kout::print("Mounting the initramfs\n");
     rootDirectory.mount(new initramfs::InitramfsFsProvider());
     kout::print("Openning the test file\n");
-    auto firstChild =
-        rootDirectory.openChild(rootDirectory.findChild("test.txt"), false);
+    auto firstChild = rootDirectory.openChild(rootDirectory.findChild("test.txt"), false);
     rootDirectory.close();
     void* buffer = memory::kmalloc(512);
     size_t size = firstChild.read(0, 512, buffer);

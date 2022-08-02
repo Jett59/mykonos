@@ -26,8 +26,6 @@ typedef bool (*TestFunction)(Logger);
 bool runTests(Logger logger);
 }  // namespace test
 
-#define ADD_TEST(FUNCTION_NAME)                  \
-  ::test::TestFunction testTable_##FUNCTION_NAME \
-      __attribute__((section(".test_array"))) = &FUNCTION_NAME
+#define ADD_TEST(FUNCTION_NAME) ::test::TestFunction testTable_##FUNCTION_NAME __attribute__((section(".test_array"))) = &FUNCTION_NAME
 
 #endif

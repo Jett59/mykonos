@@ -42,13 +42,9 @@ static unsigned parseOctal(const char* str, size_t length) {
 
 InitramfsFsProvider::InitramfsFsProvider() {
   char* initramfsPointer = (char*)initramfs.pointer;
-  while (
-      memeq(initramfsPointer + SIGNATURE_OFFSET, SIGNATURE, SIGNATURE_LENGTH)) {
+  while (memeq(initramfsPointer + SIGNATURE_OFFSET, SIGNATURE, SIGNATURE_LENGTH)) {
     char type = initramfsPointer[TYPE_OFFSET];
-    fs::FileType fileType = type == TYPE_FILE ? fs::FileType::FILE
-                                              : type == TYPE_DIRECTORY
-                                                    ? fs::FileType::DIRECTORY
-                                                    : fs::FileType::NONE;
+    fs::FileType fileType = type == TYPE_FILE ? fs::FileType::FILE : type == TYPE_DIRECTORY ? fs::FileType::DIRECTORY : fs::FileType::NONE;
     size_t size = parseOctal(initramfsPointer + SIZE_OFFSET, SIZE_LENGTH);
     if (fileType != fs::FileType::NONE) {
       String name = initramfsPointer;
@@ -65,10 +61,7 @@ InitramfsFsProvider::InitramfsFsProvider() {
   }
 }
 
-size_t InitramfsFsProvider::read(fs::FileNode& node,
-                                 size_t offset,
-                                 size_t length,
-                                 void* buffer) {
+size_t InitramfsFsProvider::read(fs::FileNode& node, size_t offset, size_t length, void* buffer) {
   InitramfsEntry& entry = *(InitramfsEntry*)node.node;
   if (offset < entry.size) {
     length = util::min(entry.size - offset, length);

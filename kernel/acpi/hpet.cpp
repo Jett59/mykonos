@@ -20,8 +20,7 @@
 #include <mykonos/kout.h>
 
 namespace acpi {
-HpetTableManager::HpetTableManager(TableHeader* header)
-    : TableManager(TableType::HPET) {
+HpetTableManager::HpetTableManager(TableHeader* header) : TableManager(TableType::HPET) {
   HpetTable* hpet = (HpetTable*)header;
   if (hpet->adress.adressSpace != 0) {
     kout::print("Unusable HPET: Not memory mapped\n");

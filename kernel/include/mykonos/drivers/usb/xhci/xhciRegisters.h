@@ -33,9 +33,7 @@ class XhciRegisterAccess {
  public:
   XhciRegisterAccess(XhciRegisters* registers) : registers(registers) {}
 
-  uint8_t getCapabilityLength() {
-    return mmio::read(&registers->capabilityLength);
-  }
+  uint8_t getCapabilityLength() { return mmio::read(&registers->capabilityLength); }
   uint16_t getVersion() { return mmio::read(&registers->version); }
 
  private:

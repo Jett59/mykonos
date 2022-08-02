@@ -53,9 +53,7 @@ void parseMbi() {
   // initramfs from the physical memory map.
   auto& initramfs = initramfs::initramfs;
   if (initramfs.size > 0) {
-    memory::physicalMemory.reserve(
-        {(void*)PAGE_ALIGN_DOWN((size_t)initramfs.pointer),
-         (void*)PAGE_ALIGN_UP((size_t)initramfs.pointer + initramfs.size)});
+    memory::physicalMemory.reserve({(void*)PAGE_ALIGN_DOWN((size_t)initramfs.pointer), (void*)PAGE_ALIGN_UP((size_t)initramfs.pointer + initramfs.size)});
   }
 }
 static void parseModuleTag(ModuleTag* tag);
@@ -90,12 +88,10 @@ static void parseMbiTag(uint32_t type, MbiTag* tag) {
   }
 }
 static void parseModuleTag(ModuleTag* tag) {
-  initramfs::initramfs = {(void*)(size_t)tag->moduleStart,
-                          tag->moduleEnd - tag->moduleStart};
+  initramfs::initramfs = {(void*)(size_t)tag->moduleStart, tag->moduleEnd - tag->moduleStart};
 }
 static void parseMemoryMapTag(MemoryMapTag* memoryMap) {
-  uint32_t numEntries =
-      (memoryMap->size - sizeof(MemoryMapTag)) / memoryMap->entrySize;
+  uint32_t numEntries = (memoryMap->size - sizeof(MemoryMapTag)) / memoryMap->entrySize;
   for (uint32_t i = 0; i < numEntries; i++) {
     if (memoryMap->memory[i].type == 1) {
       void* entryBase = (void*)PAGE_ALIGN_UP(memoryMap->memory[i].base);
@@ -104,9 +100,7 @@ static void parseMemoryMapTag(MemoryMapTag* memoryMap) {
       memory::physicalMemory.addBlock(memory::Block(entryBase, entryEnd));
     }
   }
-  memory::physicalMemory.reserve(
-      memory::Block((void*)PAGE_ALIGN_DOWN((size_t)kernelPhysicalAddress),
-                    (void*)PAGE_ALIGN_UP((size_t)kernelPhysicalEnd)));
+  memory::physicalMemory.reserve(memory::Block((void*)PAGE_ALIGN_DOWN((size_t)kernelPhysicalAddress), (void*)PAGE_ALIGN_UP((size_t)kernelPhysicalEnd)));
   memory::physicalMemory.reserve(memory::Block((void*)0x0, (void*)0x100000));
 }
 static void parseFrameBufferTag(FrameBufferTag* tag) {

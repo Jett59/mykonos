@@ -37,19 +37,13 @@ class MadtTableManager : public TableManager {
   void* getLocalApicAddress() { return localApicAddress; }
 
   unsigned localApicCount() { return numLocalApics; }
-  apic::LocalApicDescriptor getLocalApic(size_t i) {
-    return i < numLocalApics ? localApics[i] : apic::LocalApicDescriptor();
-  }
+  apic::LocalApicDescriptor getLocalApic(size_t i) { return i < numLocalApics ? localApics[i] : apic::LocalApicDescriptor(); }
 
   unsigned ioApicCount() { return numIoApics; }
-  apic::IoApicDescriptor getIoApic(size_t i) {
-    return i < numIoApics ? ioApics[i] : apic::IoApicDescriptor();
-  }
+  apic::IoApicDescriptor getIoApic(size_t i) { return i < numIoApics ? ioApics[i] : apic::IoApicDescriptor(); }
 
   unsigned gsiOverrideCount() { return numGsiOverrides; }
-  MadtGsiOverride getGsiOverride(size_t i) {
-    return i < numGsiOverrides ? gsiOverrides[i] : MadtGsiOverride();
-  }
+  MadtGsiOverride getGsiOverride(size_t i) { return i < numGsiOverrides ? gsiOverrides[i] : MadtGsiOverride(); }
 
  private:
   bool hasPic;
@@ -66,8 +60,7 @@ struct __attribute__((packed)) MadtTable {
   uint32_t localInterruptController;
   uint32_t flags;
 };
-static_assert(sizeof(MadtTable) == sizeof(TableHeader) + 8,
-              "MadtTable has not been packed");
+static_assert(sizeof(MadtTable) == sizeof(TableHeader) + 8, "MadtTable has not been packed");
 // Has legacy PIC (officially PCAT_COMPAT)
 #define MADT_FLAGS_PIC (1 << 0)
 struct MadtEntry {
@@ -85,8 +78,7 @@ struct MadtLocalApicEntry {
   uint8_t apicId;
   uint32_t flags;
 };
-static_assert(sizeof(MadtLocalApicEntry) == 8,
-              "MadtLocalApicEntry has not been packed");
+static_assert(sizeof(MadtLocalApicEntry) == 8, "MadtLocalApicEntry has not been packed");
 #define MADT_FLAGS_ENABLED (1 << 0)
 #define MADT_FLAGS_ENABLEABLE (1 << 1)
 struct MadtIoApicEntry {
@@ -97,8 +89,7 @@ struct MadtIoApicEntry {
   uint32_t physicalAddress;
   uint32_t gsiBase;
 };
-static_assert(sizeof(MadtIoApicEntry) == 12,
-              "MadtIoApicEntry has not been packed");
+static_assert(sizeof(MadtIoApicEntry) == 12, "MadtIoApicEntry has not been packed");
 struct __attribute__((packed)) MadtGsiOverrideEntry {
   uint8_t type;
   uint8_t length;
@@ -107,8 +98,7 @@ struct __attribute__((packed)) MadtGsiOverrideEntry {
   uint32_t destination;
   uint16_t flags;
 };
-static_assert(sizeof(MadtGsiOverrideEntry) == 10,
-              "MadtGsiOverrideEntry has not been packed");
+static_assert(sizeof(MadtGsiOverrideEntry) == 10, "MadtGsiOverrideEntry has not been packed");
 }  // namespace acpi
 
 #endif

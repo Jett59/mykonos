@@ -34,9 +34,7 @@ class Hpet {
   Hpet(Hpet& other) = delete;
   Hpet& operator=(Hpet& other) = delete;
 
-  uint64_t nanoTime() {
-    return (readRegister(HPET_REGISTER_COUNTER) * frequencyFemtos) / 1000000;
-  }
+  uint64_t nanoTime() { return (readRegister(HPET_REGISTER_COUNTER) * frequencyFemtos) / 1000000; }
   uint64_t getFrequencyKhz() { return 1000000000000l / frequencyFemtos; }
 
   void reset();
@@ -53,12 +51,8 @@ class Hpet {
 
   uint64_t frequencyFemtos;
 
-  void writeRegister(size_t offset, uint64_t value) {
-    mmio::write(registerPointer + (offset / 8), value);
-  }
-  uint64_t readRegister(size_t offset) {
-    return mmio::read(registerPointer + (offset / 8));
-  }
+  void writeRegister(size_t offset, uint64_t value) { mmio::write(registerPointer + (offset / 8), value); }
+  uint64_t readRegister(size_t offset) { return mmio::read(registerPointer + (offset / 8)); }
 };
 }  // namespace hpet
 

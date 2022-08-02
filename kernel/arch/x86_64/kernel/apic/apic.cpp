@@ -34,25 +34,14 @@ void LocalApic::init(void* physicalAddress) {
 }
 
 void LocalApic::enable() {
-  writeRegister(LOCAL_APIC_SPURIOUS_INTERRUPT_REGISTER,
-                LOCAL_APIC_SPURIOUS_INTERRUPT_VECTOR |
-                    LOCAL_APIC_SPURIOUS_INTERRUPT_REGISTER_ENABLE);
+  writeRegister(LOCAL_APIC_SPURIOUS_INTERRUPT_REGISTER, LOCAL_APIC_SPURIOUS_INTERRUPT_VECTOR | LOCAL_APIC_SPURIOUS_INTERRUPT_REGISTER_ENABLE);
 }
 
-void LocalApic::sendIpi(uint8_t vector,
-                        uint8_t messageType,
-                        bool logicalDestination,
-                        bool assert,
-                        bool levelTriggered,
-                        uint8_t destinationApicId) {
+void LocalApic::sendIpi(uint8_t vector, uint8_t messageType, bool logicalDestination, bool assert, bool levelTriggered, uint8_t destinationApicId) {
   // Send the ipi
-  writeRegister(LOCAL_APIC_IPI_REGISTER_HIGH,
-                (uint32_t)destinationApicId << 24);
-  writeRegister(LOCAL_APIC_IPI_REGISTER_LOW,
-                ((uint32_t)vector << 0) | ((uint32_t)messageType << 8) |
-                    ((uint32_t)logicalDestination << 11) |
-                    ((uint32_t)assert << 14) |
-                    ((uint32_t)levelTriggered << 15));
+  writeRegister(LOCAL_APIC_IPI_REGISTER_HIGH, (uint32_t)destinationApicId << 24);
+  writeRegister(LOCAL_APIC_IPI_REGISTER_LOW, ((uint32_t)vector << 0) | ((uint32_t)messageType << 8) | ((uint32_t)logicalDestination << 11) |
+                                                 ((uint32_t)assert << 14) | ((uint32_t)levelTriggered << 15));
   // Wait for delivery
   while ((readRegister(LOCAL_APIC_IPI_REGISTER_LOW) & (1 << 12)) != 0) {
     cpu::relax();

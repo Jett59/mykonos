@@ -53,9 +53,7 @@ struct MemoryMapTag {
     uint32_t reserved;
   } memory[0];
 };
-static_assert(
-    sizeof(MemoryMapTag) == 16,
-    "Invalid padding added to MemoryMapTag. Add __attribute__((packed))");
+static_assert(sizeof(MemoryMapTag) == 16, "Invalid padding added to MemoryMapTag. Add __attribute__((packed))");
 
 struct __attribute__((packed)) FrameBufferTag {
   uint32_t type;
@@ -67,23 +65,20 @@ struct __attribute__((packed)) FrameBufferTag {
   uint8_t depth;
   // Remaining information omitted
 };
-static_assert(sizeof(FrameBufferTag) == 29,
-              "Invalid padding in FrameBufferTag");
+static_assert(sizeof(FrameBufferTag) == 29, "Invalid padding in FrameBufferTag");
 
 struct OldRsdpTag {
   uint32_t type;
   uint32_t size;
   acpi::RsdpV1 rsdp;
 };
-static_assert(sizeof(OldRsdpTag) == sizeof(acpi::RsdpV1) + 8,
-              "Invalid padding added to OldRsdpTag");
+static_assert(sizeof(OldRsdpTag) == sizeof(acpi::RsdpV1) + 8, "Invalid padding added to OldRsdpTag");
 struct NewRsdpTag {
   uint32_t type;
   uint32_t size;
   acpi::RsdpV2 rsdp;
 };
-static_assert(sizeof(NewRsdpTag) == sizeof(acpi::RsdpV2) + 8,
-              "Invalid padding added to NewRsdpTag");
+static_assert(sizeof(NewRsdpTag) == sizeof(acpi::RsdpV2) + 8, "Invalid padding added to NewRsdpTag");
 
 void parseMbi();
 class Mbi {

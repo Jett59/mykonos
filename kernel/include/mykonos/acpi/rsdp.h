@@ -43,8 +43,7 @@ struct __attribute__((packed)) RsdpV2 {
   bool doChecksum() {
     unsigned char* rsdpBytes = (unsigned char*)this;
     unsigned char sum = 0;
-    for (unsigned i = 0; i < (revision >= 2 ? sizeof(RsdpV2) : sizeof(RsdpV1));
-         i++) {
+    for (unsigned i = 0; i < (revision >= 2 ? sizeof(RsdpV2) : sizeof(RsdpV1)); i++) {
       sum += rsdpBytes[i];
     }
     return sum == 0;

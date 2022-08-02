@@ -19,8 +19,7 @@
 #include <mykonos/kmalloc.h>
 
 namespace acpi {
-RsdtTableManager::RsdtTableManager(TableHeader* header)
-    : TableManager(TableType::RSDT) {
+RsdtTableManager::RsdtTableManager(TableHeader* header) : TableManager(TableType::RSDT) {
   size_t entrySize = header->signature[0] == 'X' ? 8 : 4;
   numChildren = (header->length - sizeof(TableHeader)) / entrySize;
   children = new TableManager*[numChildren];

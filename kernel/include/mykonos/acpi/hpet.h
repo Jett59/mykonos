@@ -43,12 +43,10 @@ struct __attribute__((packed)) HpetTable {
   uint16_t vendorId;
   Address adress;
   uint8_t hpetNumber;
-  uint16_t
-      minimumTicks;  // Minimum ticks to not lose interrupts in periodic mode
+  uint16_t minimumTicks;  // Minimum ticks to not lose interrupts in periodic mode
   uint8_t pageProtection;
 };
-static_assert(sizeof(HpetTable) == sizeof(TableHeader) + 20,
-              "HpetTable is not packed");
+static_assert(sizeof(HpetTable) == sizeof(TableHeader) + 20, "HpetTable is not packed");
 }  // namespace acpi
 
 #endif

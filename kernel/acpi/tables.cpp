@@ -47,11 +47,7 @@ TableManager* loadMcfg(TableHeader* header) {
   return new McfgTableManager(header);
 }
 
-static TableHandler tableHandlers[] = {{"RSDT", loadRsdt},
-                                       {"XSDT", loadRsdt},
-                                       {"APIC", loadMadt},
-                                       {"HPET", loadHpet},
-                                       {"MCFG", loadMcfg}};
+static TableHandler tableHandlers[] = {{"RSDT", loadRsdt}, {"XSDT", loadRsdt}, {"APIC", loadMadt}, {"HPET", loadHpet}, {"MCFG", loadMcfg}};
 #define numTableHandlers (sizeof(tableHandlers) / sizeof(TableHandler))
 
 static bool doChecksum(TableHeader* header) {
@@ -64,8 +60,7 @@ static bool doChecksum(TableHeader* header) {
 }
 
 TableManager* loadTable(void* physicalAddress) {
-  TableHeader* header = (TableHeader*)memory::mapAddress(
-      physicalAddress, sizeof(TableHeader), true);
+  TableHeader* header = (TableHeader*)memory::mapAddress(physicalAddress, sizeof(TableHeader), true);
   kout::print("Loading ACPI table: ");
   kout::print(String(header->signature, 4));
   kout::print("\n");

@@ -23,8 +23,7 @@
 #include <mykonos/kout.h>
 
 namespace acpi {
-MadtTableManager::MadtTableManager(TableHeader* header)
-    : TableManager(TableType::MADT) {
+MadtTableManager::MadtTableManager(TableHeader* header) : TableManager(TableType::MADT) {
   MadtTable* madt = (MadtTable*)header;
   localApicAddress = (void*)(size_t)madt->localInterruptController;
   hasPic = (madt->flags & MADT_FLAGS_PIC) != 0;
@@ -33,8 +32,7 @@ MadtTableManager::MadtTableManager(TableHeader* header)
     switch (entry->type) {
       case MADT_TYPE_LOCAL_APIC: {
         MadtLocalApicEntry* localApicEntry = (MadtLocalApicEntry*)entry;
-        if ((localApicEntry->flags & MADT_FLAGS_ENABLED) != 0 &&
-            numLocalApics < MAX_LOCAL_APICS) {
+        if ((localApicEntry->flags & MADT_FLAGS_ENABLED) != 0 && numLocalApics < MAX_LOCAL_APICS) {
           localApics[numLocalApics++].apicId = localApicEntry->apicId;
         }
         break;
@@ -44,8 +42,7 @@ MadtTableManager::MadtTableManager(TableHeader* header)
         if (numIoApics < MAX_IO_APICS) {
           apic::IoApicDescriptor& ioApicDescriptor = ioApics[numIoApics++];
           ioApicDescriptor.gsiBase = ioApicEntry->gsiBase;
-          ioApicDescriptor.physicalAddress =
-              (void*)(size_t)ioApicEntry->physicalAddress;
+          ioApicDescriptor.physicalAddress = (void*)(size_t)ioApicEntry->physicalAddress;
         }
         break;
       }
@@ -65,8 +62,7 @@ MadtTableManager::MadtTableManager(TableHeader* header)
     }
     entry = (MadtEntry*)((uint8_t*)entry + entry->length);
   }
-  kout::printf("Found %d local APICs, %d io APICs and %d GSI overrides\n",
-               numLocalApics, numIoApics, numGsiOverrides);
+  kout::printf("Found %d local APICs, %d io APICs and %d GSI overrides\n", numLocalApics, numIoApics, numGsiOverrides);
   memory::unmapMemory(header, header->length);
 }
 }  // namespace acpi

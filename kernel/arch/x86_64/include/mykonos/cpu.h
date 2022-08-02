@@ -24,18 +24,11 @@ namespace cpu {
 // documentation for details of each one.
 static inline uint64_t rdmsr(uint32_t address) {
   uint32_t msrLow, msrHigh;
-  __asm__ volatile("rdmsr"
-                   : "=a"(msrLow), "=d"(msrHigh)
-                   : "c"(address)
-                   : "memory");
+  __asm__ volatile("rdmsr" : "=a"(msrLow), "=d"(msrHigh) : "c"(address) : "memory");
   return msrLow | ((uint64_t)msrHigh << 32);
 }
 static inline void wrmsr(uint64_t value, uint32_t address) {
-  __asm__ volatile("wrmsr"
-                   :
-                   : "a"((uint32_t)value), "d"((uint32_t)(value >> 32)),
-                     "c"(address)
-                   : "memory");
+  __asm__ volatile("wrmsr" : : "a"((uint32_t)value), "d"((uint32_t)(value >> 32)), "c"(address) : "memory");
 }
 
 // Get the CPU number from the TSC auxiliary data

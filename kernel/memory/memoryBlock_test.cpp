@@ -75,8 +75,7 @@ bool blockMapTest(::test::Logger logger) {
     return false;
   }
   if (map.allocate(0x800) != (void*)0x1000) {
-    logger(
-        "blockMapTest failed: Reserving in the middle of the block failed\n");
+    logger("blockMapTest failed: Reserving in the middle of the block failed\n");
     return false;
   }
   if (map.allocate(0x800) != (void*)0x2800) {

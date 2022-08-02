@@ -21,9 +21,7 @@
 #include <mykonos/task/controlBlock.h>
 
 namespace thread {
-void create(void (*entrypoint)(void* context),
-            void* context,
-            unsigned priority) {
+void create(void (*entrypoint)(void* context), void* context, unsigned priority) {
   void* stack = stacks::allocateStack();
   task::ControlBlock* task = new task::ControlBlock();
   task->originalStackPointer = stack;

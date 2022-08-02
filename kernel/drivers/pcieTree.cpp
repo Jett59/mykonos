@@ -19,11 +19,8 @@
 #include <mykonos/drivers/usb/xhci/xhciDriver.h>
 #include <mykonos/kout.h>
 
-#define PCIE_DEVICE(BASE, BUS, DEVICE, FUNCTION)                            \
-  PcieDeviceAccess {                                                        \
-    (PcieDeviceHeader*)((size_t)(BASE) + ((BUS) << 20) + ((DEVICE) << 15) + \
-                        ((FUNCTION) << 12))                                 \
-  }
+#define PCIE_DEVICE(BASE, BUS, DEVICE, FUNCTION) \
+  PcieDeviceAccess { (PcieDeviceHeader*)((size_t)(BASE) + ((BUS) << 20) + ((DEVICE) << 15) + ((FUNCTION) << 12)) }
 
 namespace drivers {
 struct PcieDriver {
@@ -39,39 +36,31 @@ struct PcieDriver {
 };
 
 static DeviceTree* loadXhciDriver(PcieDeviceAccess access) {
-  return new xhci::XhciDriver(
-      xhci::XhciRegisterAccess((xhci::XhciRegisters*)access.mapBar(0)));
+  return new xhci::XhciDriver(xhci::XhciRegisterAccess((xhci::XhciRegisters*)access.mapBar(0)));
 }
 
-static PcieDriver pcieDrivers[] = {
-    {0xffff, 0xffff, 0x0c, 0x03, 0x30, loadXhciDriver}};
+static PcieDriver pcieDrivers[] = {{0xffff, 0xffff, 0x0c, 0x03, 0x30, loadXhciDriver}};
 
 void PcieDeviceTree::load() {
   kout::print("Scanning PCIE configuration\n");
   unsigned unknownDeviceCount = 0;
   for (size_t i = 0; i < mcfg->entryCount(); i++) {
     auto mcfgEntry = mcfg->getEntry(i);
-    for (size_t bus = mcfgEntry.firstBusNumber; bus <= mcfgEntry.lastBusNumber;
-         bus++) {
+    for (size_t bus = mcfgEntry.firstBusNumber; bus <= mcfgEntry.lastBusNumber; bus++) {
       for (size_t device = 0; device < 32; device++) {
         for (size_t function = 0; function < 8; function++) {
           auto access = PCIE_DEVICE(mcfgEntry.address, bus, device, function);
           unsigned headerType = access.getHeaderType();
           if ((headerType & 0x7f) == 0 && access.getVendorId() != 0xffff) {
-            kout::printf("Vendor: %x, device: %x, class: %x, subclass: %x\n",
-                         access.getVendorId(), access.getDeviceId(),
-                         access.getClass(), access.getSubclass());
+            kout::printf("Vendor: %x, device: %x, class: %x, subclass: %x\n", access.getVendorId(), access.getDeviceId(), access.getClass(),
+                         access.getSubclass());
             bool matched = false;
             for (auto& driver : pcieDrivers) {
               if (driver.vendorId != 0xffff) {
-                matched = driver.vendorId == access.getVendorId() &&
-                          driver.deviceId == access.getDeviceId();
+                matched = driver.vendorId == access.getVendorId() && driver.deviceId == access.getDeviceId();
               } else {
-                matched =
-                    driver.classId == access.getClass() &&
-                    driver.subclass == access.getSubclass() &&
-                    (driver.registerInterface == 0xff ||
-                     driver.registerInterface == access.getRegisterInterface());
+                matched = driver.classId == access.getClass() && driver.subclass == access.getSubclass() &&
+                          (driver.registerInterface == 0xff || driver.registerInterface == access.getRegisterInterface());
               }
               if (matched) {
                 appendAndLoad(driver.get(access));

@@ -40,10 +40,7 @@ class InitramfsFsProvider : public fs::FsProvider {
  public:
   InitramfsFsProvider();
 
-  virtual size_t read(fs::FileNode& node,
-                      size_t offset,
-                      size_t length,
-                      void* buffer);
+  virtual size_t read(fs::FileNode& node, size_t offset, size_t length, void* buffer);
   virtual void populateDirectory(fs::FileNode& directory);
   virtual void freeNode(fs::FileNode& directory);
   virtual void initRoot(fs::FileNode& root);

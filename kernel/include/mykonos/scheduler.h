@@ -45,8 +45,7 @@ void addTask(task::ControlBlock* task);
 
 // Switch to the per-CPU stack. Use when you want to stop running the current
 // task. Will never return.
-[[noreturn]] void switchToSchedulerStack(void (*callback)(void*),
-                                         void* context);
+[[noreturn]] void switchToSchedulerStack(void (*callback)(void*), void* context);
 
 // Call for each CPU with a freshly allocated task::ControlBlock
 void init(unsigned cpuNumber, task::ControlBlock* task);

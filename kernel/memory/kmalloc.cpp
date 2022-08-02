@@ -39,8 +39,7 @@ void* allocateMemory(size_t size) {
   for (size_t i = 0; i < size; i += PAGE_SIZE) {
     size_t frame = memory::allocateFrame();
     if (frame != 0) {
-      paging::mapPage(ADD_TO_POINTER(ptr, i), (void*)(frame * PAGE_SIZE),
-                      paging::PageTableFlags::WRITABLE, true, true);
+      paging::mapPage(ADD_TO_POINTER(ptr, i), (void*)(frame * PAGE_SIZE), paging::PageTableFlags::WRITABLE, true, true);
     } else {
       kpanic("Out of memory");
     }
@@ -76,8 +75,7 @@ void* mapAddress(void* physicalAddress, size_t size, bool cacheable) {
     return nullptr;
   }
   for (size_t i = 0; i < size; i += PAGE_SIZE) {
-    paging::mapPage(ADD_TO_POINTER(ptr, i), ADD_TO_POINTER(physicalAddress, i),
-                    paging::PageTableFlags::WRITABLE, false, cacheable);
+    paging::mapPage(ADD_TO_POINTER(ptr, i), ADD_TO_POINTER(physicalAddress, i), paging::PageTableFlags::WRITABLE, false, cacheable);
   }
   return ADD_TO_POINTER(ptr, pageOffset);
 }
@@ -100,9 +98,7 @@ void unmapMemory(void* address, size_t size) {
           processors::letCallerReturn();
           return true;
         };
-        processors::runOn(i,
-                          callback::Lambda<decltype(tlbInvalidationCode), bool>(
-                              tlbInvalidationCode));
+        processors::runOn(i, callback::Lambda<decltype(tlbInvalidationCode), bool>(tlbInvalidationCode));
       }
     }
     virtualMemory.returnMemory(address, size);

@@ -24,8 +24,7 @@
 namespace drivers {
 class PcieDeviceTree : public DeviceTree {
  public:
-  PcieDeviceTree(acpi::McfgTableManager* mcfg)
-      : DeviceTree(DeviceType::PCIE), mcfg(mcfg) {}
+  PcieDeviceTree(acpi::McfgTableManager* mcfg) : DeviceTree(DeviceType::PCIE), mcfg(mcfg) {}
 
  protected:
   virtual void load();

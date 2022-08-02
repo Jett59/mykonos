@@ -37,9 +37,8 @@ struct PcieDeviceHeader {
   uint32_t bars[6];
 };
 class PcieDeviceAccess {
-public:
-  PcieDeviceAccess(PcieDeviceHeader *devicePointer)
-      : devicePointer(devicePointer) {}
+ public:
+  PcieDeviceAccess(PcieDeviceHeader* devicePointer) : devicePointer(devicePointer) {}
 
   uint16_t getVendorId() { return mmio::read(&devicePointer->vendorId); }
   uint16_t getDeviceId() { return mmio::read(&devicePointer->deviceId); }
@@ -48,26 +47,20 @@ public:
   uint16_t getStatus() { return mmio::read(&devicePointer->status); }
 
   uint8_t getRevision() { return mmio::read(&devicePointer->revision); }
-  uint8_t getRegisterInterface() {
-    return mmio::read(&devicePointer->registerInterface);
-  }
+  uint8_t getRegisterInterface() { return mmio::read(&devicePointer->registerInterface); }
   uint8_t getSubclass() { return mmio::read(&devicePointer->subclass); }
   uint8_t getClass() { return mmio::read(&devicePointer->classId); }
 
   uint8_t getHeaderType() { return mmio::read(&devicePointer->headerType); }
 
-  void *mapBar(unsigned number);
+  void* mapBar(unsigned number);
 
-private:
-  uint32_t readBar(unsigned number) {
-    return mmio::read(&devicePointer->bars[number]);
-  }
-  void writeBar(unsigned number, uint32_t value) {
-    mmio::write(&devicePointer->bars[number], value);
-  }
+ private:
+  uint32_t readBar(unsigned number) { return mmio::read(&devicePointer->bars[number]); }
+  void writeBar(unsigned number, uint32_t value) { mmio::write(&devicePointer->bars[number], value); }
 
-  PcieDeviceHeader *devicePointer;
+  PcieDeviceHeader* devicePointer;
 };
-} // namespace drivers
+}  // namespace drivers
 
 #endif

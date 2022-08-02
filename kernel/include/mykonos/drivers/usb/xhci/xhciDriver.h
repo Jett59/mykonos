@@ -24,8 +24,7 @@ namespace drivers {
 namespace xhci {
 class XhciDriver : public DeviceTree {
  public:
-  XhciDriver(XhciRegisterAccess registers)
-      : DeviceTree(DeviceType::XHCI), registers(registers) {}
+  XhciDriver(XhciRegisterAccess registers) : DeviceTree(DeviceType::XHCI), registers(registers) {}
 
   void load();
 

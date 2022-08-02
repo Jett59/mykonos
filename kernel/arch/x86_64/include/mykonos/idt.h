@@ -33,8 +33,7 @@ struct IdtEntry {
   uint32_t reserved;
 
   IdtEntry() {}
-  IdtEntry(void (*function)(), int istNum, bool trap)
-      : gdtSelector(8), istEntry(istNum), type(trap ? 0xF : 0xE), present(1) {
+  IdtEntry(void (*function)(), int istNum, bool trap) : gdtSelector(8), istEntry(istNum), type(trap ? 0xF : 0xE), present(1) {
     uint64_t functionPointer = (uint64_t)function;
     offsetLow = functionPointer & 0xFFFF;
     functionPointer >>= 16;

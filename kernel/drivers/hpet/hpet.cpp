@@ -25,14 +25,10 @@
 #define HPET_CONFIGURATION_LEGACY_BIT (1 << 1)
 
 namespace hpet {
-Hpet::Hpet(void* physicalAddress)
-    : registerPointer(
-          (uint64_t*)memory::mapAddress(physicalAddress, 1024, false)) {
+Hpet::Hpet(void* physicalAddress) : registerPointer((uint64_t*)memory::mapAddress(physicalAddress, 1024, false)) {
   frequencyFemtos = readRegister(HPET_REGISTER_GENERAL_CAPABILITIES) >> 32;
   // Remove legacy mappings
-  writeRegister(HPET_REGISTER_GENERAL_CONFIGURATION,
-                readRegister(HPET_REGISTER_GENERAL_CONFIGURATION) &
-                    ~HPET_CONFIGURATION_LEGACY_BIT);
+  writeRegister(HPET_REGISTER_GENERAL_CONFIGURATION, readRegister(HPET_REGISTER_GENERAL_CONFIGURATION) & ~HPET_CONFIGURATION_LEGACY_BIT);
   reset();
 }
 Hpet::~Hpet() {
@@ -41,14 +37,10 @@ Hpet::~Hpet() {
 
 void Hpet::reset() {
   // Stop the counter
-  writeRegister(HPET_REGISTER_GENERAL_CONFIGURATION,
-                readRegister(HPET_REGISTER_GENERAL_CONFIGURATION) &
-                    ~HPET_CONFIGURATION_ENABLE_BIT);
+  writeRegister(HPET_REGISTER_GENERAL_CONFIGURATION, readRegister(HPET_REGISTER_GENERAL_CONFIGURATION) & ~HPET_CONFIGURATION_ENABLE_BIT);
   // Set it to 0
   writeRegister(HPET_REGISTER_COUNTER, 0);
   // Enable the counter
-  writeRegister(HPET_REGISTER_GENERAL_CONFIGURATION,
-                readRegister(HPET_REGISTER_GENERAL_CONFIGURATION) |
-                    HPET_CONFIGURATION_ENABLE_BIT);
+  writeRegister(HPET_REGISTER_GENERAL_CONFIGURATION, readRegister(HPET_REGISTER_GENERAL_CONFIGURATION) | HPET_CONFIGURATION_ENABLE_BIT);
 }
 }  // namespace hpet
