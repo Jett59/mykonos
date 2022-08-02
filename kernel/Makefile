@@ -33,9 +33,9 @@ include scheduler/Make.steps
 include util/Make.steps
 include fs/Make.steps
 
-# Enable runtime tests if requested
-ifeq ($(TEST),ON)
- CPPFLAGS+=-DRUNTIME_TESTS
+# Enable debug mode if requested.
+ifeq ($(DEBUG),ON)
+ CPPFLAGS+=-DDEBUG
  STEPS+=$(TEST_STEPS)
 endif
 

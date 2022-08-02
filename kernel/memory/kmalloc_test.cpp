@@ -14,8 +14,6 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     */
-#ifdef RUNTIME_TESTS
-
 #include <mykonos/kmalloc.h>
 #include <mykonos/test.h>
 
@@ -66,5 +64,3 @@ ADD_TEST(kmallocTest);
 ADD_TEST(mapMemoryTest);
 }  // namespace test
 }  // namespace memory
-
-#endif

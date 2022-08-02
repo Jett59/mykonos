@@ -14,8 +14,6 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     */
-#ifdef RUNTIME_TESTS
-
 #include <mykonos/memoryBlock.h>
 
 #include <mykonos/test.h>
@@ -95,5 +93,3 @@ bool blockMapTest(::test::Logger logger) {
 ADD_TEST(blockMapTest);
 }  // namespace test
 }  // namespace memory
-
-#endif

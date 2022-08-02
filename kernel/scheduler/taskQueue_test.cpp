@@ -14,8 +14,6 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     */
-#ifdef RUNTIME_TESTS
-
 #include <mykonos/task/taskQueue.h>
 
 #include <mykonos/test.h>
@@ -54,5 +52,3 @@ bool taskQueueTest(::test::Logger logger) {
 ADD_TEST(taskQueueTest);
 }  // namespace test
 }  // namespace task
-
-#endif

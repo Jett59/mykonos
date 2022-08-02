@@ -14,8 +14,6 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
-#ifdef RUNTIME_TESTS
-
 #include <mykonos/test.h>
 #include <mykonos/vector.h>
 
@@ -72,5 +70,3 @@ bool vectorTest(::test::Logger logger) {
 ADD_TEST(vectorTest);
 }  // namespace test
 }  // namespace util
-
-#endif
