@@ -108,7 +108,7 @@ void initIoApics(const IoApicDescriptor* descriptors, size_t count) {
     nextGsiBase += ioApics[i].gsiCount;
   }
 }
-void mapGsi(uint32_t gsi, uint32_t vector, bool levelTriggered, bool activeHigh, uint8_t targetCpuNumber) {
+void mapIoApicInterrupt(uint32_t gsi, uint8_t vector, bool levelTriggered, bool activeHigh, uint32_t targetCpuNumber) {
   uint32_t targetLocalApic = localApicIds[targetCpuNumber];
   for (unsigned i = 0; i < ioApicCount; i++) {
     if (gsi >= ioApics[i].gsiBase && gsi < ioApics[i].gsiBase + ioApics[i].gsiCount) {
@@ -119,7 +119,7 @@ void mapGsi(uint32_t gsi, uint32_t vector, bool levelTriggered, bool activeHigh,
   kout::printf("Failed to map GSI %d\n", gsi);
   kpanic("Failed to map GSI");
 }
-void maskGsi(uint32_t gsi) {
+void maskIoApicInterrupt(uint32_t gsi) {
   for (unsigned i = 0; i < ioApicCount; i++) {
     if (gsi >= ioApics[i].gsiBase && gsi < ioApics[i].gsiBase + ioApics[i].gsiCount) {
       ioApics[i].maskGsi(gsi - ioApics[i].gsiBase);
@@ -129,7 +129,7 @@ void maskGsi(uint32_t gsi) {
   kout::printf("Failed to mask GSI %d\n", gsi);
   kpanic("Failed to mask GSI");
 }
-void unmaskGsi(uint32_t gsi) {
+void unmaskIoApicInterrupt(uint32_t gsi) {
   for (unsigned i = 0; i < ioApicCount; i++) {
     if (gsi >= ioApics[i].gsiBase && gsi < ioApics[i].gsiBase + ioApics[i].gsiCount) {
       ioApics[i].unmaskGsi(gsi - ioApics[i].gsiBase);

@@ -33,8 +33,7 @@ struct IrqHandlerAndContext {
 
 static IrqHandlerAndContext irqHandlers[256][MAX_IRQ_SHARING];
 
-template <>
-void registerIrqHandler<void>(IrqClass irqClass,
+void registerIrqHandlerBase(IrqClass irqClass,
                               unsigned irq,
                               IrqHandler<void> handler,
                               void* context,

@@ -26,12 +26,22 @@ enum class IrqClass {
 template <typename Context>
 using IrqHandler = void (*)(Context*);
 
+void registerIrqHandlerBase(IrqClass irqClass,
+                        unsigned irq,
+                        IrqHandler<void> handler,
+                        void* context,
+                        bool levelTriggered,
+                        bool activeHigh);
+
 template <typename Context>
-static inline void registerIrqHandler(IrqClass irqClass, unsigned irq, IrqHandler<Context> handler, Context* context, bool levelTriggered, bool activeHigh) {
-  return registerIrqHandler<void>(irqClass, irq, (IrqHandler<void>)handler, (void*)context, levelTriggered, activeHigh);
+static inline void registerIrqHandler(IrqClass irqClass,
+                                      unsigned irq,
+                                      IrqHandler<Context> handler,
+                                      Context* context,
+                                      bool levelTriggered,
+                                      bool activeHigh) {
+  return registerIrqHandlerBase(irqClass, irq, (IrqHandler<void>)handler, (void*)context, levelTriggered, activeHigh);
 }
-template <>
-void registerIrqHandler<void>(IrqClass irqClass, unsigned irq, IrqHandler<void> handler, void* context, bool levelTriggered, bool activeHigh);
 }  // namespace irq
 
 #endif
