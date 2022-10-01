@@ -42,8 +42,6 @@ static DeviceTree* loadXhciDriver(PcieDeviceAccess access) {
 static PcieDriver pcieDrivers[] = {{0xffff, 0xffff, 0x0c, 0x03, 0x30, loadXhciDriver}};
 
 void PcieDeviceTree::load() {
-  kout::print("Scanning PCIE configuration\n");
-  unsigned unknownDeviceCount = 0;
   for (size_t i = 0; i < mcfg->entryCount(); i++) {
     auto mcfgEntry = mcfg->getEntry(i);
     for (size_t bus = mcfgEntry.firstBusNumber; bus <= mcfgEntry.lastBusNumber; bus++) {
@@ -68,9 +66,6 @@ void PcieDeviceTree::load() {
                 break;
               }
             }
-            if (!matched) {
-              unknownDeviceCount++;
-            }
           }
           if (function == 0 && (headerType & 0x80) == 0) {
             break;
@@ -79,6 +74,5 @@ void PcieDeviceTree::load() {
       }
     }
   }
-  kout::printf("%d unknown PCIE devices\n", unknownDeviceCount);
 }
 }  // namespace drivers

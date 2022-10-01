@@ -188,18 +188,9 @@ extern "C" [[noreturn]] void kstartApCpu(uint8_t cpuNumber) {
   // Mask all internal interrupts so we can start getting timer IRQs
   apic::localApic.maskAllInternal();
   cpu::enableLocalIrqs();
-  // Run some code on another CPU for the fun of it
-  auto otherCpuCode = [=]() -> bool {
-    kout::printf("I am CPU %d called from CPU %d\n", cpu::getCpuNumber(), cpuNumber);
-    processors::letCallerReturn();
-    return true;
-  };
-  processors::runOn(cpuNumber - 1, callback::Lambda<decltype(otherCpuCode), bool>(otherCpuCode));
-  // Wait for the BSP to figure out the APIC setting
   while (localApicTickSetting == 0) {
     cpu::relax();
   }
-  // Set up the APIC timer
   apic::setUpTimer(localApicTickSetting);
   kRun();
 }
@@ -216,14 +207,11 @@ static bool hardwareInitLock = 0;
   }
   volatile bool otherThreadDone = false;
   auto otherThreadFunction = [](void* otherThreadDonePtr) {
-    kout::printf("Other thread got CPU time on CPU %d\n", cpu::getCpuNumber());
     scheduler::yield();
-    kout::printf("Other thread got CPU time after yield on CPU %d\n", cpu::getCpuNumber());
     *((bool*)otherThreadDonePtr) = true;
     thread::destroy();
   };
   thread::create(otherThreadFunction, (void*)&otherThreadDone, PRIORITY_HIGH);
-  kout::printf("Main thread yielding on CPU %d\n", cpu::getCpuNumber());
   while (!otherThreadDone) {
     cpu::relax();
   }
@@ -231,7 +219,6 @@ static bool hardwareInitLock = 0;
   while (numCpusDone < numCpus) {
     cpu::relax();
   }
-  // Race for the chance to begin hardware initialization
   if (__sync_bool_compare_and_swap(&hardwareInitLock, 0, 1)) {
     kout::print("Starting hardware initialization\n");
     drivers::loadRootDevice();
@@ -240,7 +227,6 @@ static bool hardwareInitLock = 0;
     auto rootDirectory = fs::FileHandle("/", true);
     kout::print("Mounting the initramfs\n");
     rootDirectory.mount(new initramfs::InitramfsFsProvider());
-    kout::print("Openning the test file\n");
     auto firstChild = rootDirectory.openChild(rootDirectory.findChild("test.txt"), false);
     rootDirectory.close();
     void* buffer = memory::kmalloc(512);
@@ -249,7 +235,7 @@ static bool hardwareInitLock = 0;
     kout::print("\n");
     memory::kfree(buffer);
     firstChild.close();
-    kout::print("Completed initramfs initialization\n");
+    kout::print("Completed initialization\n");
   }
   thread::destroy();
 }

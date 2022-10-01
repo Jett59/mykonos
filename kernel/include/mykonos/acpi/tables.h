@@ -41,7 +41,7 @@ struct __attribute__((packed)) Address {
 };
 static_assert(sizeof(Address) == 12, "Address is not packed");
 
-enum class TableType { RSDT, MADT, HPET, MCFG };
+enum class TableType { RSDT, MADT, HPET, MCFG, FADT };
 class TableManager {
  public:
   const TableType type;

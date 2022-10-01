@@ -17,6 +17,7 @@
 #include <mykonos/acpi/rsdp.h>
 #include <mykonos/acpi/tables.h>
 
+#include <mykonos/acpi/fadt.h>
 #include <mykonos/acpi/hpet.h>
 #include <mykonos/acpi/madt.h>
 #include <mykonos/acpi/mcfg.h>
@@ -46,12 +47,16 @@ TableManager* loadHpet(TableHeader* header) {
 TableManager* loadMcfg(TableHeader* header) {
   return new McfgTableManager(header);
 }
+TableManager* loadFadt(TableHeader* header) {
+  return new FadtTableManager(header);
+}
 
 static TableHandler tableHandlers[] = {{"RSDT", loadRsdt},
                                        {"XSDT", loadRsdt},
                                        {"APIC", loadMadt},
                                        {"HPET", loadHpet},
-                                       {"MCFG", loadMcfg}};
+                                       {"MCFG", loadMcfg},
+                                       {"FACP", loadFadt}};
 #define numTableHandlers (sizeof(tableHandlers) / sizeof(TableHandler))
 
 static bool doChecksum(TableHeader* header) {
@@ -65,9 +70,6 @@ static bool doChecksum(TableHeader* header) {
 
 TableManager* loadTable(void* physicalAddress) {
   TableHeader* header = (TableHeader*)memory::mapAddress(physicalAddress, sizeof(TableHeader), true);
-  kout::print("Loading ACPI table: ");
-  kout::print(String(header->signature, 4));
-  kout::print("\n");
   size_t tableSize = header->length;
   if (tableSize < sizeof(TableHeader)) {
     kout::print("Invalid table: Size too small\n");
@@ -83,6 +85,9 @@ TableManager* loadTable(void* physicalAddress) {
   for (unsigned i = 0; i < numTableHandlers; i++) {
     TableHandler handler = tableHandlers[i];
     if (memeq(header->signature, handler.signature, 4)) {
+      kout::print("Loading ACPI table: ");
+      kout::print(String(header->signature, 4));
+      kout::print("\n");
       return handler.creator(header);
     }
   }

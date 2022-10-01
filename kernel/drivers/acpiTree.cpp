@@ -29,24 +29,16 @@ DeviceTree* loadPcieDriver(acpi::TableManager* table) {
 static TableDriver tableDrivers[] = {{acpi::TableType::MCFG, loadPcieDriver}};
 
 void AcpiDeviceTree::load() {
-  kout::print("Scanning ACPI tables\n");
-  unsigned unusedTableCount = 0;
   for (size_t i = 0; i < tables->childCount(); i++) {
     acpi::TableManager* table = (*tables)[i];
     if (table != nullptr) {
-      bool used = false;
       for (auto& tableDriver : tableDrivers) {
         if (tableDriver.type == table->type) {
-          used = true;
           appendAndLoad(tableDriver.get(table));
           break;
         }
       }
-      if (!used) {
-        unusedTableCount++;
-      }
     }
   }
-  kout::printf("%d unused ACPI tables\n", unusedTableCount);
 }
 }  // namespace drivers
