@@ -22,11 +22,13 @@ namespace acpi {
 FadtTableManager::FadtTableManager(TableHeader* header) : TableManager(TableType::FADT) {
   Fadt* fadt = (Fadt*)header;
 #ifdef __x86_64__
-  // Find if there is a "8042" controller using the boot architecture flags.
+  // Find if there is an 8042 controller using the boot architecture flags.
   // Qemu appears to not set this flag dispite being version 3, so we exclude version 3 as well.
   if (header->revision > 3) {
-    hasPs2Controller = (fadt->bootArchitectureFlags & (1 << 1)) != 0;
+    kout::printf("Revision %d flags 0x%x\n", header->revision, fadt->bootArchitectureFlags);
+    hasPs2Controller = (fadt->bootArchitectureFlags & 0x1) != 0;
   } else {
+    kout::print("FADT version is less than 4, assuming PS/2 controller is present.\n");
     hasPs2Controller = true;
   }
   if (hasPs2Controller) {
