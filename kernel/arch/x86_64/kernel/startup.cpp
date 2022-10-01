@@ -160,10 +160,6 @@ extern "C" [[noreturn]] void kstart() {
     // Store our CPU number (0 for BSP)
     cpu::setCpuNumber(0);
     apic::initIoApics(madt->getIoApics(), madt->ioApicCount());
-    int n = 4;
-    irq::registerIrqHandler<int>(
-        irq::IrqClass::STANDARD, 1, [](int* context) { kout::printf("Keyboard interrupt %d\n", *context); }, &n, false,
-        true);
     unsigned ticksPer10ms = apic::timerTicksPer(10000000, hpet);
     localApicTickSetting = ticksPer10ms;
     kout::printf("APIC timer runs at %dHz\n", ticksPer10ms * 100);

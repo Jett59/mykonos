@@ -34,11 +34,11 @@ struct IrqHandlerAndContext {
 static IrqHandlerAndContext irqHandlers[256][MAX_IRQ_SHARING];
 
 void registerIrqHandlerBase(IrqClass irqClass,
-                              unsigned irq,
-                              IrqHandler<void> handler,
-                              void* context,
-                              bool levelTriggered,
-                              bool activeHigh) {
+                            unsigned irq,
+                            IrqHandler<void> handler,
+                            void* context,
+                            bool levelTriggered,
+                            bool activeHigh) {
   switch (irqClass) {
     case IrqClass::STANDARD:
       apic::mapIoApicInterrupt(irq, irq + IO_APIC_INTERRUPT_BASE, levelTriggered, activeHigh,

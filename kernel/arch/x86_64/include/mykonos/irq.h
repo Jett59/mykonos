@@ -27,11 +27,11 @@ template <typename Context>
 using IrqHandler = void (*)(Context*);
 
 void registerIrqHandlerBase(IrqClass irqClass,
-                        unsigned irq,
-                        IrqHandler<void> handler,
-                        void* context,
-                        bool levelTriggered,
-                        bool activeHigh);
+                            unsigned irq,
+                            IrqHandler<void> handler,
+                            void* context,
+                            bool levelTriggered,
+                            bool activeHigh);
 
 template <typename Context>
 static inline void registerIrqHandler(IrqClass irqClass,
