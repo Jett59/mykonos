@@ -139,4 +139,11 @@ void unmaskGsi(uint32_t gsi) {
   kout::printf("Failed to unmask GSI %d\n", gsi);
   kpanic("Failed to unmask GSI");
 }
+uint32_t getGsiCount() {
+  uint32_t result = 0;
+  for (unsigned i = 0; i < ioApicCount; i++) {
+    result += ioApics[i].gsiCount;
+  }
+  return result;
+}
 }  // namespace apic

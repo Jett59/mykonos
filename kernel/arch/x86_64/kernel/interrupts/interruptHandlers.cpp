@@ -16,10 +16,57 @@
 */
 #include <mykonos/apic.h>
 #include <mykonos/apicTimer.h>
+#include <mykonos/irq.h>
+#include <mykonos/kpanic.h>
 #include <mykonos/processors.h>
 #include <mykonos/scheduler.h>
 
 #include <stdint.h>
+
+#define MAX_IRQ_SHARING 16
+
+namespace irq {
+struct IrqHandlerAndContext {
+  IrqHandler<void> handler;
+  void* context;
+};
+
+static IrqHandlerAndContext irqHandlers[256][MAX_IRQ_SHARING];
+
+template <>
+void registerIrqHandler<void>(IrqClass irqClass,
+                              unsigned irq,
+                              IrqHandler<void> handler,
+                              void* context,
+                              bool levelTriggered,
+                              bool activeHigh) {
+  switch (irqClass) {
+    case IrqClass::STANDARD:
+      apic::mapIoApicInterrupt(irq, irq + IO_APIC_INTERRUPT_BASE, levelTriggered, activeHigh,
+                               0);  // TODO: IRQ balancing.
+      apic::unmaskIoApicInterrupt(irq);
+      irq += IO_APIC_INTERRUPT_BASE;
+      break;
+    case IrqClass::LOCAL_INTERRUPT:
+      break;
+    case IrqClass::MSI:
+      irq += IO_APIC_INTERRUPT_BASE + apic::getGsiCount();
+      break;
+    default:
+      kpanic("Invalid IRQ class");
+  }
+  if (irq >= 256) {
+    kpanic("IRQ out of range");
+  }
+  for (int i = 0; i < MAX_IRQ_SHARING; i++) {
+    if (irqHandlers[irq][i].handler == nullptr) {
+      irqHandlers[irq][i].handler = handler;
+      irqHandlers[irq][i].context = context;
+      break;
+    }
+  }
+}
+}  // namespace irq
 
 extern "C" void handleInterrupt(uint8_t interruptNumber) {
   switch (interruptNumber) {
@@ -34,9 +81,16 @@ extern "C" void handleInterrupt(uint8_t interruptNumber) {
       break;
     }
     default:
+      for (int i = 0; i < MAX_IRQ_SHARING; i++) {
+        if (irq::irqHandlers[interruptNumber][i].handler != nullptr) {
+          irq::irqHandlers[interruptNumber][i].handler(irq::irqHandlers[interruptNumber][i].context);
+        } else {
+          break;
+        }
+      }
+      if (apic::localApic.inService(interruptNumber)) {
+        apic::localApic.eoi();
+      }
       break;
-  }
-  if (apic::localApic.inService(interruptNumber)) {
-    apic::localApic.eoi();
   }
 }
