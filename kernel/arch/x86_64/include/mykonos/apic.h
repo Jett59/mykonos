@@ -20,7 +20,7 @@
 #include <mykonos/processors.h>
 
 #define MAX_LOCAL_APICS MAX_CPUS
-#define MAX_IO_APICS 24
+#define MAX_IO_APICS 8
 
 #include <stddef.h>
 #include <stdint.h>
@@ -146,6 +146,15 @@ class LocalApic {
 extern uint8_t localApicIds[MAX_LOCAL_APICS];
 
 extern LocalApic localApic;
+
+#define IO_APIC_INTERRUPT_BASE 0x20
+
+void initIoApics(const IoApicDescriptor* ioApicDescriptors, size_t numIoApics);
+// Doesn't unmask the interrupt. Call unmask() to do that.
+void mapIoApicInterrupt(uint32_t gsi, uint8_t vector, bool levelTriggered, bool activeHigh, uint32_t targetCpuNumber);
+void maskIoApicInterrupt(uint32_t gsi);
+void unmaskIoApicInterrupt(uint32_t gsi);
+uint32_t getGsiCount();
 }  // namespace apic
 
 #endif

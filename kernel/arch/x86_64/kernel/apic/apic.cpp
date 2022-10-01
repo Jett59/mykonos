@@ -15,6 +15,8 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     */
 #include <mykonos/apic.h>
+#include <mykonos/kout.h>
+#include <mykonos/kpanic.h>
 
 #define LOCAL_APIC_SPURIOUS_INTERRUPT_REGISTER 0xf0
 #define LOCAL_APIC_IPI_REGISTER_LOW 0x300
@@ -59,5 +61,89 @@ void LocalApic::maskAllInternal() {
   maskLvtRegister(LOCAL_APIC_THERMAL_LVT_REGISTER);
   maskLvtRegister(LOCAL_APIC_PERFORMANCE_LVT_REGISTER);
   maskLvtRegister(LOCAL_APIC_ERROR_LVT_REGISTER);
+}
+
+struct IoApic {
+  void* base;
+  uint32_t gsiCount;
+  uint32_t gsiBase;
+
+  uint32_t readRegister(uint32_t registerIndex) {
+    mmio::write((uint32_t*)base, registerIndex);
+    return mmio::read((uint32_t*)base + 4);
+  }
+  void writeRegister(uint32_t registerIndex, uint32_t value) {
+    mmio::write((uint32_t*)base, registerIndex);
+    mmio::write((uint32_t*)base + 4, value);
+  }
+
+  void mapGsi(uint32_t gsi, uint32_t vector, bool levelTriggered, bool activeHigh, uint8_t targetLocalApic) {
+    uint32_t redirectionEntry = readRegister(0x10 + gsi * 2);
+    redirectionEntry |= (uint32_t)vector << 0;
+    redirectionEntry |= (uint32_t)levelTriggered << 15;
+    redirectionEntry |= (uint32_t)!activeHigh << 13;
+    writeRegister(0x10 + gsi * 2, redirectionEntry);
+    writeRegister(0x10 + gsi * 2 + 1, (uint32_t)targetLocalApic << 24);
+  }
+
+  void maskGsi(uint32_t gsi) { writeRegister(0x10 + gsi * 2, readRegister(0x10 + gsi * 2) | (1 << 16)); }
+  void unmaskGsi(uint32_t gsi) { writeRegister(0x10 + gsi * 2, readRegister(0x10 + gsi * 2) & ~(1 << 16)); }
+};
+
+static IoApic ioApics[MAX_IO_APICS];
+static unsigned ioApicCount = 0;
+
+void initIoApics(const IoApicDescriptor* descriptors, size_t count) {
+  ioApicCount = count;
+  uint32_t nextGsiBase = 0;
+  for (unsigned i = 0; i < count; i++) {
+    const IoApicDescriptor& descriptor = descriptors[i];
+    if (descriptor.gsiBase != nextGsiBase) {
+      kout::printf("Expected GSI base %d but got %d\n", nextGsiBase, descriptor.gsiBase);
+      kpanic("Invalid GSI base");
+    }
+    ioApics[i].base = memory::mapAddress(descriptor.physicalAddress, 32, false);
+    ioApics[i].gsiCount = ((ioApics[i].readRegister(1) >> 16) & 0xff) + 1;  // n + 1 encoded.
+    ioApics[i].gsiBase = descriptor.gsiBase;
+    nextGsiBase += ioApics[i].gsiCount;
+  }
+}
+void mapIoApicInterrupt(uint32_t gsi, uint8_t vector, bool levelTriggered, bool activeHigh, uint32_t targetCpuNumber) {
+  uint32_t targetLocalApic = localApicIds[targetCpuNumber];
+  for (unsigned i = 0; i < ioApicCount; i++) {
+    if (gsi >= ioApics[i].gsiBase && gsi < ioApics[i].gsiBase + ioApics[i].gsiCount) {
+      ioApics[i].mapGsi(gsi - ioApics[i].gsiBase, vector, levelTriggered, activeHigh, targetLocalApic);
+      return;
+    }
+  }
+  kout::printf("Failed to map GSI %d\n", gsi);
+  kpanic("Failed to map GSI");
+}
+void maskIoApicInterrupt(uint32_t gsi) {
+  for (unsigned i = 0; i < ioApicCount; i++) {
+    if (gsi >= ioApics[i].gsiBase && gsi < ioApics[i].gsiBase + ioApics[i].gsiCount) {
+      ioApics[i].maskGsi(gsi - ioApics[i].gsiBase);
+      return;
+    }
+  }
+  kout::printf("Failed to mask GSI %d\n", gsi);
+  kpanic("Failed to mask GSI");
+}
+void unmaskIoApicInterrupt(uint32_t gsi) {
+  for (unsigned i = 0; i < ioApicCount; i++) {
+    if (gsi >= ioApics[i].gsiBase && gsi < ioApics[i].gsiBase + ioApics[i].gsiCount) {
+      ioApics[i].unmaskGsi(gsi - ioApics[i].gsiBase);
+      return;
+    }
+  }
+  kout::printf("Failed to unmask GSI %d\n", gsi);
+  kpanic("Failed to unmask GSI");
+}
+uint32_t getGsiCount() {
+  uint32_t result = 0;
+  for (unsigned i = 0; i < ioApicCount; i++) {
+    result += ioApics[i].gsiCount;
+  }
+  return result;
 }
 }  // namespace apic

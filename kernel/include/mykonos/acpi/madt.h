@@ -43,6 +43,7 @@ class MadtTableManager : public TableManager {
 
   unsigned ioApicCount() { return numIoApics; }
   apic::IoApicDescriptor getIoApic(size_t i) { return i < numIoApics ? ioApics[i] : apic::IoApicDescriptor(); }
+  const apic::IoApicDescriptor* getIoApics() { return ioApics; }
 
   unsigned gsiOverrideCount() { return numGsiOverrides; }
   MadtGsiOverride getGsiOverride(size_t i) { return i < numGsiOverrides ? gsiOverrides[i] : MadtGsiOverride(); }

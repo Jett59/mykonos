@@ -30,6 +30,7 @@
 #include <mykonos/hpet.h>
 #include <mykonos/initramfs.h>
 #include <mykonos/interrupts.h>
+#include <mykonos/irq.h>
 #include <mykonos/kmalloc.h>
 #include <mykonos/kout.h>
 #include <mykonos/kpanic.h>
@@ -158,6 +159,7 @@ extern "C" [[noreturn]] void kstart() {
     }
     // Store our CPU number (0 for BSP)
     cpu::setCpuNumber(0);
+    apic::initIoApics(madt->getIoApics(), madt->ioApicCount());
     unsigned ticksPer10ms = apic::timerTicksPer(10000000, hpet);
     localApicTickSetting = ticksPer10ms;
     kout::printf("APIC timer runs at %dHz\n", ticksPer10ms * 100);
