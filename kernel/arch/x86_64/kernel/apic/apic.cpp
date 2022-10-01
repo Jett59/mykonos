@@ -93,17 +93,17 @@ struct IoApic {
 static IoApic ioApics[MAX_IO_APICS];
 static unsigned ioApicCount = 0;
 
-void initIoApics(const IoApicDescriptor* descriptors, unsigned count) {
+void initIoApics(const IoApicDescriptor* descriptors, size_t count) {
   ioApicCount = count;
   uint32_t nextGsiBase = 0;
   for (unsigned i = 0; i < count; i++) {
-    IoApicDescriptor& descriptor = descriptors[i];
+    const IoApicDescriptor& descriptor = descriptors[i];
     if (descriptor.gsiBase != nextGsiBase) {
       kout::printf("Expected GSI base %d but got %d\n", nextGsiBase, descriptor.gsiBase);
       kpanic("Invalid GSI base");
     }
     ioApics[i].base = memory::mapAddress(descriptor.physicalAddress, 32, false);
-    ioApics[i].gsiCount = (ioApics[i].readRegister(1) >> 16) & 0xff;
+    ioApics[i].gsiCount = ((ioApics[i].readRegister(1) >> 16) & 0xff) + 1;  // n + 1 encoded.
     ioApics[i].gsiBase = descriptor.gsiBase;
     nextGsiBase += ioApics[i].gsiCount;
   }
